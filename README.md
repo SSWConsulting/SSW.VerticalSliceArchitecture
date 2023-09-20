@@ -1,4 +1,4 @@
-![banner.png](docs%2Fbanner.png)
+![banner.png](https://github.com/Hona/VerticalSliceArchitecture/blob/main/docs%2Fbanner.png)
 
 # 🤔 What is it?
 
