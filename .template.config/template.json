@@ -1,0 +1,41 @@
+{
+    "$schema": "http://json.schemastore.org/template",
+    "author": "Hona",
+    "classifications": [
+      ".NET",
+      "Vertical Slice Architecture",
+      "API",
+      "ASP.NET Core",
+      "EF Core"
+    ],
+    "name": "Vertical Slice Architecture Solution",
+    "description": "Creates a new Vertical Slice Architecture Solution",
+    "identity": "Hona.VerticalSliceArchitecture.Solution.CSharp",
+    "groupIdentity": "Hona.VerticalSliceArchitecture.Solution",
+    "shortName": "hona-vsa",
+    "tags": {
+      "language": "C#",
+      "type": "project"
+    },
+    "sourceName": "VerticalSliceArchitecture",
+    "preferNameDirectory": true,
+    "sources": [
+      {
+        "source": "./",
+        "target": "./",
+        "exclude": [
+          "README.md",
+          "**/[Bb]in/**",
+          "**/[Oo]bj/**",
+          ".template.config/**/*",
+          ".vs/**/*",
+          "**/*.filelist",
+          "**/*.user",
+          "**/*.lock.json",
+          "**/.git/**",
+          "*.nuspec",
+          "**/node_modules/**"
+        ]
+      }
+    ]
+  }
