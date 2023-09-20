@@ -2,9 +2,9 @@
 
 public class DeleteTodoEndpoint : Endpoint<DeleteTodoRequest>
 {
-    private readonly TodoRepository _todoRepository;
+    private readonly ITodoRepository _todoRepository;
 
-    public DeleteTodoEndpoint(TodoRepository todoRepository)
+    public DeleteTodoEndpoint(ITodoRepository todoRepository)
     {
         _todoRepository = todoRepository;
     }

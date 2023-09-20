@@ -3,9 +3,9 @@ namespace VerticalSliceArchitecture.Features.Todo.GetTodo;
 
 public class GetTodoEndpoint : Endpoint<GetTodoRequest, TodoEntity>
 {
-    private readonly TodoRepository _todoRepository;
+    private readonly ITodoRepository _todoRepository;
 
-    public GetTodoEndpoint(TodoRepository todoRepository)
+    public GetTodoEndpoint(ITodoRepository todoRepository)
     {
         _todoRepository = todoRepository;
     }

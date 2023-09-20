@@ -1,6 +1,15 @@
 ﻿namespace VerticalSliceArchitecture.Features.Todo;
 
-public class TodoRepository
+public interface ITodoRepository
+{
+    Task<IEnumerable<TodoEntity>> GetAllAsync(CancellationToken cancellationToken = default);
+    Task<TodoEntity?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
+    Task<TodoEntity> AddAsync(TodoEntity todo, CancellationToken cancellationToken = default);
+    Task DeleteAsync(TodoEntity todo, CancellationToken cancellationToken = default);
+    Task UpdateAsync(TodoEntity todo, CancellationToken cancellationToken = default);
+}
+
+public class TodoRepository : ITodoRepository
 {
     private readonly AppDbContext _appDbContext;
 

@@ -2,9 +2,9 @@
 
 public class GetAllTodosEndpoint : EndpointWithoutRequest<IEnumerable<TodoEntity>>
 {
-    private readonly TodoRepository _todoRepository;
+    private readonly ITodoRepository _todoRepository;
 
-    public GetAllTodosEndpoint(TodoRepository todoRepository)
+    public GetAllTodosEndpoint(ITodoRepository todoRepository)
     {
         _todoRepository = todoRepository;
     }

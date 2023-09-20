@@ -4,9 +4,9 @@ namespace VerticalSliceArchitecture.Features.Todo.CreateTodo;
 
 public class CreateTodoEndpoint : Endpoint<CreateTodoRequest, Guid>
 {
-    private readonly TodoRepository _todoRepository;
+    private readonly ITodoRepository _todoRepository;
 
-    public CreateTodoEndpoint(TodoRepository todoRepository)
+    public CreateTodoEndpoint(ITodoRepository todoRepository)
     {
         _todoRepository = todoRepository;
     }

@@ -2,9 +2,9 @@
 
 public class UpdateTodoEndpoint : Endpoint<TodoEntity>
 {
-    private readonly TodoRepository _todoRepository;
+    private readonly ITodoRepository _todoRepository;
 
-    public UpdateTodoEndpoint(TodoRepository todoRepository)
+    public UpdateTodoEndpoint(ITodoRepository todoRepository)
     {
         _todoRepository = todoRepository;
     }
