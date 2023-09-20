@@ -21,6 +21,12 @@ cd Sprout
 dotnet new hona-vsa
 ```
 
+Finally, to update the template to the latest version run:
+
+```bash
+dotnet new update
+```
+
 # ✨ Features
 
 - C# 11
