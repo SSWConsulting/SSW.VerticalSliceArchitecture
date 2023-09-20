@@ -34,7 +34,8 @@
           "**/*.lock.json",
           "**/.git/**",
           "*.nuspec",
-          "**/node_modules/**"
+          "**/node_modules/**",
+          "docs/banner.png"
         ]
       }
     ]
