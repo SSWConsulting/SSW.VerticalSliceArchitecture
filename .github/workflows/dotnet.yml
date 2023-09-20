@@ -1,0 +1,47 @@
+# This workflow will build a .NET project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
+
+name: .NET
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    name: "Build" 
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Cache
+      uses: actions/cache@v3
+      with:    
+        path: ~/.nuget/packages
+        key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}    
+        restore-keys: |      
+          ${{ runner.os }}-nuget-
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Build
+      run: dotnet build --no-restore --configuration Release
+
+    - name: Test
+      run: dotnet test --no-build --no-restore --configuration Release --logger "trx;LogFileName=TestResults.trx"
+
+    - name: Test Report
+      uses: dorny/test-reporter@v1
+      if: success() || failure()    # run this step even if previous step failed
+      with:
+        name: Tests             # Name of the check run which will be created
+        path: "**/*.trx"        # Path to test results
+        reporter: dotnet-trx    # Format of test results
