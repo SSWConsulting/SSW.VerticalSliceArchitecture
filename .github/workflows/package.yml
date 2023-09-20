@@ -5,6 +5,7 @@ on:
       - main
     paths:
       - 'VerticalSliceArchitecture.nuspec'
+  workflow_dispatch:
 jobs:
   publish:
     name: Publish to NuGet.org
