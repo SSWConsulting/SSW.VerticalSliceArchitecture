@@ -3,7 +3,7 @@
   <metadata>
 
     <id>Hona.VerticalSliceArchitecture.Template</id>
-    <version>0.2.1</version>
+    <version>0.3.0</version>
     <title>Vertical Slice Architecture Template</title>
     <authors>Hona</authors>
     <description>Vertical Slice Architecture template using ASP.NET Core</description>
@@ -11,7 +11,7 @@
         This template is a way to get up and running using VSA in ASP.NET Core and C#. It is using Fast Endpoints as well as EF Core.
     </summary>
     <releaseNotes>
-      Upgraded to .NET 8 RC2
+      Upgraded to .NET 8 for .NET Conf
     </releaseNotes>
 
     <projectUrl>https://github.com/Hona/VerticalSliceArchitecture</projectUrl>
