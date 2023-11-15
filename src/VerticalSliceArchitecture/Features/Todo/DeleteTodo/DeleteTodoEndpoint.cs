@@ -1,32 +1,23 @@
 ﻿namespace VerticalSliceArchitecture.Features.Todo.DeleteTodo;
 
-public class DeleteTodoEndpoint : Endpoint<DeleteTodoRequest>
+public class DeleteTodoEndpoint : IEndpoint
 {
-    private readonly ITodoRepository _todoRepository;
-
-    public DeleteTodoEndpoint(ITodoRepository todoRepository)
+    public static async Task<IResult> HandleAsync(Guid id, ITodoRepository todoRepository, CancellationToken cancellationToken)
     {
-        _todoRepository = todoRepository;
-    }
-
-    public override void Configure()
-    {
-        Delete("/todo/{id}");
-        AllowAnonymous();
-    }
-
-    public override async Task HandleAsync(DeleteTodoRequest request, CancellationToken cancellationToken)
-    {
-        var output = await _todoRepository.GetByIdAsync(request.Id, cancellationToken);
+        var output = await todoRepository.GetByIdAsync(id, cancellationToken);
 
         if (output == null)
         {
-            await SendNotFoundAsync(cancellation: cancellationToken);
-            return;
+            return Results.NotFound();
         }
 
-        await _todoRepository.DeleteAsync(output, cancellationToken);
+        await todoRepository.DeleteAsync(output, cancellationToken);
 
-        await SendNoContentAsync(cancellation: cancellationToken);
+        return Results.NoContent();
+    }
+
+    public void MapEndpoint(IEndpointRouteBuilder endpoints)
+    {
+        endpoints.MapDelete("/todo/{id}", HandleAsync);
     }
 }

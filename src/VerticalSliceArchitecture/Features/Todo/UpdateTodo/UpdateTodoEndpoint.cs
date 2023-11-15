@@ -1,35 +1,28 @@
-﻿namespace VerticalSliceArchitecture.Features.Todo.UpdateTodo;
+﻿using Microsoft.AspNetCore.Mvc;
 
-public class UpdateTodoEndpoint : Endpoint<TodoEntity>
+namespace VerticalSliceArchitecture.Features.Todo.UpdateTodo;
+
+public class UpdateTodoEndpoint : IEndpoint
 {
-    private readonly ITodoRepository _todoRepository;
-
-    public UpdateTodoEndpoint(ITodoRepository todoRepository)
+    public async Task<IResult> HandleAsync(Guid id, TodoEntity input, ITodoRepository todoRepository, CancellationToken cancellationToken)
     {
-        _todoRepository = todoRepository;
-    }
-
-    public override void Configure()
-    {
-        Put("/todo/{id}");
-        AllowAnonymous();
-    }
-
-    public override async Task HandleAsync(TodoEntity input, CancellationToken cancellationToken)
-    {
-        var todo = await _todoRepository.GetByIdAsync(input.Id, cancellationToken);
+        var todo = await todoRepository.GetByIdAsync(input.Id, cancellationToken);
 
         if (todo == null)
         {
-            await SendNotFoundAsync(cancellation: cancellationToken);
-            return;
+            return Results.NotFound();
         }
 
         todo.Text = input.Text;
         todo.Completed = input.Completed;
 
-        await _todoRepository.UpdateAsync(todo, cancellationToken);
+        await todoRepository.UpdateAsync(todo, cancellationToken);
 
-        await SendAsync(todo, cancellation: cancellationToken);
+        return Results.Ok(todo);
+    }
+
+    public void MapEndpoint(IEndpointRouteBuilder endpoints)
+    {
+        endpoints.MapPut("/todo/{id}", handler: HandleAsync);
     }
 }

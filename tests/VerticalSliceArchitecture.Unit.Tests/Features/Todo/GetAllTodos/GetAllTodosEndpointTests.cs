@@ -1,5 +1,9 @@
-﻿using FastEndpoints;
+﻿
+using System.Collections;
 using FluentAssertions;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using NSubstitute;
 using VerticalSliceArchitecture.Features.Todo;
 using VerticalSliceArchitecture.Features.Todo.GetAllTodos;
@@ -24,14 +28,12 @@ public class GetAllTodosEndpointTests
         var repo = Substitute.For<ITodoRepository>();
         repo.GetAllAsync(Arg.Any<CancellationToken>())
             .Returns(x => Task.FromResult<IEnumerable<TodoEntity>>(items));
-
-        var endpoint = Factory.Create<GetAllTodosEndpoint>(repo);
         
         // Act
-        await endpoint.HandleAsync(default);
-        var response = endpoint.Response;
+        var result = await GetAllTodosEndpoint.HandleAsync(repo, CancellationToken.None);
 
-        response.Should().NotBeNullOrEmpty();
+        result.Should().BeOfType<Ok<IEnumerable<TodoEntity>>>()
+            .Which.Value.Should().BeEquivalentTo(items);
     }
     
 }

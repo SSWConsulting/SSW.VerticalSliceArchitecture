@@ -2,22 +2,9 @@
 
 namespace VerticalSliceArchitecture.Features.Todo.CreateTodo;
 
-public class CreateTodoEndpoint : Endpoint<CreateTodoRequest, Guid>
+public class CreateTodoEndpoint : IEndpoint
 {
-    private readonly ITodoRepository _todoRepository;
-
-    public CreateTodoEndpoint(ITodoRepository todoRepository)
-    {
-        _todoRepository = todoRepository;
-    }
-
-    public override void Configure()
-    {
-        Post("/todo");
-        AllowAnonymous();
-    }
-
-    public override async Task HandleAsync(CreateTodoRequest request, CancellationToken cancellationToken)
+    public static async Task<IResult> HandleAsync(CreateTodoRequest request, ITodoRepository todoRepository, CancellationToken cancellationToken)
     {
         var output = new TodoEntity
         {
@@ -25,8 +12,13 @@ public class CreateTodoEndpoint : Endpoint<CreateTodoRequest, Guid>
             Completed = false
         };
 
-        await _todoRepository.AddAsync(output, cancellationToken);
+        await todoRepository.AddAsync(output, cancellationToken);
+        
+        return Results.Created();
+    }
 
-        await SendCreatedAtAsync<GetTodoEndpoint>(output.Id, output.Id, cancellation: cancellationToken);
+    public void MapEndpoint(IEndpointRouteBuilder endpoints)
+    {
+        endpoints.MapPost("/todo", handler: HandleAsync);
     }
 }
