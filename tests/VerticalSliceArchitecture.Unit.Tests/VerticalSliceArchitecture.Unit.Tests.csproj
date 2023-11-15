@@ -10,7 +10,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="FastEndpoints.Testing" Version="5.18.0.6-beta" />
         <PackageReference Include="FluentAssertions" Version="7.0.0-alpha.2" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.9.0-preview-23503-02" />
         <PackageReference Include="NSubstitute" Version="5.1.0" />

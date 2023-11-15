@@ -1,31 +1,22 @@
 ﻿
 namespace VerticalSliceArchitecture.Features.Todo.GetTodo;
 
-public class GetTodoEndpoint : Endpoint<GetTodoRequest, TodoEntity>
+public class GetTodoEndpoint : IEndpoint
 {
-    private readonly ITodoRepository _todoRepository;
-
-    public GetTodoEndpoint(ITodoRepository todoRepository)
+    public static async Task<IResult> HandleAsync(Guid id, ITodoRepository todoRepository, CancellationToken cancellationToken)
     {
-        _todoRepository = todoRepository;
-    }
-
-    public override void Configure()
-    {
-        Get("/todo/{id}");
-        AllowAnonymous();
-    }
-
-    public override async Task HandleAsync(GetTodoRequest request, CancellationToken cancellationToken)
-    {
-        var output = await _todoRepository.GetByIdAsync(request.Id, cancellationToken);
+        var output = await todoRepository.GetByIdAsync(id, cancellationToken);
 
         if (output == null)
         {
-            await SendNotFoundAsync(cancellation: cancellationToken);
-            return;
+            return Results.NotFound();
         }
 
-        await SendAsync(output, cancellation: cancellationToken);
+        return Results.Ok(output);
+    }
+
+    public void MapEndpoint(IEndpointRouteBuilder endpoints)
+    {
+        endpoints.MapGet("/todo/{id}", handler: HandleAsync);
     }
 }
