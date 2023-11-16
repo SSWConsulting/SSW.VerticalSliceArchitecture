@@ -29,9 +29,9 @@ dotnet new update
 
 # ✨ Features
 
-- C# 11
-- .NET 7
+- C# 12
+- .NET 8
 - ASP.NET Core
-- [FastEndpoints](https://fast-endpoints.com/)
+- Minimal APIs
 - EF Core
 - Swagger UI
