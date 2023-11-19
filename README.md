@@ -6,7 +6,7 @@ A small but opinionated Vertical Slice Architecture solution template for .NET 7
 
 ## Learn
 
-![](https://img.shields.io/badge/watch%20the%20video-FF0000?style=for-the-badge&logo=youtube)
+[![](https://img.shields.io/badge/watch%20the%20video-FF0000?style=for-the-badge&logo=youtube)](https://www.youtube.com/watch?v=T-EwN9UqRwE)
 
 [![Vertical Slice Architecture: How Does it Compare to Clean Architecture | .NET Conf 2023](https://i3.ytimg.com/vi/T-EwN9UqRwE/maxresdefault.jpg)
 ](https://www.youtube.com/watch?v=T-EwN9UqRwE)
