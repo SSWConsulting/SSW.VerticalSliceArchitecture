@@ -2,7 +2,7 @@
 
 # 🤔 What is it?
 
-A small but opinionated Vertical Slice Architecture solution template for .NET 7
+A small but opinionated Vertical Slice Architecture solution template for .NET 8
 
 ## Learn
 
