@@ -1,14 +1,10 @@
-﻿
-using System.Collections;
-using FluentAssertions;
-using Microsoft.AspNetCore.Http;
+﻿using FluentAssertions;
 using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
 using NSubstitute;
 using VerticalSliceArchitecture.Features.Todos;
 using VerticalSliceArchitecture.Features.Todos.Queries.GetAllTodos;
 
-namespace VerticalSliceArchitecture.Unit.Tests.Features.Todo.GetAllTodos;
+namespace VerticalSliceArchitecture.Unit.Tests.Features.Todos.GetAllTodos;
 
 public class GetAllTodosEndpointTests
 {
@@ -18,7 +14,7 @@ public class GetAllTodosEndpointTests
         // Arrange
         var items = new[]
         {
-            new VerticalSliceArchitecture.Features.Todos.Todo
+            new Todo
             {
                 Id = Guid.NewGuid(),
                 Text = "My todo item"
@@ -26,13 +22,13 @@ public class GetAllTodosEndpointTests
         };
         
         var repo = Substitute.For<ITodoRepository>();
-        repo.GetAllAsync(Arg.Any<CancellationToken>())
-            .Returns(x => Task.FromResult<IEnumerable<VerticalSliceArchitecture.Features.Todos.Todo>>(items));
+        repo.GetAllAsync(Arg.Any<bool?>(), Arg.Any<CancellationToken>())
+            .Returns(x => Task.FromResult<IEnumerable<Todo>>(items));
         
         // Act
-        var result = await GetAllTodosEndpoint.HandleAsync(repo, CancellationToken.None);
+        var result = await GetAllTodosEndpoint.HandleAsync(null, repo, CancellationToken.None);
 
-        result.Should().BeOfType<Ok<IEnumerable<VerticalSliceArchitecture.Features.Todos.Todo>>>()
+        result.Should().BeOfType<Ok<IEnumerable<Todo>>>()
             .Which.Value.Should().BeEquivalentTo(items);
     }
     
