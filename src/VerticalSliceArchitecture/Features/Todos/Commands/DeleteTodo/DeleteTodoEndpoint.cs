@@ -1,6 +1,8 @@
-﻿namespace VerticalSliceArchitecture.Features.Todo.DeleteTodo;
+﻿using Ardalis.Result.AspNetCore;
 
-public class DeleteTodoEndpoint : IEndpoint
+namespace VerticalSliceArchitecture.Features.Todos.Commands.DeleteTodo;
+
+public sealed class DeleteTodoEndpoint : IEndpoint
 {
     public static async Task<IResult> HandleAsync(Guid id, ITodoRepository todoRepository, CancellationToken cancellationToken)
     {
@@ -16,8 +18,9 @@ public class DeleteTodoEndpoint : IEndpoint
         return Results.NoContent();
     }
 
-    public void MapEndpoint(IEndpointRouteBuilder endpoints)
+    public static void MapEndpoint(IEndpointRouteBuilder endpoints)
     {
-        endpoints.MapDelete("/todo/{id}", HandleAsync);
+        endpoints.MapDeleteWithOpenApi("/todo/{id:guid}", HandleAsync)
+            .WithTags(nameof(Todo));
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace VerticalSliceArchitecture.Features.Todo.CreateTodo;
+﻿namespace VerticalSliceArchitecture.Features.Todos.Commands.CreateTodo;
 
 public class CreateTodoRequest
 {

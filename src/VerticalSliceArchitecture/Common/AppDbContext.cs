@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using VerticalSliceArchitecture.Features.Todo;
+using VerticalSliceArchitecture.Features.Todos;
 
 namespace VerticalSliceArchitecture.Common;
 
@@ -9,5 +9,5 @@ public class AppDbContext : DbContext
     {
     }
 
-    public DbSet<TodoEntity> Todos { get; set; } = null!;
+    public DbSet<Todo> Todos { get; set; } = null!;
 }
