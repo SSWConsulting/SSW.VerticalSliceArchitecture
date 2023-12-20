@@ -1,9 +1,11 @@
 using VerticalSliceArchitecture;
-using VerticalSliceArchitecture.Features.Todo;
+using VerticalSliceArchitecture.Features.Todos;
+using VerticalSliceArchitecture.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddEfCore();
+builder.Services.AddMediatR(configure => configure.RegisterServicesFromAssemblyContaining<Program>());
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -18,6 +20,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseProductionExceptionHandler();
 
 app.RegisterEndpoints();
 

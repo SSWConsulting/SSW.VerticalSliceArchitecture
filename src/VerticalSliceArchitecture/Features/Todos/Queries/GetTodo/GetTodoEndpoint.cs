@@ -1,7 +1,7 @@
 ﻿
-namespace VerticalSliceArchitecture.Features.Todo.GetTodo;
+namespace VerticalSliceArchitecture.Features.Todos.Queries.GetTodo;
 
-public class GetTodoEndpoint : IEndpoint
+public sealed class GetTodoEndpoint : IEndpoint
 {
     public static async Task<IResult> HandleAsync(Guid id, ITodoRepository todoRepository, CancellationToken cancellationToken)
     {
@@ -15,8 +15,9 @@ public class GetTodoEndpoint : IEndpoint
         return Results.Ok(output);
     }
 
-    public void MapEndpoint(IEndpointRouteBuilder endpoints)
+    public static void MapEndpoint(IEndpointRouteBuilder endpoints)
     {
-        endpoints.MapGet("/todo/{id}", handler: HandleAsync);
+        endpoints.MapGetWithOpenApi<Todo>("/todo/{id:guid}", handler: HandleAsync)
+            .WithTags(nameof(Todo));
     }
 }

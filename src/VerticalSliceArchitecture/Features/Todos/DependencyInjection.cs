@@ -1,4 +1,4 @@
-﻿namespace VerticalSliceArchitecture.Features.Todo;
+﻿namespace VerticalSliceArchitecture.Features.Todos;
 
 public static class DependencyInjection
 {
