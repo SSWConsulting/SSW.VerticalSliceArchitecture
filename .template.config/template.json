@@ -24,7 +24,6 @@
         "source": "./",
         "target": "./",
         "exclude": [
-          "README.md",
           "**/[Bb]in/**",
           "**/[Oo]bj/**",
           ".template.config/**/*",
@@ -33,9 +32,12 @@
           "**/*.user",
           "**/*.lock.json",
           "**/.git/**",
+          "**/.idea/**",
+          "**/.vscode/**",
           "*.nuspec",
           "**/node_modules/**",
-          "docs/banner.png"
+          "docs/banner.png",
+          "templates/"
         ]
       }
     ]
