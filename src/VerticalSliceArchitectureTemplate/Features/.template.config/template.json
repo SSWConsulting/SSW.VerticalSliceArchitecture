@@ -26,13 +26,6 @@
       "replaces": "VerticalSliceArchitectureTemplate",
       "defaultValue": "VerticalSliceArchitectureTemplate"
     },
-    "featureName": {
-      "type": "parameter",
-      "datatype": "string",
-      "isRequired": true,
-      "replaces": "Todo",
-      "fileRename": "Todo"
-    },
     "featureNamePlural": {
       "type": "parameter",
       "datatype": "string",
@@ -42,8 +35,43 @@
     },
     "featureNamePluralDefault": {
       "type": "computed",
-      "value": "(featureNamePlural == '') ? featureName + 's' : featureNamePlural",
+      "value": "featureNamePlural && featureNamePlural !== '' ? featureNamePlural : featureName + 's'",
       "replaces": "Todos"
+    },
+    "tempFirstPluralCamel": {
+      "type": "derived",
+      "valueSource": "featureNamePlural",
+      "valueTransform": "lowerCaseFirstLetter"
+    },
+    "tempSecondPluralCamel": {
+      "type": "derived",
+      "valueSource": "featureNamePlural",
+      "valueTransform": "afterFirstLetter"
+    },
+    "featureNamePluralCamel": {
+      "type": "generated",
+      "generator": "join",
+      "replaces": "todos",
+      "fileRename": "todos",
+      "parameters": {
+        "symbols": [
+          {
+            "type": "ref",
+            "value": "tempFirstPluralCamel"
+          },
+          {
+            "type": "ref",
+            "value": "tempSecondPluralCamel"
+          }
+        ]
+      }
+    },      
+    "featureName": {
+      "type": "parameter",
+      "datatype": "string",
+      "isRequired": true,
+      "replaces": "Todo",
+      "fileRename": "Todo"
     },
     "tempFirstCamel": {
       "type": "derived",
