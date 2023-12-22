@@ -1,0 +1,12 @@
+{
+    "symbolInfo": {
+        "featureName": {
+            "longName": "feature",
+            "shortName": "f"
+        },
+        "featureNamePlural": {
+            "longName": "feature-plural",
+            "shortName": "fp"
+        }
+    }
+}
