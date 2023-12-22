@@ -61,9 +61,30 @@ This creates everything you need to get started with a new feature.
     - provides `Events/` as a folder to demonstrate how to trigger side effects
 - Basic REPR pattern (i.e., Request, an Endpoint, and a Response)
 - Adds a new Entity
+- Basic DDD pattern - the 'Complete' method on the entity shows adding Domain events and using `Result` objects instead of exceptions for validation
 - Adds a DbSet to the DbContext
 - Adds EF Core Entity Type Configuration
 - Adds a Repository
+
+While there is a small amount of code to remove, it is better to push you towards the pit of success, than allow inconsistency.
+
+# 📝 Architecture
+
+```mermaid
+graph TD;
+    subgraph ASP.NET Core Web App
+        subgraph Slices
+            A[Feature A]
+            B[Feature B]
+        end
+        Slices --> |depends on| Common
+        Kernel --> |depends on| Common
+        Kernel --> |depends on| Slices
+        ASPNETCore[ASP.NET Core] --> |uses| Kernel
+    end
+
+    Common[Common]
+```
 
 # ✨ Features
 
