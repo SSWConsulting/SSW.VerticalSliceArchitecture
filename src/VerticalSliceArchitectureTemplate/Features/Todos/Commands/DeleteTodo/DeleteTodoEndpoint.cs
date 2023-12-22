@@ -4,7 +4,7 @@ public sealed class DeleteTodoEndpoint : IEndpoint
 {
     public static void MapEndpoint(IEndpointRouteBuilder endpoints)
     {
-        endpoints.MapDeleteWithOpenApi("/todo/{id:guid}", HandleAsync)
+        endpoints.MapDeleteWithOpenApi("/todos/{id:guid}", HandleAsync)
             .WithTags(nameof(Todo));
     }
 

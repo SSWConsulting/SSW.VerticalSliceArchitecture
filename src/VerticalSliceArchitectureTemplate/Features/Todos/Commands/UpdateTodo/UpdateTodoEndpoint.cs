@@ -4,7 +4,7 @@ public sealed class UpdateTodoEndpoint : IEndpoint
 {
     public static void MapEndpoint(IEndpointRouteBuilder endpoints)
     {
-        endpoints.MapPutWithOpenApi("/todo/{id:guid}", HandleAsync)
+        endpoints.MapPutWithOpenApi("/todos/{id:guid}", HandleAsync)
             .WithTags(nameof(Todo));
     }
 

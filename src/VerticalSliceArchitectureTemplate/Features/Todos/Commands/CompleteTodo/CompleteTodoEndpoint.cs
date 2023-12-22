@@ -6,7 +6,7 @@ public sealed class CompleteTodoEndpoint : IEndpoint
 {
     public static void MapEndpoint(IEndpointRouteBuilder endpoints)
     {
-        endpoints.MapPostWithUpdatedOpenApi("/todo/{id:guid}/complete", HandleAsync)
+        endpoints.MapPostWithUpdatedOpenApi("/todos/{id:guid}/complete", HandleAsync)
             .WithTags(nameof(Todo));
     }
 

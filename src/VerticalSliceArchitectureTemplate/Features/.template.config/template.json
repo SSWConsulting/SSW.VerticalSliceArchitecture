@@ -44,6 +44,56 @@
       "type": "computed",
       "value": "(featureNamePlural == '') ? featureName + 's' : featureNamePlural",
       "replaces": "Todos"
+    },
+    "tempFirstCamel": {
+      "type": "derived",
+      "valueSource": "featureName",
+      "valueTransform": "lowerCaseFirstLetter"
+    },
+    "tempSecondCamel": {
+      "type": "derived",
+      "valueSource": "featureName",
+      "valueTransform": "afterFirstLetter"
+    },
+    "featureNameCamel": {
+      "type": "generated",
+      "generator": "join",
+      "replaces": "todo",
+      "fileRename": "todo",
+      "parameters": {
+        "symbols": [
+          {
+            "type": "ref",
+            "value": "tempFirstCamel"
+          },
+          {
+            "type": "ref",
+            "value": "tempSecondCamel"
+          }
+        ]
+      }
+    }
+  },
+  "forms": {
+    "lowerCaseFirstLetter": {
+      "identifier": "chain",
+      "steps": [
+        "firstLetter",
+        "lowerCase"
+      ]
+    },
+    "firstLetter": {
+      "identifier": "replace",
+      "pattern": "^(.)(.*)",
+      "replacement": "$1"
+    },
+    "afterFirstLetter": {
+      "identifier": "replace",
+      "pattern": "^(.)(.*)",
+      "replacement": "$2"
+    },
+    "lowerCase": {
+      "identifier": "lowerCase"
     }
   },
   "sources": [

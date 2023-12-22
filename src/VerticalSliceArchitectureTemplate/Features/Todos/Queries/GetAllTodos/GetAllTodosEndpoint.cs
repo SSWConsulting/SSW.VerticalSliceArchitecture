@@ -4,7 +4,7 @@ public sealed class GetAllTodosEndpoint : IEndpoint
 {
     public static void MapEndpoint(IEndpointRouteBuilder endpoints)
     {
-        endpoints.MapGetWithOpenApi<Todo[]>("/todo", HandleAsync)
+        endpoints.MapGetWithOpenApi<Todo[]>("/todos", HandleAsync)
             .WithTags(nameof(Todo));
     }
 

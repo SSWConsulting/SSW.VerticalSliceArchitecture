@@ -4,7 +4,7 @@ public sealed class CreateTodoEndpoint : IEndpoint
 {
     public static void MapEndpoint(IEndpointRouteBuilder endpoints)
     {
-        endpoints.MapPostWithCreatedOpenApi("/todo", HandleAsync)
+        endpoints.MapPostWithCreatedOpenApi("/todos", HandleAsync)
             .WithTags(nameof(Todo));
     }
 
@@ -18,6 +18,6 @@ public sealed class CreateTodoEndpoint : IEndpoint
 
         await todoRepository.AddAsync(output, cancellationToken);
 
-        return Results.Created("/todo", output.Id);
+        return Results.Created("/todos", output.Id);
     }
 }
