@@ -30,7 +30,8 @@ public class EventPublisher(IPublisher mediator) : SaveChangesInterceptor
             .ToList();
 
         var domainEvents = entities
-            .SelectMany(e => e.StagedEvents);
+            .SelectMany(e => e.StagedEvents)
+            .ToList();
 
         entities.ForEach(e => e.StagedEvents.Clear());
 
