@@ -13,6 +13,7 @@
     <releaseNotes>
       `dotnet new` item templates for quicker slice development.
     </releaseNotes>
+    <readme>README.md</readme>
 
     <projectUrl>https://github.com/Hona/VerticalSliceArchitecture</projectUrl>
     <repository type="git" url="https://github.com/Hona/VerticalSliceArchitecture.git" branch="main" />
