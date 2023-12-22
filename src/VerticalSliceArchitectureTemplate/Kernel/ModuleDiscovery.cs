@@ -8,6 +8,11 @@ public static class ModuleDiscovery
 
     public static void ConfigureModules(this IServiceCollection services, params Assembly[] assemblies)
     {
+        if (assemblies.Length == 0)
+        {
+            throw new ArgumentException("At least one assembly must be provided.", nameof(assemblies));
+        }
+        
         var moduleTypes = GetModuleTypes(assemblies);
 
         foreach (var type in moduleTypes)

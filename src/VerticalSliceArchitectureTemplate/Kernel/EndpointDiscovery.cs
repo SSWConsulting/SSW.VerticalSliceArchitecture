@@ -8,6 +8,11 @@ public static class EndpointDiscovery
 
     public static void RegisterEndpoints(this IEndpointRouteBuilder endpoints, params Assembly[] assemblies)
     {
+        if (assemblies.Length == 0)
+        {
+            throw new ArgumentException("At least one assembly must be provided.", nameof(assemblies));
+        }
+        
         var endpointTypes = GetEndpointTypes(assemblies);
 
         foreach (var type in endpointTypes)
