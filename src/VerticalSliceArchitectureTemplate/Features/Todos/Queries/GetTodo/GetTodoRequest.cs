@@ -1,6 +1,3 @@
 ﻿namespace VerticalSliceArchitectureTemplate.Features.Todos.Queries.GetTodo;
 
-public class GetTodoRequest
-{
-    public Guid Id { get; set; }
-}
+public record GetTodoRequest(Guid Id);

@@ -7,6 +7,11 @@ namespace VerticalSliceArchitectureTemplate.Features.Todos;
 
 public class Todo : BaseEntity
 {
+    public Todo()
+    {
+        StagedEvents.Add(new TodoCreatedEvent(this));
+    }
+    
     public Guid Id { get; init; }
     
     [MaxLength(1024)]
@@ -25,7 +30,7 @@ public class Todo : BaseEntity
         }
         
         Completed = true;
-        
+    
         StagedEvents.Add(new TodoCompletedEvent(this));
         
         return Result.Success();

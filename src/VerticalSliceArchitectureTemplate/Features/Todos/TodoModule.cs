@@ -1,8 +1,8 @@
 ﻿namespace VerticalSliceArchitectureTemplate.Features.Todos;
 
-public static class DependencyInjection
+public sealed class TodoModule : IModule
 {
-    public static void AddTodoFeature(this IServiceCollection services)
+    public static void ConfigureServices(IServiceCollection services)
     {
         services.AddScoped<ITodoRepository, TodoRepository>();
     }

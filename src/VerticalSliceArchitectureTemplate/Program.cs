@@ -1,6 +1,4 @@
-using VerticalSliceArchitectureTemplate;
-using VerticalSliceArchitectureTemplate.Features.Todos;
-using VerticalSliceArchitectureTemplate.Middleware;
+using VerticalSliceArchitectureTemplate.Kernel;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,8 +8,9 @@ builder.Services.AddMediatR(configure => configure.RegisterServicesFromAssemblyC
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Features
-builder.Services.AddTodoFeature();
+builder.Services.AddExceptionHandler<ExceptionHandler.KnownExceptionsHandler>();
+
+builder.Services.ConfigureModules();
 
 var app = builder.Build();
 

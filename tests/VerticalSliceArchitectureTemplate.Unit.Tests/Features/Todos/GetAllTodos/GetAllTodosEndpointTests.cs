@@ -20,16 +20,15 @@ public class GetAllTodosEndpointTests
                 Text = "My todo item"
             }
         };
-        
+
         var repo = Substitute.For<ITodoRepository>();
         repo.GetAllAsync(Arg.Any<bool?>(), Arg.Any<CancellationToken>())
             .Returns(x => Task.FromResult<IEnumerable<Todo>>(items));
-        
+
         // Act
         var result = await GetAllTodosEndpoint.HandleAsync(null, repo, CancellationToken.None);
 
         result.Should().BeOfType<Ok<IEnumerable<Todo>>>()
             .Which.Value.Should().BeEquivalentTo(items);
     }
-    
 }

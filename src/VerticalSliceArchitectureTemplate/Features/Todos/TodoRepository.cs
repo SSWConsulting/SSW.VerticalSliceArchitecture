@@ -1,6 +1,4 @@
-﻿using VerticalSliceArchitectureTemplate.Common;
-
-namespace VerticalSliceArchitectureTemplate.Features.Todos;
+﻿namespace VerticalSliceArchitectureTemplate.Features.Todos;
 
 public interface ITodoRepository
 {
@@ -19,22 +17,20 @@ public class TodoRepository : ITodoRepository
     {
         _appDbContext = appDbContext;
     }
-    
-    public async Task<IEnumerable<Todo>> GetAllAsync(bool? isCompleted = null, CancellationToken cancellationToken = default)
+
+    public async Task<IEnumerable<Todo>> GetAllAsync(bool? isCompleted = null,
+        CancellationToken cancellationToken = default)
     {
         var query = _appDbContext.Todos.AsQueryable();
 
-        if (isCompleted is not null)
-        {
-            query = query.Where(x => x.Completed == isCompleted);
-        }
-        
-        return await query.ToListAsync(cancellationToken: cancellationToken);
+        if (isCompleted is not null) query = query.Where(x => x.Completed == isCompleted);
+
+        return await query.ToListAsync(cancellationToken);
     }
-    
+
     public async Task<Todo?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        return await _appDbContext.Todos.FirstOrDefaultAsync(x => x.Id == id, cancellationToken: cancellationToken);
+        return await _appDbContext.Todos.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
     }
 
     public async Task<Todo> AddAsync(Todo todo, CancellationToken cancellationToken = default)
@@ -43,13 +39,13 @@ public class TodoRepository : ITodoRepository
         await _appDbContext.SaveChangesAsync(cancellationToken);
         return todo;
     }
-    
+
     public async Task DeleteAsync(Todo todo, CancellationToken cancellationToken = default)
     {
         _appDbContext.Todos.Remove(todo);
         await _appDbContext.SaveChangesAsync(cancellationToken);
     }
-    
+
     public async Task UpdateAsync(Todo todo, CancellationToken cancellationToken = default)
     {
         _appDbContext.Todos.Update(todo);

@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Diagnostics;
 
-namespace VerticalSliceArchitectureTemplate.Middleware;
+namespace VerticalSliceArchitectureTemplate.Kernel;
 
 public static class ExceptionHandler
 {
@@ -16,14 +16,15 @@ public static class ExceptionHandler
                 await defaultExceptionResponse.ExecuteAsync(context);
             }));
     }
-    
+
     public sealed class KnownExceptionsHandler : IExceptionHandler
     {
-        private static readonly IDictionary<Type, Func<HttpContext, Exception, IResult>> ExceptionHandlers = new Dictionary<Type, Func<HttpContext, Exception, IResult>>
-        {
-            { typeof(ValidationException), HandleValidationException },
-            { typeof(InvalidOperationException), HandleInvalidOperationException },
-        };
+        private static readonly IDictionary<Type, Func<HttpContext, Exception, IResult>> ExceptionHandlers =
+            new Dictionary<Type, Func<HttpContext, Exception, IResult>>
+            {
+                { typeof(ValidationException), HandleValidationException },
+                { typeof(InvalidOperationException), HandleInvalidOperationException }
+            };
 
         public async ValueTask<bool> TryHandleAsync(
             HttpContext httpContext,
@@ -32,32 +33,33 @@ public static class ExceptionHandler
         {
             var type = exception.GetType();
 
-            if (!ExceptionHandlers.TryGetValue(type, out var handler))
-            {
-                return false;
-            }
-            
+            if (!ExceptionHandlers.TryGetValue(type, out var handler)) return false;
+
             var result = handler.Invoke(httpContext, exception);
             await result.ExecuteAsync(httpContext);
-            
+
             return true;
         }
 
         private static IResult HandleValidationException(HttpContext context, Exception exception)
         {
-            var validationException = exception as ValidationException ?? throw new InvalidOperationException("Exception is not of type ValidationException");
-            
-            return Results.Problem(detail: validationException.ValidationResult.ErrorMessage,
+            var validationException = exception as ValidationException ??
+                                      throw new InvalidOperationException(
+                                          "Exception is not of type ValidationException");
+
+            return Results.Problem(validationException.ValidationResult.ErrorMessage,
                 type: "https://tools.ietf.org/html/rfc7231#section-6.5.1",
                 statusCode: StatusCodes.Status400BadRequest);
         }
 
         private static IResult HandleInvalidOperationException(HttpContext context, Exception exception)
         {
-            var invalidOperationException = exception as InvalidOperationException ?? throw new InvalidOperationException("Exception is not of type InvalidOperationException");
+            var invalidOperationException = exception as InvalidOperationException ??
+                                            throw new InvalidOperationException(
+                                                "Exception is not of type InvalidOperationException");
 
             return Results.Problem(invalidOperationException.Message,
-                type: "https://tools.ietf.org/html/rfc7231#section-6.5.1", 
+                type: "https://tools.ietf.org/html/rfc7231#section-6.5.1",
                 statusCode: StatusCodes.Status400BadRequest);
         }
     }

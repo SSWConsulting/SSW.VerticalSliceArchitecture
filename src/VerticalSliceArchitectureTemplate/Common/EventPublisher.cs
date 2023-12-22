@@ -2,15 +2,8 @@
 
 namespace VerticalSliceArchitectureTemplate.Common;
 
-public class EventPublisher : SaveChangesInterceptor
+public class EventPublisher(IPublisher mediator) : SaveChangesInterceptor
 {
-    private readonly IMediator _mediator;
-
-    public EventPublisher(IMediator mediator)
-    {
-        _mediator = mediator;
-    }
-
     public override InterceptionResult<int> SavingChanges(DbContextEventData eventData, InterceptionResult<int> result)
     {
         DispatchDomainEvents(eventData.Context).GetAwaiter().GetResult();
@@ -18,7 +11,8 @@ public class EventPublisher : SaveChangesInterceptor
         return base.SavingChanges(eventData, result);
     }
 
-    public override async ValueTask<InterceptionResult<int>> SavingChangesAsync(DbContextEventData eventData, InterceptionResult<int> result, CancellationToken cancellationToken = default)
+    public override async ValueTask<InterceptionResult<int>> SavingChangesAsync(DbContextEventData eventData,
+        InterceptionResult<int> result, CancellationToken cancellationToken = default)
     {
         await DispatchDomainEvents(eventData.Context);
 
@@ -41,6 +35,6 @@ public class EventPublisher : SaveChangesInterceptor
         entities.ForEach(e => e.StagedEvents.Clear());
 
         foreach (var domainEvent in domainEvents)
-            await _mediator.Publish(domainEvent);
+            await mediator.Publish(domainEvent);
     }
 }

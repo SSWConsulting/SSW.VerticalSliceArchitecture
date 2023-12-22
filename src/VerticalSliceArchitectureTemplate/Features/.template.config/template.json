@@ -23,8 +23,8 @@
     "DefaultNamespace": {
       "type": "bind",
       "binding": "msbuild:RootNamespace",
-      "replaces": "VerticalSliceArchitecture",
-      "defaultValue": "VerticalSliceArchitecture"
+      "replaces": "VerticalSliceArchitectureTemplate",
+      "defaultValue": "VerticalSliceArchitectureTemplate"
     },
     "featureName": {
       "type": "parameter",
@@ -32,6 +32,18 @@
       "isRequired": true,
       "replaces": "Todo",
       "fileRename": "Todo"
+    },
+    "featureNamePlural": {
+      "type": "parameter",
+      "datatype": "string",
+      "isRequired": false,
+      "replaces": "Todos",
+      "fileRename": "Todos"
+    },
+    "featureNamePluralDefault": {
+      "type": "computed",
+      "value": "(featureNamePlural == '') ? featureName + 's' : featureNamePlural",
+      "replaces": "Todos"
     }
   },
   "sources": [
