@@ -3,7 +3,7 @@
   <metadata>
 
     <id>Hona.VerticalSliceArchitecture.Template</id>
-    <version>0.5.1</version>
+    <version>0.5.2</version>
     <title>Vertical Slice Architecture Template</title>
     <authors>Hona</authors>
     <description>Vertical Slice Architecture template using ASP.NET Core</description>
@@ -13,6 +13,7 @@
     <releaseNotes>
       `dotnet new` item templates for quicker slice development.
     </releaseNotes>
+    <readme>README.md</readme>
 
     <projectUrl>https://github.com/Hona/VerticalSliceArchitecture</projectUrl>
     <repository type="git" url="https://github.com/Hona/VerticalSliceArchitecture.git" branch="main" />
