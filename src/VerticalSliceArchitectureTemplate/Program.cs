@@ -1,5 +1,7 @@
+using System.Reflection;
 using VerticalSliceArchitectureTemplate.Kernel;
 
+var appAssembly = Assembly.GetExecutingAssembly();
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddEfCore();
@@ -10,7 +12,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddExceptionHandler<ExceptionHandler.KnownExceptionsHandler>();
 
-builder.Services.ConfigureModules();
+builder.Services.ConfigureModules(appAssembly);
 
 var app = builder.Build();
 
@@ -22,6 +24,6 @@ if (app.Environment.IsDevelopment())
 
 app.UseProductionExceptionHandler();
 
-app.RegisterEndpoints();
+app.RegisterEndpoints(appAssembly);
 
 app.Run();
