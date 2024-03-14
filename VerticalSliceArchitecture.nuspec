@@ -3,7 +3,7 @@
   <metadata>
 
     <id>Hona.VerticalSliceArchitecture.Template</id>
-    <version>0.5.3</version>
+    <version>0.6.0</version>
     <title>Vertical Slice Architecture Template</title>
     <authors>Hona</authors>
     <description>Vertical Slice Architecture template using ASP.NET Core</description>
@@ -11,7 +11,11 @@
         This template is a way to get up and running using VSA in ASP.NET Core and C#. It is using Fast Endpoints as well as EF Core.
     </summary>
     <releaseNotes>
-      `dotnet new` item templates for quicker slice development.
+      Decoupled endpoints from CQRS objects.
+      Moved from Result flow, to exception flow for speed of development and convenience.
+      Rename Kernel to Host for more clarity.
+      Remove the Repository pattern in favour of using EF Core directly.
+      Improves Open API extension methods.
     </releaseNotes>
     <readme>README.md</readme>
 
@@ -32,7 +36,7 @@
   <files>
     <file src=".template.config\icon.png" target="" />
     <file src="README.md" />
-    <file src=".\**" target="content" exclude="**\bin\**;**\obj\**;**\.vs\**;**\.vscode\**;**\.git\**;**\.github\**;**\LICENSE;" />
+    <file src=".\**" target="content" exclude="**\bin\**;**\obj\**;**\.vs\**;**\.vscode\**;**\.git\**;**\.github\**;**\LICENSE;**\*.nupkg" />
   </files>
 
 </package>

@@ -140,7 +140,7 @@
         "**/.vscode/**",
         "*.nuspec",
         "**/node_modules/**",
-        "Todos/Commands/CompleteTodo/**"
+        "**/.github/**"
       ]
     }
   ]
