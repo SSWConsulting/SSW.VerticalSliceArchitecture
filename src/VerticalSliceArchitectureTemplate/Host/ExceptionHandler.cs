@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Diagnostics;
 
-namespace VerticalSliceArchitectureTemplate.Kernel;
+namespace VerticalSliceArchitectureTemplate.Host;
 
 public static class ExceptionHandler
 {

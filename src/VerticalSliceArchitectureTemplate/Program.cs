@@ -1,5 +1,5 @@
 using System.Reflection;
-using VerticalSliceArchitectureTemplate.Kernel;
+using VerticalSliceArchitectureTemplate.Host;
 
 var appAssembly = Assembly.GetExecutingAssembly();
 var builder = WebApplication.CreateBuilder(args);

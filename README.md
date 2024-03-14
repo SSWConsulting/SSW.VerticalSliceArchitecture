@@ -78,9 +78,9 @@ graph TD;
             B[Feature B]
         end
         Slices --> |depends on| Common
-        Kernel --> |depends on| Common
-        Kernel --> |depends on| Slices
-        ASPNETCore[ASP.NET Core] --> |uses| Kernel
+        Host --> |depends on| Common
+        Host --> |depends on| Slices
+        ASPNETCore[ASP.NET Core] --> |uses| Host
     end
 
     Common[Common]

@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-namespace VerticalSliceArchitectureTemplate.Kernel;
+namespace VerticalSliceArchitectureTemplate.Host;
 
 public static class ModuleDiscovery
 {
