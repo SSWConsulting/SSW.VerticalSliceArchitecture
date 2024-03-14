@@ -12,45 +12,42 @@ public class TodoEndpoints : IEndpoints
         var group = endpoints.MapGroup("/todos")
             .WithTags(nameof(Todo));
 
-        group.MapPostWithCreatedOpenApi(string.Empty,
+        group.MapPostWithOpenApi(string.Empty,
             async (CreateTodoCommand command, ISender sender, CancellationToken cancellationToken) =>
             {
                 var id = await sender.Send(command, cancellationToken);
                 return Results.Created($"/todos/{id}", id);
             });
-        
-        group.MapPostWithUpdatedOpenApi("/{id:guid}",
-            async (Guid id, UpdateTodoCommand command, ISender sender, CancellationToken cancellationToken)
-                =>
-            {
-                await sender.Send(command with { Id = id }, cancellationToken);
-                return Results.NoContent();
-            })
+
+        group.MapPutWithOpenApi("/{id:guid}",
+                async (Guid id, UpdateTodoCommand command, ISender sender, CancellationToken cancellationToken) =>
+                {
+                    await sender.Send(command with { Id = id }, cancellationToken);
+                    return Results.NoContent();
+                })
             .WithTags(nameof(Todo));
-        
-        group.MapPostWithUpdatedOpenApi("/{id:guid}/complete", 
-                async (Guid id, ISender sender, CancellationToken cancellationToken) 
-                    =>
+
+        group.MapPutWithOpenApi("/{id:guid}/complete",
+                async (Guid id, ISender sender, CancellationToken cancellationToken) =>
                 {
                     await sender.Send(new CompleteTodoCommand(id), cancellationToken);
                     return Results.NoContent();
                 })
             .WithTags(nameof(Todo));
-        
-        group.MapDeleteWithOpenApi("/{id:guid}", 
-            async (Guid id, ISender sender, CancellationToken cancellationToken) 
-                =>
+
+        group.MapDeleteWithOpenApi("/{id:guid}",
+            async (Guid id, ISender sender, CancellationToken cancellationToken) =>
             {
                 await sender.Send(new DeleteTodoCommand(id), cancellationToken);
                 return Results.NoContent();
             });
-        
-        group.MapGetWithOpenApi<Todo>("/{id:guid}", 
-            (Guid id, ISender sender, CancellationToken cancellationToken) 
+
+        group.MapGetWithOpenApi<Todo>("/{id:guid}",
+            (Guid id, ISender sender, CancellationToken cancellationToken)
                 => sender.Send(new GetTodoQuery(id), cancellationToken));
-        
+
         group.MapGetWithOpenApi<IImmutableList<Todo>>(string.Empty,
-            (bool? isCompleted, ISender sender, CancellationToken cancellationToken) 
+            (bool? isCompleted, ISender sender, CancellationToken cancellationToken)
                 => sender.Send(new GetAllTodosQuery(isCompleted), cancellationToken));
     }
 }

@@ -24,24 +24,15 @@ public static class OpenApiConvenienceExtensions
     public static RouteHandlerBuilder ProducesPost(this RouteHandlerBuilder builder) =>
         builder
             .ProducesValidationProblem()
-            .ProducesProblem(StatusCodes.Status500InternalServerError);
-
-    public static RouteHandlerBuilder MapPostWithCreatedOpenApi(
-        this IEndpointRouteBuilder endpoints,
-        string pattern,
-        Delegate handler) =>
-        endpoints.MapPost(pattern, handler)
-            .ProducesPost()
+            .ProducesProblem(StatusCodes.Status500InternalServerError)
             .Produces(StatusCodes.Status201Created);
 
-    public static RouteHandlerBuilder MapPostWithUpdatedOpenApi(
+    public static RouteHandlerBuilder MapPostWithOpenApi(
         this IEndpointRouteBuilder endpoints,
         string pattern,
         Delegate handler) =>
         endpoints.MapPost(pattern, handler)
-            .ProducesPost()
-            .Produces(StatusCodes.Status404NotFound)
-            .Produces(StatusCodes.Status204NoContent);
+            .ProducesPost();
 
     /// <summary>
     ///     Used for PUT endpoints that updates a single item.
@@ -75,5 +66,5 @@ public static class OpenApiConvenienceExtensions
         string pattern,
         Delegate handler) =>
         endpoints.MapDelete(pattern, handler)
-            .Produces(StatusCodes.Status204NoContent);
+            .ProducesDelete();
 }
