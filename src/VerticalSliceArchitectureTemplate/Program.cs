@@ -4,9 +4,11 @@ using VerticalSliceArchitectureTemplate.Host;
 var appAssembly = Assembly.GetExecutingAssembly();
 var builder = WebApplication.CreateBuilder(args);
 
+// Common
 builder.Services.AddEfCore();
-builder.Services.AddMediatR(configure => configure.RegisterServicesFromAssemblyContaining<Program>());
 
+// Host
+builder.Services.AddMediatR(configure => configure.RegisterServicesFromAssemblyContaining<Program>());
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
