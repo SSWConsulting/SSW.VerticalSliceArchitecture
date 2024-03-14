@@ -1,13 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using VerticalSliceArchitectureTemplate.Features.Todos.Events;
 
-namespace VerticalSliceArchitectureTemplate.Features.Todos;
+namespace VerticalSliceArchitectureTemplate.Features.Todos.Models;
 
 public class Todo : BaseEntity
 {
     public Todo()
     {
-        StagedEvents.Add(new TodoCreatedEvent(this));
+        StagedEvents.Add(new TodoCreatedEvent(Id));
     }
     
     public Guid Id { get; init; }
@@ -29,7 +29,7 @@ public class Todo : BaseEntity
         
         Completed = true;
     
-        StagedEvents.Add(new TodoCompletedEvent(this));
+        StagedEvents.Add(new TodoCompletedEvent(Id));
         
         return Result.Success();
     }

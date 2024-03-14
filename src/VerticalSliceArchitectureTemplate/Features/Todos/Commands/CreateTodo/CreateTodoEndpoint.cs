@@ -1,4 +1,6 @@
-﻿namespace VerticalSliceArchitectureTemplate.Features.Todos.Commands.CreateTodo;
+﻿using VerticalSliceArchitectureTemplate.Features.Todos.Models;
+
+namespace VerticalSliceArchitectureTemplate.Features.Todos.Commands.CreateTodo;
 
 public sealed class CreateTodoEndpoint : IEndpoint
 {
@@ -8,15 +10,16 @@ public sealed class CreateTodoEndpoint : IEndpoint
             .WithTags(nameof(Todo));
     }
 
-    public static async Task<IResult> HandleAsync(CreateTodoRequest request, ITodoRepository todoRepository,
+    public static async Task<IResult> HandleAsync(CreateTodoRequest request, AppDbContext dbContext,
         CancellationToken cancellationToken)
     {
         var output = new Todo
         {
             Text = request.Text
         };
-
-        await todoRepository.AddAsync(output, cancellationToken);
+        
+        await dbContext.Todos.AddAsync(output, cancellationToken);
+        await dbContext.SaveChangesAsync(cancellationToken);
 
         return Results.Created("/todos", output.Id);
     }

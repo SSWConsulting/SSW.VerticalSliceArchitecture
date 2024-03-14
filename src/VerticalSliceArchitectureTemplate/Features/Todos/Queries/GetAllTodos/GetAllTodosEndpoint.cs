@@ -1,4 +1,6 @@
-﻿namespace VerticalSliceArchitectureTemplate.Features.Todos.Queries.GetAllTodos;
+﻿using VerticalSliceArchitectureTemplate.Features.Todos.Models;
+
+namespace VerticalSliceArchitectureTemplate.Features.Todos.Queries.GetAllTodos;
 
 public sealed class GetAllTodosEndpoint : IEndpoint
 {
@@ -8,10 +10,12 @@ public sealed class GetAllTodosEndpoint : IEndpoint
             .WithTags(nameof(Todo));
     }
 
-    public static async Task<IResult> HandleAsync(bool? isCompleted, ITodoRepository todoRepository,
+    public static async Task<IResult> HandleAsync(bool? isCompleted, AppDbContext todoRepository,
         CancellationToken cancellationToken)
     {
-        var output = await todoRepository.GetAllAsync(isCompleted, cancellationToken);
+        var output = await todoRepository.Todos
+            .Where(x => isCompleted == null || x.Completed == isCompleted)
+            .ToArrayAsync(cancellationToken);
 
         return Results.Ok(output);
     }

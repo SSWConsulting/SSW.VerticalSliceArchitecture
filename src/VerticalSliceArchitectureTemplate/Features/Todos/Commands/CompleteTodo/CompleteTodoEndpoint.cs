@@ -1,4 +1,5 @@
 ﻿using Ardalis.Result.AspNetCore;
+using VerticalSliceArchitectureTemplate.Features.Todos.Models;
 
 namespace VerticalSliceArchitectureTemplate.Features.Todos.Commands.CompleteTodo;
 
@@ -10,10 +11,10 @@ public sealed class CompleteTodoEndpoint : IEndpoint
             .WithTags(nameof(Todo));
     }
 
-    public static async Task<IResult> HandleAsync(Guid id, ITodoRepository todoRepository,
+    public static async Task<IResult> HandleAsync(Guid id, AppDbContext dbContext,
         CancellationToken cancellationToken)
     {
-        var todo = await todoRepository.GetByIdAsync(id, cancellationToken);
+        var todo = await dbContext.Todos.FindAsync([id], cancellationToken);
 
         if (todo == null) return Results.NotFound();
 
@@ -21,7 +22,7 @@ public sealed class CompleteTodoEndpoint : IEndpoint
 
         if (!result.IsSuccess) return result.ToMinimalApiResult();
 
-        await todoRepository.UpdateAsync(todo, cancellationToken);
+        await dbContext.SaveChangesAsync(cancellationToken);
 
         return Results.NoContent();
     }

@@ -1,3 +1,3 @@
 ﻿namespace VerticalSliceArchitectureTemplate.Features.Todos.Events;
 
-public record TodoCompletedEvent(Todo Todo) : INotification;
+public record TodoCompletedEvent(Guid TodoId) : INotification;
