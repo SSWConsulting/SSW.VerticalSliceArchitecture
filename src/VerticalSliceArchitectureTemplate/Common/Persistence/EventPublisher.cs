@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Diagnostics;
 
-namespace VerticalSliceArchitectureTemplate.Common;
+namespace VerticalSliceArchitectureTemplate.Common.Persistence;
 
 public class EventPublisher(IPublisher mediator) : SaveChangesInterceptor
 {

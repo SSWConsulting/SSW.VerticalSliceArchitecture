@@ -1,4 +1,4 @@
-﻿namespace VerticalSliceArchitectureTemplate.Common;
+﻿namespace VerticalSliceArchitectureTemplate.Common.Features;
 
 public static class OpenApiConvenienceExtensions
 {

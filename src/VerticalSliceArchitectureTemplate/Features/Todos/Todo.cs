@@ -1,6 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Ardalis.Result;
-using VerticalSliceArchitectureTemplate.Common;
 using VerticalSliceArchitectureTemplate.Features.Todos.Events;
 
 namespace VerticalSliceArchitectureTemplate.Features.Todos;

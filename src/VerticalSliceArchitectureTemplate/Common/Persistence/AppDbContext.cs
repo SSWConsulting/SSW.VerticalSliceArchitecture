@@ -1,4 +1,4 @@
-﻿namespace VerticalSliceArchitectureTemplate.Common;
+﻿namespace VerticalSliceArchitectureTemplate.Common.Persistence;
 
 public partial class AppDbContext : DbContext
 {

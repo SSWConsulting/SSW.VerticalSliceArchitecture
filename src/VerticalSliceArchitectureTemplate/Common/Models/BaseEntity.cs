@@ -1,4 +1,4 @@
-﻿namespace VerticalSliceArchitectureTemplate.Common;
+﻿namespace VerticalSliceArchitectureTemplate.Common.Models;
 
 public abstract class BaseEntity
 {

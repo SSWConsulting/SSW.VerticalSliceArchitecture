@@ -1,4 +1,6 @@
-﻿namespace VerticalSliceArchitectureTemplate.Features.Todos;
+﻿using AppDbContext = VerticalSliceArchitectureTemplate.Common.Persistence.AppDbContext;
+
+namespace VerticalSliceArchitectureTemplate.Features.Todos;
 
 public interface ITodoRepository
 {
