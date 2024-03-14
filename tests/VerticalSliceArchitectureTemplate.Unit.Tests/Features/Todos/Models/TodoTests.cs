@@ -20,7 +20,7 @@ public class TodoTests
         item.Complete();
         
         // Assert
-        item.Completed.Should().BeTrue();
+        item.IsCompleted.Should().BeTrue();
     }
     
     [Fact]

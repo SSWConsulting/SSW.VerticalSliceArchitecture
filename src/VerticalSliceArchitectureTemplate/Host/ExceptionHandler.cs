@@ -23,7 +23,8 @@ public static class ExceptionHandler
             new Dictionary<Type, Func<HttpContext, Exception, IResult>>
             {
                 { typeof(ValidationException), HandleValidationException },
-                { typeof(InvalidOperationException), HandleInvalidOperationException }
+                { typeof(InvalidOperationException), HandleInvalidOperationException },
+                { typeof(NotFoundException), HandleNotFoundException }
             };
 
         public async ValueTask<bool> TryHandleAsync(
@@ -61,6 +62,17 @@ public static class ExceptionHandler
             return Results.Problem(invalidOperationException.Message,
                 type: "https://tools.ietf.org/html/rfc7231#section-6.5.1",
                 statusCode: StatusCodes.Status400BadRequest);
+        }
+        
+        private static IResult HandleNotFoundException(HttpContext context, Exception exception)
+        {
+            var notFoundException = exception as NotFoundException ??
+                                   throw new InvalidOperationException(
+                                       "Exception is not of type NotFoundException");
+            
+            return Results.Problem(detail: notFoundException.Message,
+                statusCode: StatusCodes.Status404NotFound,
+                type: "https://tools.ietf.org/html/rfc7231#section-6.5.4");
         }
     }
 }

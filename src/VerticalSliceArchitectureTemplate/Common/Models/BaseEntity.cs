@@ -2,5 +2,5 @@
 
 public abstract class BaseEntity
 {
-    public readonly List<INotification> StagedEvents = new();
+    public readonly List<INotification> StagedEvents = [];
 }

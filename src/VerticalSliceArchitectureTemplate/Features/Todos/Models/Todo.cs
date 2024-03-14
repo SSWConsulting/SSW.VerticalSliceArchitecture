@@ -14,23 +14,18 @@ public class Todo : BaseEntity
     
     [MaxLength(1024)]
     public string Text { get; set; } = string.Empty;
-    public bool Completed { get; private set; }
+    public bool IsCompleted { get; private set; }
     
-    public Result Complete()
+    /// <exception cref="InvalidOperationException">Throws when trying to complete an already completed item</exception>
+    public void Complete()
     {
-        if (Completed)
+        if (IsCompleted)
         {
-            return Result.Invalid(new ValidationError
-            {
-                Identifier = nameof(Completed),
-                ErrorMessage = "Todo is already completed."
-            });
+            throw new InvalidOperationException("Todo is already completed");
         }
         
-        Completed = true;
+        IsCompleted = true;
     
         StagedEvents.Add(new TodoCompletedEvent(Id));
-        
-        return Result.Success();
     }
 }

@@ -40,6 +40,7 @@ public static class OpenApiConvenienceExtensions
         Delegate handler) =>
         endpoints.MapPost(pattern, handler)
             .ProducesPost()
+            .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status204NoContent);
 
     /// <summary>
@@ -74,5 +75,5 @@ public static class OpenApiConvenienceExtensions
         string pattern,
         Delegate handler) =>
         endpoints.MapDelete(pattern, handler)
-            .ProducesDelete();
+            .Produces(StatusCodes.Status204NoContent);
 }
