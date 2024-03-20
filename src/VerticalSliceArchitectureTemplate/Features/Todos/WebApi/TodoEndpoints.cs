@@ -12,42 +12,67 @@ public class TodoEndpoints : IEndpoints
         var group = endpoints.MapGroup("/todos")
             .WithTags(nameof(Todo));
 
-        group.MapPostWithOpenApi(string.Empty,
-            async (CreateTodoCommand command, ISender sender, CancellationToken cancellationToken) =>
-            {
-                var id = await sender.Send(command, cancellationToken);
-                return Results.Created($"/todos/{id}", id);
-            });
+        group.MapPost("",
+                async (CreateTodoCommand command, ISender sender, CancellationToken cancellationToken) =>
+                {
+                    var id = await sender.Send(command, cancellationToken);
+                    return Results.Created($"/todos/{id}", id);
+                })
+            .Produces<Todo>(StatusCodes.Status201Created)
+            .ProducesValidationProblem()
+            .ProducesProblem(StatusCodes.Status500InternalServerError)
+            .WithTags(nameof(Todo));
 
-        group.MapPutWithOpenApi("/{id:guid}",
+        group.MapPut("/{id:guid}",
                 async (Guid id, UpdateTodoCommand command, ISender sender, CancellationToken cancellationToken) =>
                 {
                     await sender.Send(command with { Id = id }, cancellationToken);
                     return Results.NoContent();
                 })
+            .Produces(StatusCodes.Status204NoContent)
+            .Produces(StatusCodes.Status404NotFound)
+            .ProducesValidationProblem()
+            .ProducesProblem(StatusCodes.Status500InternalServerError)
             .WithTags(nameof(Todo));
 
-        group.MapPutWithOpenApi("/{id:guid}/complete",
+        group.MapPut("/{id:guid}/complete",
                 async (Guid id, ISender sender, CancellationToken cancellationToken) =>
                 {
                     await sender.Send(new CompleteTodoCommand(id), cancellationToken);
                     return Results.NoContent();
                 })
+            .Produces(StatusCodes.Status204NoContent)
+            .Produces(StatusCodes.Status404NotFound)
+            .ProducesValidationProblem()
+            .ProducesProblem(StatusCodes.Status500InternalServerError)
             .WithTags(nameof(Todo));
 
-        group.MapDeleteWithOpenApi("/{id:guid}",
-            async (Guid id, ISender sender, CancellationToken cancellationToken) =>
-            {
-                await sender.Send(new DeleteTodoCommand(id), cancellationToken);
-                return Results.NoContent();
-            });
+        group.MapDelete("/{id:guid}",
+                async (Guid id, ISender sender, CancellationToken cancellationToken) =>
+                {
+                    await sender.Send(new DeleteTodoCommand(id), cancellationToken);
+                    return Results.NoContent();
+                })
+            .Produces(StatusCodes.Status204NoContent)
+            .Produces(StatusCodes.Status404NotFound)
+            .ProducesValidationProblem()
+            .ProducesProblem(StatusCodes.Status500InternalServerError)
+            .WithTags(nameof(Todo));
 
-        group.MapGetWithOpenApi<Todo>("/{id:guid}",
-            (Guid id, ISender sender, CancellationToken cancellationToken)
-                => sender.Send(new GetTodoQuery(id), cancellationToken));
+        group.MapGet("/{id:guid}",
+                (Guid id, ISender sender, CancellationToken cancellationToken)
+                    => sender.Send(new GetTodoQuery(id), cancellationToken))
+            .Produces<Todo>()
+            .Produces(StatusCodes.Status404NotFound)
+            .ProducesProblem(StatusCodes.Status500InternalServerError)
+            .WithTags(nameof(Todo));
 
-        group.MapGetWithOpenApi<IImmutableList<Todo>>(string.Empty,
-            (bool? isCompleted, ISender sender, CancellationToken cancellationToken)
-                => sender.Send(new GetAllTodosQuery(isCompleted), cancellationToken));
+        group.MapGet("",
+                (bool? isCompleted, ISender sender, CancellationToken cancellationToken)
+                    => sender.Send(new GetAllTodosQuery(isCompleted), cancellationToken))
+            .Produces<IImmutableList<Todo>>()
+            .Produces(StatusCodes.Status404NotFound)
+            .ProducesProblem(StatusCodes.Status500InternalServerError)
+            .WithTags(nameof(Todo));
     }
 }
