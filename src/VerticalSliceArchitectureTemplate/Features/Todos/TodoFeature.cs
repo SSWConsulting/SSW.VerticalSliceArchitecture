@@ -1,6 +1,6 @@
 ﻿namespace VerticalSliceArchitectureTemplate.Features.Todos;
 
-public sealed class TodoModule : IModule
+public sealed class TodoFeature : IFeature
 {
     public static void ConfigureServices(IServiceCollection services)
     {
