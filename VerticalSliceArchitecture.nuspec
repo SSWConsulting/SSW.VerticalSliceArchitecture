@@ -11,7 +11,7 @@
         This template is a way to get up and running using VSA in ASP.NET Core and C#. It is using Fast Endpoints as well as EF Core.
     </summary>
     <releaseNotes>
-      ♻️ Switch back to IReadOnlyList & ToListAsync (#38)
+      ♻️ Switch back to IReadOnlyList &amp; ToListAsync (#38)
       ✨ Add config to configure services (#37)
       🗑️ Drop OpenAPI convenience extensions (#36)
       ♻️ Rename Module to Feature (#35)
