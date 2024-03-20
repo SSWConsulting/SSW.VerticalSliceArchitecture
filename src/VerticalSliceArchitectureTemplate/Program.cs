@@ -14,7 +14,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddExceptionHandler<ExceptionHandler.KnownExceptionsHandler>();
 
-builder.Services.ConfigureModules(appAssembly);
+builder.Services.ConfigureFeatures(appAssembly);
 
 var app = builder.Build();
 
