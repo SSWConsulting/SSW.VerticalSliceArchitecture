@@ -2,5 +2,5 @@
 
 public interface IFeature
 {
-    static abstract void ConfigureServices(IServiceCollection services);
+    static abstract void ConfigureServices(IServiceCollection services, IConfiguration config);
 }
