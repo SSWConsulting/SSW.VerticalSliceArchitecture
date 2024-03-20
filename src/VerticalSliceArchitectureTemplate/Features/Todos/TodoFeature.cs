@@ -2,7 +2,7 @@
 
 public sealed class TodoFeature : IFeature
 {
-    public static void ConfigureServices(IServiceCollection services)
+    public static void ConfigureServices(IServiceCollection services, IConfiguration config)
     {
         
     }

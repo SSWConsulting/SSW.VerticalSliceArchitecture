@@ -6,7 +6,7 @@ public static class FeatureDiscovery
 {
     private static readonly Type ModuleType = typeof(IFeature);
 
-    public static void ConfigureFeatures(this IServiceCollection services, params Assembly[] assemblies)
+    public static void ConfigureFeatures(this IServiceCollection services, IConfiguration config, params Assembly[] assemblies)
     {
         if (assemblies.Length == 0)
         {
@@ -18,7 +18,7 @@ public static class FeatureDiscovery
         foreach (var type in moduleTypes)
         {
             var method = GetConfigureServicesMethod(type);
-            method?.Invoke(null, [services]);
+            method?.Invoke(null, [services, config]);
         }
     }
     
