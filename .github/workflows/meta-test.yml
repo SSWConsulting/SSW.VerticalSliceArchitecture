@@ -1,0 +1,60 @@
+# This workflow will build a .NET project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
+
+name: Meta Test
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    name: "Build" 
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Cache
+      uses: actions/cache@v3
+      with:    
+        path: ~/.nuget/packages
+        key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}    
+        restore-keys: |      
+          ${{ runner.os }}-nuget-
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Build
+      run: dotnet build --no-restore --configuration Release
+
+    - name: Install
+      run: dotnet new install .
+
+    - name: Create new Project
+      run: |
+        mkdir -p /MyTestApp
+        cd /MyTestApp
+        dotnet new hona-vsa
+
+    - name: Build fresh Project
+      run: |
+        cd /MyTestApp
+        dotnet build --no-restore --configuration Release
+
+    - name: Create new slice
+      run: |
+        cd /MyTestApp/Features
+        dotnet new hona-vsa-slice -f Student
+      
+    - name: Build after a new slice
+      run: |
+        cd /MyTestApp
+        dotnet build --no-restore --configuration Release
