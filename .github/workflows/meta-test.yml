@@ -41,7 +41,7 @@ jobs:
     - name: Build fresh Project
       run: |
         cd ./temp/MyTestApp
-        dotnet build --no-restore --configuration Release
+        dotnet build --configuration Release
 
     - name: Create new slice
       run: |
@@ -51,4 +51,4 @@ jobs:
     - name: Build after a new slice
       run: |
         cd ./temp/MyTestApp
-        dotnet build --no-restore --configuration Release
+        dotnet build --configuration Release
