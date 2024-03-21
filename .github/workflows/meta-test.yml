@@ -29,32 +29,26 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
 
-    - name: Restore dependencies
-      run: dotnet restore
-
-    - name: Build
-      run: dotnet build --no-restore --configuration Release
-
     - name: Install
       run: dotnet new install .
 
     - name: Create new Project
       run: |
-        mkdir -p /MyTestApp
-        cd /MyTestApp
+        mkdir -p ./temp/MyTestApp
+        cd ./temp/MyTestApp
         dotnet new hona-vsa
 
     - name: Build fresh Project
       run: |
-        cd /MyTestApp
+        cd ./temp/MyTestApp
         dotnet build --no-restore --configuration Release
 
     - name: Create new slice
       run: |
-        cd /MyTestApp/Features
+        cd ./temp/MyTestApp/Features
         dotnet new hona-vsa-slice -f Student
       
     - name: Build after a new slice
       run: |
-        cd /MyTestApp
+        cd ./temp/MyTestApp
         dotnet build --no-restore --configuration Release
