@@ -1,0 +1,71 @@
+# This workflow will build a .NET project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
+
+name: Meta Test
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    name: "Build" 
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Cache
+      uses: actions/cache@v3
+      with:    
+        path: ~/.nuget/packages
+        key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}    
+        restore-keys: |      
+          ${{ runner.os }}-nuget-
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+
+    # Tests that the dotnet new template is valid
+    - name: Install
+      run: dotnet new install .
+
+    # Tests that the template follows the parent structure
+    # Tests that the dotnet new command works 'hona-vsa'
+    - name: Create new Project
+      run: |
+        mkdir -p ./temp/MyTestApp
+        cd ./temp/MyTestApp
+        dotnet new hona-vsa
+
+    # Tests that a fresh project can be built (in debug mode)
+    - name: Build fresh Project
+      run: |
+        cd ./temp/MyTestApp
+        dotnet build --configuration Debug 
+
+    # Tests that a slice can be generated
+    - name: Create new slice
+      run: |
+        cd ./temp/MyTestApp/src/MyTestApp/Features
+        dotnet new hona-vsa-slice -f Student
+      
+    # Tests that a fresh slice leaves the project in a buildable state
+    - name: Build after a new slice
+      run: |
+        cd ./temp/MyTestApp
+        dotnet build --configuration Release
+
+    - name: Delete original feature
+      run: |
+        rm -rf ./temp/MyTestApp/src/MyTestApp/Features/Todos
+        rm -rf ./temp/MyTestApp/tests/MyTestApp.Unit.Tests/Features/Todos
+
+    # Tests that deleting a slice leaves the project in a buildable state
+    - name: Build after deleting a feature
+      run: |
+        cd ./temp/MyTestApp
+        dotnet build --configuration Release
