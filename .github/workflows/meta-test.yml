@@ -62,6 +62,7 @@ jobs:
     - name: Delete original feature
       run: |
         rm -rf ./temp/MyTestApp/src/MyTestApp/Features/Todos
+        rm -rf ./temp/MyTestApp/tests/MyTestApp.Unit.Tests/Features/Todos
 
     # Tests that deleting a slice leaves the project in a buildable state
     - name: Build after deleting a feature
