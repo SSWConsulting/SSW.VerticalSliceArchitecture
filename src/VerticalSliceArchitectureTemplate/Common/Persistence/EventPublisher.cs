@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Diagnostics;
+﻿using MediatR;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using VerticalSliceArchitectureTemplate.Common.Domain;
 
 namespace VerticalSliceArchitectureTemplate.Common.Persistence;

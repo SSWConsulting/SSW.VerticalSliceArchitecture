@@ -2,11 +2,12 @@
 
 namespace VerticalSliceArchitectureTemplate.Features.Todos.Queries;
 
-public sealed record GetTodoQuery(Guid Id) : IRequest<Todo>;
-
-public sealed class GetTodoQueryHandler(AppDbContext dbContext) : IRequestHandler<GetTodoQuery, Todo>
+[Handler]
+public sealed partial class GetTodo
 {
-    public async Task<Todo> Handle(GetTodoQuery request, CancellationToken cancellationToken)
+    public sealed record Query(Guid Id);
+
+    private static async ValueTask<Todo> HandleAsync(Query request, AppDbContext dbContext, CancellationToken cancellationToken)
     {
         var todo = await dbContext.Todos.FindAsync([request.Id], cancellationToken);
 
