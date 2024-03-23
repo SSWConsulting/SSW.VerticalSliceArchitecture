@@ -1,4 +1,4 @@
-﻿using VerticalSliceArchitectureTemplate.Features.Todos.Models;
+﻿using VerticalSliceArchitectureTemplate.Features.Todos.Domain;
 
 namespace VerticalSliceArchitectureTemplate.Features.Todos.Queries;
 

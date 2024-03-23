@@ -1,6 +1,6 @@
 ﻿using FluentAssertions;
-using VerticalSliceArchitectureTemplate.Features.Todos.Events;
-using VerticalSliceArchitectureTemplate.Features.Todos.Models;
+using VerticalSliceArchitectureTemplate.Features.Todos.Domain;
+using VerticalSliceArchitectureTemplate.Features.Todos.Domain.Events;
 
 namespace VerticalSliceArchitectureTemplate.Unit.Tests.Features.Todos.Models;
 

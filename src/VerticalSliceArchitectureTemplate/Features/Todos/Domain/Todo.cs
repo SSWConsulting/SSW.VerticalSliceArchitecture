@@ -1,7 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using VerticalSliceArchitectureTemplate.Features.Todos.Events;
+using VerticalSliceArchitectureTemplate.Common.Domain;
+using VerticalSliceArchitectureTemplate.Features.Todos.Domain.Events;
 
-namespace VerticalSliceArchitectureTemplate.Features.Todos.Models;
+namespace VerticalSliceArchitectureTemplate.Features.Todos.Domain;
 
 public class Todo : BaseEntity
 {

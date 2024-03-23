@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using VerticalSliceArchitectureTemplate.Features.Todos.Models;
+using VerticalSliceArchitectureTemplate.Features.Todos.Domain;
 
 namespace VerticalSliceArchitectureTemplate.Features.Todos.Persistence;
 
