@@ -1,6 +1,6 @@
 ﻿using System.Collections.Immutable;
 using VerticalSliceArchitectureTemplate.Features.Todos.Commands;
-using VerticalSliceArchitectureTemplate.Features.Todos.Models;
+using VerticalSliceArchitectureTemplate.Features.Todos.Domain;
 using VerticalSliceArchitectureTemplate.Features.Todos.Queries;
 
 namespace VerticalSliceArchitectureTemplate.Features.Todos.WebApi;
