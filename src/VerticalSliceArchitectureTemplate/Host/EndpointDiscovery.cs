@@ -2,6 +2,7 @@
 
 namespace VerticalSliceArchitectureTemplate.Host;
 
+// TODO: Source generate this
 public static class EndpointDiscovery
 {
     private static readonly Type EndpointType = typeof(IEndpoint);
