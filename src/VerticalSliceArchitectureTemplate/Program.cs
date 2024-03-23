@@ -1,4 +1,5 @@
 using System.Reflection;
+using VerticalSliceArchitectureTemplate;
 using VerticalSliceArchitectureTemplate.Host;
 
 var appAssembly = Assembly.GetExecutingAssembly();
@@ -8,6 +9,13 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEfCore();
 
 // Host
+builder.Services.AddHandlers();
+builder.Services.AddBehaviors();
+builder.Services.AddSwaggerGen( options =>
+{
+    options.CustomSchemaIds(x => x.FullName?.Replace("+", ".", StringComparison.Ordinal));
+});
+
 builder.Services.AddMediatR(configure => configure.RegisterServicesFromAssemblyContaining<Program>());
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

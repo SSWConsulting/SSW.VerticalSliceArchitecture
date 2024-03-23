@@ -2,11 +2,12 @@
 
 namespace VerticalSliceArchitectureTemplate.Features.Todos.Commands;
 
-public sealed record DeleteTodoCommand(Guid Id) : IRequest;
-
-public sealed class DeleteTodoCommandHandler(AppDbContext dbContext) : IRequestHandler<DeleteTodoCommand>
+[Handler]
+public sealed partial class DeleteTodo
 {
-    public async Task Handle(DeleteTodoCommand request, CancellationToken cancellationToken)
+    public sealed record Command(Guid Id) : IRequest;
+
+    private static async ValueTask HandleAsync(Command request, AppDbContext dbContext, CancellationToken cancellationToken)
     {
         var todo = await dbContext.Todos.FindAsync([request.Id], cancellationToken);
 
