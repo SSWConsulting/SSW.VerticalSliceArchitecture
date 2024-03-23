@@ -5,7 +5,7 @@ namespace VerticalSliceArchitectureTemplate.Features.Todos.Commands;
 [Handler]
 public sealed partial class CreateTodo
 {
-    public sealed record Command(string Text) : IRequest<Guid>;
+    public sealed record Command(string Text);
 
     private static async ValueTask<Guid> HandleAsync(Command request, AppDbContext dbContext, CancellationToken cancellationToken)
     {

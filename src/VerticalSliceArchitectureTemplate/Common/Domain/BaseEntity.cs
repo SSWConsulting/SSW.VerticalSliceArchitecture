@@ -1,4 +1,6 @@
-﻿namespace VerticalSliceArchitectureTemplate.Common.Domain;
+﻿using MediatR;
+
+namespace VerticalSliceArchitectureTemplate.Common.Domain;
 
 public abstract class BaseEntity
 {
