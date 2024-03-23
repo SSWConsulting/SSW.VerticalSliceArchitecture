@@ -15,7 +15,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: nuget/setup-nuget@v1
+      - uses: nuget/setup-nuget@v2
         with:
           nuget-version: '6.x'
 
