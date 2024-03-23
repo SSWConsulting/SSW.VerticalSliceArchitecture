@@ -2,6 +2,7 @@
 
 namespace VerticalSliceArchitectureTemplate.Host;
 
+// TODO: Source generate this
 public static class FeatureDiscovery
 {
     private static readonly Type ModuleType = typeof(IFeature);
