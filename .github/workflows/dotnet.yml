@@ -40,7 +40,7 @@ jobs:
 
     - name: Test Report
       uses: dorny/test-reporter@v1
-      if: success() || failure()    # run this step even if previous step failed
+      if: github.actor != 'dependabot[bot]' && (success() || failure())    # run this step even if previous step failed
       with:
         name: Tests             # Name of the check run which will be created
         path: "**/*.trx"        # Path to test results
