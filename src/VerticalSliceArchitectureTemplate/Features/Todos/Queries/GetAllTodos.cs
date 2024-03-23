@@ -3,8 +3,19 @@
 namespace VerticalSliceArchitectureTemplate.Features.Todos.Queries;
 
 [Handler]
-public sealed partial class GetAllTodos
+public sealed partial class GetAllTodos : IEndpoint
 {
+    public static void MapEndpoint(IEndpointRouteBuilder endpoints)
+    {
+        endpoints.MapGet("/todos",
+                ([AsParameters] Query query, Handler handler, CancellationToken cancellationToken)
+                    => handler.HandleAsync(query, cancellationToken))
+            .Produces<IReadOnlyList<Todo>>()
+            .Produces(StatusCodes.Status404NotFound)
+            .ProducesProblem(StatusCodes.Status500InternalServerError)
+            .WithTags(nameof(Todo));
+    }
+    
     public sealed record Query(bool? IsCompleted = null);
 
     private static async ValueTask<IReadOnlyList<Todo>> HandleAsync(Query request, AppDbContext dbContext, CancellationToken cancellationToken)
