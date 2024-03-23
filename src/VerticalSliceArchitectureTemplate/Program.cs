@@ -34,6 +34,6 @@ if (app.Environment.IsDevelopment())
 
 app.UseProductionExceptionHandler();
 
-app.RegisterEndpoints(appAssembly);
+app.MapVerticalSliceArchitectureTemplateEndpoints();
 
 app.Run();

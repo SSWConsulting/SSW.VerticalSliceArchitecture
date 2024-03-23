@@ -2,6 +2,7 @@
 
 namespace VerticalSliceArchitectureTemplate.Features.Todos.Queries;
 
+[MapGet("/todos/{id:guid}")]
 [Handler]
 public sealed partial class GetTodo
 {

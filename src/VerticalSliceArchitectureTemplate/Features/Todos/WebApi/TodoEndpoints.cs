@@ -6,7 +6,7 @@ using VerticalSliceArchitectureTemplate.Features.Todos.Queries;
 
 namespace VerticalSliceArchitectureTemplate.Features.Todos.WebApi;
 
-public class TodoEndpoints : IEndpoints
+public class TodoEndpoints
 {
     public static void MapEndpoints(IEndpointRouteBuilder endpoints)
     {
@@ -64,7 +64,7 @@ public class TodoEndpoints : IEndpoints
             .WithTags(nameof(Todo));
 
         group.MapGet("/{id:guid}",
-                (Guid id, GetTodo.Handler handler, CancellationToken cancellationToken)
+                (Guid id, [FromRoute] GetTodo.Handler handler, CancellationToken cancellationToken)
                     => handler.HandleAsync(new GetTodo.Query(id), cancellationToken))
             .Produces<Todo>()
             .Produces(StatusCodes.Status404NotFound)
