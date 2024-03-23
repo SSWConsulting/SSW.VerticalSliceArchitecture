@@ -27,7 +27,7 @@ jobs:
           ${{ runner.os }}-nuget-
 
     - name: Setup .NET
-      uses: actions/setup-dotnet@v3
+      uses: actions/setup-dotnet@v4
 
     # Tests that the dotnet new template is valid
     - name: Install
