@@ -3,30 +3,16 @@
   <metadata>
 
     <id>SSW.VerticalSliceArchitecture.Template</id>
-    <version>0.8.0</version>
+    <version>0.9.0</version>
     <title>Vertical Slice Architecture Template</title>
     <authors>SSW Consulting</authors>
     <description>Vertical Slice Architecture template using ASP.NET Core</description>
     <summary>
-        This template is a way to get up and running using VSA in ASP.NET Core and C#. It is using Fast Endpoints as well as EF Core.
+      An enterprise ready solution template for Vertical Slice Architecture.
+      This template is just one way to apply the Vertical Slice Architecture.
     </summary>
     <releaseNotes>
-      🧪 Add meta test (#47)
-      ♻️ Make the Domain more intentional (#49)
-      ♻️ Use Immediate.Handlers instead of MediatR (#50)
-      👷🏻 Add dependabot for NuGet + GitHub actions (#51)
-      👷🏻 Exclude test result upload from dependabot (#61)
-      Bump actions/checkout from 2 to 4 (#52)
-      Bump actions/cache from 3 to 4 (#54)
-      Bump actions/setup-dotnet from 3 to 4 (#53)
-      Bump nuget/setup-nuget from 1 to 2 (#55)
-      Bump FluentAssertions from 7.0.0-alpha.2 to 7.0.0-alpha.3 (#57)
-      Bump Microsoft.AspNetCore.OpenApi from 8.0.0 to 8.0.3 (#60)
-      Bump coverlet.collector from 6.0.0 to 6.0.2 (#56)
-      Bump xunit from 2.6.3 to 2.7.0 (#59)
-      Bump Microsoft.NET.Test.Sdk from 17.9.0-preview-23503-02 to 17.9.0 (#58)
-      ♻️ More cohesion between endpoint &amp; CQRS object (#63)
-      🚧 Add TODOs for source gens (#64)
+      Migrate from Hona to SSW Consulting and begin Enterprise ready.
     </releaseNotes>
     <readme>README.md</readme>
 
