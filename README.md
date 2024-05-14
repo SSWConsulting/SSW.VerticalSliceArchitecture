@@ -1,8 +1,11 @@
-[![VerticalSliceArchitecture Template Banner](https://raw.githubusercontent.com/Hona/VerticalSliceArchitecture/main/docs/banner.png)](https://github.com/Hona/VerticalSliceArchitecture)
+[![SSW Banner](https://raw.githubusercontent.com/SSWConsulting/SSW.Rules.Content/main/_docs/images/ssw-banner.png)](https://github.com/SSWConsulting/VerticalSliceArchitecture)
 
 # 🤔 What is it?
 
-A small but opinionated Vertical Slice Architecture solution template for .NET 8
+An enterprise ready solution template for Vertical Slice Architecture.
+This template is just one way to apply the Vertical Slice Architecture.
+
+Read more on [SSW Rules to Better Vertical Slice Architecture](https://www.ssw.com.au/rules/rules-to-better-vertical-slice-architecture/)
 
 ## Learn
 
@@ -16,7 +19,7 @@ A small but opinionated Vertical Slice Architecture solution template for .NET 8
 To install the template from NuGet.org run the following command:
 
 ```bash
-dotnet new install Hona.VerticalSliceArchitecture.Template
+dotnet new install SSW.VerticalSliceArchitecture.Template
 ```
 
 Then create a new solution:
@@ -25,7 +28,7 @@ Then create a new solution:
 mkdir Sprout
 cd Sprout
 
-dotnet new hona-vsa
+dotnet new ssw-vsa
 ```
 
 Finally, to update the template to the latest version run:
@@ -39,7 +42,7 @@ dotnet new update
 To speed up development there is a `dotnet new` template to create a full Vertical Slice.
 
 ```bash
-dotnet new hona-vsa-slice -f Student
+dotnet new ssw-vsa-slice -f Student
 ```
 `-f` or `--feature` where the feature name is the **singular** name of the feature.
 
@@ -48,7 +51,7 @@ Of course, there are always exceptions where appending an 's' is not enough. For
 For this, use the optional parameter:
 
 ```bash
-dotnet new hona-vsa-slice -f Person -fp People
+dotnet new ssw-vsa-slice -f Person -fp People
 ```
 
 optional: `-fp` or `--feature-plural` where the feature name is the **plural** name of the feature.
