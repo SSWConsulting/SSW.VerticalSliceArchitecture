@@ -34,12 +34,12 @@ jobs:
       run: dotnet new install .
 
     # Tests that the template follows the parent structure
-    # Tests that the dotnet new command works 'hona-vsa'
+    # Tests that the dotnet new command works 'ssw-vsa'
     - name: Create new Project
       run: |
         mkdir -p ./temp/MyTestApp
         cd ./temp/MyTestApp
-        dotnet new hona-vsa
+        dotnet new ssw-vsa
 
     # Tests that a fresh project can be built (in debug mode)
     - name: Build fresh Project
@@ -51,7 +51,7 @@ jobs:
     - name: Create new slice
       run: |
         cd ./temp/MyTestApp/src/MyTestApp/Features
-        dotnet new hona-vsa-slice -f Student
+        dotnet new ssw-vsa-slice -f Student
       
     # Tests that a fresh slice leaves the project in a buildable state
     - name: Build after a new slice

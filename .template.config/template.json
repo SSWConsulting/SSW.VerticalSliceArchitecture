@@ -1,6 +1,6 @@
 {
     "$schema": "http://json.schemastore.org/template",
-    "author": "Hona",
+    "author": "SSW Consulting",
     "classifications": [
       ".NET",
       "Vertical Slice Architecture",
@@ -10,9 +10,9 @@
     ],
     "name": "Vertical Slice Architecture Solution",
     "description": "Creates a new Vertical Slice Architecture Solution",
-    "identity": "Hona.VerticalSliceArchitecture.Solution.CSharp",
-    "groupIdentity": "Hona.VerticalSliceArchitecture.Solution",
-    "shortName": "hona-vsa",
+    "identity": "SSW.VerticalSliceArchitecture.Solution.CSharp",
+    "groupIdentity": "SSW.VerticalSliceArchitecture.Solution",
+    "shortName": "ssw-vsa",
     "tags": {
       "language": "C#",
       "type": "project"
