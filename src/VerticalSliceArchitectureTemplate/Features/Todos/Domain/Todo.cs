@@ -1,10 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using VerticalSliceArchitectureTemplate.Common.Domain;
-using VerticalSliceArchitectureTemplate.Features.Todos.Application;
-using VerticalSliceArchitectureTemplate.Features.Todos.Commands;
 using VerticalSliceArchitectureTemplate.Features.Todos.Domain.Events;
-using VerticalSliceArchitectureTemplate.Features.Todos.Infrastructure;
-using VerticalSliceArchitectureTemplate.Features.Todos.Queries;
 
 namespace VerticalSliceArchitectureTemplate.Features.Todos.Domain;
 
@@ -33,24 +29,4 @@ public class Todo : BaseEntity
     
         StagedEvents.Add(new TodoCompletedEvent(Id));
     }
-
-    public void Save(DataService service)
-    {
-
-    }
-
-    // public void Save(MyApp app)
-    // {
-    //
-    // }
-
-    // public void Save(MyQuery app)
-    // {
-    //
-    // }
-    //
-    // public void Save(MyCommand app)
-    // {
-    //
-    // }
 }

@@ -1,24 +1,31 @@
 using FluentAssertions;
-using NetArchTest.Rules;
+using VerticalSliceArchitecture.ArchTests.Common;
+using Xunit.Abstractions;
 
 namespace VerticalSliceArchitecture.ArchTests;
 
 public class ArchitectureTests : TestBase
 {
+    private readonly ITestOutputHelper _outputHelper;
 
-    private string[] ApplicationNamespaces =
+    public ArchitectureTests(ITestOutputHelper outputHelper)
+    {
+        _outputHelper = outputHelper;
+    }
+
+    private readonly string[] _applicationNamespaces =
     [
         "Queries",
         "Application",
         "Commands"
     ];
 
-    private string[] DomainNamespaces =
+    private readonly string[] _domainNamespaces =
     [
         "Domain"
     ];
 
-    private string[] InfrastructureNamespaces =
+    private readonly string[] _infrastructureNamespaces =
     [
         "Infrastructure",
         "Persistence"
@@ -27,28 +34,36 @@ public class ArchitectureTests : TestBase
     [Fact]
     public void Domain_Should_Not_Depend_On_Infrastructure()
     {
-        var domainTypes = TypesMatchingAnyPattern(DomainNamespaces);
-        var infraTypes = TypesMatchingAnyPattern(InfrastructureNamespaces);
+        // Arrange
+        var domainTypes = TypesMatchingAnyPattern(_domainNamespaces);
+        var infraTypes = TypesMatchingAnyPattern(_infrastructureNamespaces);
 
+        // Act
         var result = domainTypes
             .ShouldNot()
             .HaveDependencyOnAny(infraTypes.GetNames())
             .GetResult();
 
+        // Assert
+        result.DumpFailingTypes(_outputHelper);
         result.IsSuccessful.Should().BeTrue();
     }
 
     [Fact]
     public void Domain_Should_Not_Depend_On_Application()
     {
-        var domainTypes = TypesMatchingAnyPattern(DomainNamespaces);
-        var applicationTypes = TypesMatchingAnyPattern(ApplicationNamespaces);
+        // Arrange
+        var domainTypes = TypesMatchingAnyPattern(_domainNamespaces);
+        var applicationTypes = TypesMatchingAnyPattern(_applicationNamespaces);
 
+        // Act
         var result = domainTypes
             .ShouldNot()
             .HaveDependencyOnAny(applicationTypes.GetNames())
             .GetResult();
 
+        // Assert
+        result.DumpFailingTypes(_outputHelper);
         result.IsSuccessful.Should().BeTrue();
     }
 }
