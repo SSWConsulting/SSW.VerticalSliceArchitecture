@@ -37,3 +37,5 @@ app.UseProductionExceptionHandler();
 app.RegisterEndpoints(appAssembly);
 
 app.Run();
+
+public partial class Program;
