@@ -9,8 +9,6 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEfCore();
 
 // Host
-builder.Services.AddHandlers();
-builder.Services.AddBehaviors();
 builder.Services.AddSwaggerGen( options =>
 {
     options.CustomSchemaIds(x => x.FullName?.Replace("+", ".", StringComparison.Ordinal));

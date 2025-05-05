@@ -1,24 +1,23 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
+<!--        // SM: Rename namespace from Unit.Tests to UnitTests? And do we want to prepend SSW. to namespaces like with CA? -->
     <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
+        <RootNamespace>VerticalSliceArchitectureTemplate.Unit.Tests</RootNamespace>
+        <AssemblyName>VerticalSliceArchitectureTemplate.Unit.Tests</AssemblyName>
 
         <IsPackable>false</IsPackable>
         <IsTestProject>true</IsTestProject>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="FluentAssertions" Version="7.0.0-alpha.3"/>
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.9.0"/>
-        <PackageReference Include="NSubstitute" Version="5.1.0"/>
-        <PackageReference Include="xunit" Version="2.8.0" />
-        <PackageReference Include="xunit.runner.visualstudio" Version="2.8.0">
+        <PackageReference Include="FluentAssertions" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" />
+        <PackageReference Include="NSubstitute" />
+        <PackageReference Include="xunit" />
+        <PackageReference Include="xunit.runner.visualstudio">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
-        <PackageReference Include="coverlet.collector" Version="6.0.2">
+        <PackageReference Include="coverlet.collector">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
@@ -26,7 +25,7 @@
 
 
     <ItemGroup>
-        <ProjectReference Include="..\..\src\VerticalSliceArchitectureTemplate\VerticalSliceArchitectureTemplate.csproj"/>
+        <ProjectReference Include="..\..\src\VerticalSliceArchitectureTemplate\VerticalSliceArchitectureTemplate.csproj" />
     </ItemGroup>
 
 </Project>

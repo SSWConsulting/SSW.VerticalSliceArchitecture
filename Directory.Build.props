@@ -1,0 +1,22 @@
+<Project>
+    <PropertyGroup>
+<!-- SM: net9.0 -->
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <TreatWarningsAsErrors Condition="'$(Configuration)' == 'Release'">true</TreatWarningsAsErrors>
+        <CodeAnalysisTreatWarningsAsErrors Condition="'$(Configuration)' == 'Release'">true</CodeAnalysisTreatWarningsAsErrors>
+
+        <AnalysisLevel>latest</AnalysisLevel>
+        <AnalysisMode>Recommended</AnalysisMode>
+
+        <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+
+        <!-- Disable whitespace rule -->
+        <NoWarn>$(NoWarn);IDE0055</NoWarn>
+
+        <!-- Disable "must have curly braces for if/else" -->
+        <NoWarn>$(NoWarn);IDE0011</NoWarn>
+
+    </PropertyGroup>
+</Project>
