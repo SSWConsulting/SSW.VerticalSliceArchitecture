@@ -1,6 +1,7 @@
-﻿namespace VerticalSliceArchitectureTemplate;
+﻿using VerticalSliceArchitectureTemplate.Common.Behaviours;
 
-// SM: Correct location for this class?
+namespace VerticalSliceArchitectureTemplate.Host;
+
 public static class DependencyInjection
 {
     public static IServiceCollection AddApplication(this IServiceCollection services)
@@ -12,14 +13,14 @@ public static class DependencyInjection
         services.AddMediatR(config =>
         {
             config.RegisterServicesFromAssembly(applicationAssembly);
-            // SM: Add Behaviours?
-            // config.AddOpenBehavior(typeof(UnhandledExceptionBehaviour<,>));
+            
+            config.AddOpenBehavior(typeof(UnhandledExceptionBehaviour<,>));
 
             // NOTE: Switch to ValidationExceptionBehavior if you want to use exceptions over the result pattern for flow control
-            //config.AddOpenBehavior(typeof(ValidationExceptionBehaviour<,>));
-            // config.AddOpenBehavior(typeof(ValidationErrorOrResultBehavior<,>));
+            // config.AddOpenBehavior(typeof(ValidationExceptionBehaviour<,>));
+            config.AddOpenBehavior(typeof(ValidationErrorOrResultBehavior<,>));
 
-            // config.AddOpenBehavior(typeof(PerformanceBehaviour<,>));
+            config.AddOpenBehavior(typeof(PerformanceBehaviour<,>));
         });
         
         return services;

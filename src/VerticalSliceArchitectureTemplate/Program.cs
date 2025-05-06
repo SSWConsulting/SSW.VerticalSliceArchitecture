@@ -17,8 +17,6 @@ builder.Services.AddSwaggerGen( options =>
 builder.Services.AddApplication();
 builder.Services.AddEndpointsApiExplorer();
 
-builder.Services.AddExceptionHandler<ExceptionHandler.KnownExceptionsHandler>();
-
 builder.Services.ConfigureFeatures(builder.Configuration, appAssembly);
 
 var app = builder.Build();
@@ -29,9 +27,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseProductionExceptionHandler();
-
 app.RegisterEndpoints(appAssembly);
+
+app.UseProductionExceptionHandler();
 
 app.Run();
 

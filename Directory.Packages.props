@@ -3,15 +3,15 @@
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
   </PropertyGroup>
   <ItemGroup>
-    <!--        SM: Update package versions -->
-    <PackageVersion Include="MediatR" Version="12.2.0" />
+    <PackageVersion Include="MediatR" Version="12.5.0" />
     <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="8.0.4" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="8.0.4" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.InMemory" Version="8.0.4" />
     <PackageVersion Include="Swashbuckle.AspNetCore" Version="6.5.0" />
     <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0" />
+    <PackageVersion Include="ErrorOr" Version="2.0.1" />
   </ItemGroup>
-  <!--        SM: Do we like this conditional stuff? -->
+  
   <ItemGroup Condition="$(IsTestProject) == 'true'">
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.6.0" />
     <PackageVersion Include="xunit" Version="2.4.2" />

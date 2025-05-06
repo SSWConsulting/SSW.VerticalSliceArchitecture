@@ -7,7 +7,7 @@ namespace VerticalSliceArchitectureTemplate.Features.Todos.Commands;
 
 public static class CompleteTodo
 {
-    public record Request : IRequest
+    public record Request : IRequest<ErrorOr<Success>>
     {
         [JsonIgnore]
         public Guid Id { get; set; }
@@ -20,7 +20,7 @@ public static class CompleteTodo
             endpoints.MapPut("/todos/{id:guid}/complete",
                     async (
                         Guid id,
-                        ISender sender, 
+                        ISender sender,
                         CancellationToken cancellationToken) =>
                     {
                         var request = new Request { Id = id };
@@ -28,7 +28,6 @@ public static class CompleteTodo
                         return Results.NoContent();
                     })
                 .WithName("CompleteTodo")
-                .WithTags("Todos")
                 .ProducesPut();
         }
     }
@@ -42,20 +41,28 @@ public static class CompleteTodo
         }
     }
     
-    internal sealed class Handler(AppDbContext dbContext)
-        : IRequestHandler<Request>
+    internal sealed class Handler : IRequestHandler<Request, ErrorOr<Success>>
     {
-        public async Task Handle(
+        private readonly AppDbContext _dbContext;
+
+        public Handler(AppDbContext dbContext)
+        {
+            _dbContext = dbContext;
+        }
+
+        public async Task<ErrorOr<Success>> Handle(
             Request request,
             CancellationToken cancellationToken)
         {
-            var todo = await dbContext.Todos.FindAsync([request.Id], cancellationToken);
+            var todo = await _dbContext.Todos.FindAsync([request.Id], cancellationToken);
 
             if (todo == null) throw new NotFoundException(nameof(Todo), request.Id);
 
             todo.Complete();
 
-            await dbContext.SaveChangesAsync(cancellationToken);
+            await _dbContext.SaveChangesAsync(cancellationToken);
+
+            return new Success();
         }
     }
 }

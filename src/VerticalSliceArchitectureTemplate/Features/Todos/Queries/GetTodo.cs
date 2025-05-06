@@ -7,7 +7,7 @@ namespace VerticalSliceArchitectureTemplate.Features.Todos.Queries;
 
 public static class GetTodo
 {
-    public record Request : IRequest<Todo>
+    public record Request : IRequest<ErrorOr<Todo>>
     {
         [JsonIgnore]
         public Guid Id { get; set; }
@@ -24,7 +24,6 @@ public static class GetTodo
                         return sender.Send(request, cancellationToken);
                     })
                 .WithName("GetTodo")
-                .WithTags("Todos")
                 .ProducesGet<Todo>();
         }
     }
@@ -38,14 +37,20 @@ public static class GetTodo
         }
     }
 
-    internal sealed class Handler(AppDbContext dbContext)
-        : IRequestHandler<Request, Todo>
+    internal sealed class Handler : IRequestHandler<Request, ErrorOr<Todo>>
     {
-        public async Task<Todo> Handle(
+        private readonly AppDbContext _dbContext;
+
+        public Handler(AppDbContext dbContext)
+        {
+            _dbContext = dbContext;
+        }
+
+        public async Task<ErrorOr<Todo>> Handle(
             Request request,
             CancellationToken cancellationToken)
         {
-            var todo = await dbContext.Todos.FindAsync([request.Id], cancellationToken);
+            var todo = await _dbContext.Todos.FindAsync([request.Id], cancellationToken);
 
             if (todo == null) throw new NotFoundException(nameof(Todo), request.Id);
 

@@ -7,7 +7,7 @@ namespace VerticalSliceArchitectureTemplate.Features.Todos.Commands;
 
 public static class UpdateTodo
 {
-    public record Request(String Text) : IRequest
+    public record Request(String Text) : IRequest<ErrorOr<Success>>
     {
         [JsonIgnore]
         public Guid Id { get; set; }
@@ -25,7 +25,6 @@ public static class UpdateTodo
                         return Results.NoContent();
                     })
                 .WithName("UpdateTodo")
-                .WithTags("Todos")
                 .ProducesPut();
         }
     }
@@ -42,20 +41,28 @@ public static class UpdateTodo
         }
     }
 
-    internal sealed class Handler(AppDbContext dbContext)
-        : IRequestHandler<Request>
+    internal sealed class Handler : IRequestHandler<Request, ErrorOr<Success>>
     {
-        public async Task Handle(
+        private readonly AppDbContext _dbContext;
+
+        public Handler(AppDbContext dbContext)
+        {
+            _dbContext = dbContext;
+        }
+
+        public async Task<ErrorOr<Success>> Handle(
             Request request,
             CancellationToken cancellationToken)
         {
-            var todo = await dbContext.Todos.FindAsync([request.Id], cancellationToken);
+            var todo = await _dbContext.Todos.FindAsync([request.Id], cancellationToken);
 
             if (todo == null) throw new NotFoundException(nameof(Todo), request.Id);
 
             todo.Text = request.Text;
 
-            await dbContext.SaveChangesAsync(cancellationToken);
+            await _dbContext.SaveChangesAsync(cancellationToken);
+
+            return new Success();
         }
     }
 }

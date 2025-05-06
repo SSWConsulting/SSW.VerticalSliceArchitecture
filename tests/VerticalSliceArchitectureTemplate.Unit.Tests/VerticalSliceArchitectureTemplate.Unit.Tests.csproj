@@ -1,7 +1,4 @@
 <Project Sdk="Microsoft.NET.Sdk">
-<!-- SM: Rename namespace from Unit.Tests to UnitTests? -->
-<!-- And do we want to prepend SSW. to namespaces like with CA? -->
-<!-- And do we need to rename namespaces overall? -->
     <PropertyGroup>
         <RootNamespace>VerticalSliceArchitectureTemplate.Unit.Tests</RootNamespace>
         <AssemblyName>VerticalSliceArchitectureTemplate.Unit.Tests</AssemblyName>

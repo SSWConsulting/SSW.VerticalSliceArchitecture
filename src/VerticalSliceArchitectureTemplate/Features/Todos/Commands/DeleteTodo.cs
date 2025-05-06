@@ -7,7 +7,7 @@ namespace VerticalSliceArchitectureTemplate.Features.Todos.Commands;
 
 public static class DeleteTodo
 {
-    public record Request : IRequest
+    public record Request : IRequest<ErrorOr<Success>>
     {
         [JsonIgnore]
         public Guid Id { get; set; }
@@ -28,7 +28,6 @@ public static class DeleteTodo
                         return Results.NoContent();
                     })
                 .WithName("DeleteTodo")
-                .WithTags("Todos")
                 .ProducesDelete();
         }
     }
@@ -42,20 +41,28 @@ public static class DeleteTodo
         }
     }
     
-    internal sealed class Handler(AppDbContext dbContext)
-        : IRequestHandler<Request>
+    internal sealed class Handler : IRequestHandler<Request, ErrorOr<Success>>
     {
-        public async Task Handle(
+        private readonly AppDbContext _dbContext;
+
+        public Handler(AppDbContext dbContext)
+        {
+            _dbContext = dbContext;
+        }
+
+        public async Task<ErrorOr<Success>> Handle(
             Request request,
             CancellationToken cancellationToken)
         {
-            var todo = await dbContext.Todos.FindAsync([request.Id], cancellationToken);
+            var todo = await _dbContext.Todos.FindAsync([request.Id], cancellationToken);
 
             if (todo == null) throw new NotFoundException(nameof(Todo), request.Id);
 
-            dbContext.Todos.Remove(todo);
+            _dbContext.Todos.Remove(todo);
 
-            await dbContext.SaveChangesAsync(cancellationToken);
+            await _dbContext.SaveChangesAsync(cancellationToken);
+
+            return new Success();
         }
     }
 }

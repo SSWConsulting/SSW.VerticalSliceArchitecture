@@ -6,7 +6,7 @@ namespace VerticalSliceArchitectureTemplate.Features.Todos.Commands;
 
 public static class CreateTodo
 {
-    public record Request(string Text) : IRequest<Guid>;
+    public record Request(string Text) : IRequest<ErrorOr<Guid>>;
 
     public class Endpoint : IEndpoint
     {
@@ -22,7 +22,6 @@ public static class CreateTodo
                         return TypedResults.Ok();
                     })
                 .WithName("CreateTodo")
-                .WithTags("Todos")
                 .ProducesPost();
         }
     }
@@ -36,10 +35,16 @@ public static class CreateTodo
         }
     }
     
-    internal sealed class Handler(AppDbContext dbContext)
-        : IRequestHandler<Request, Guid>
+    internal sealed class Handler : IRequestHandler<Request, ErrorOr<Guid>>
     {
-        public async Task<Guid> Handle(
+        private readonly AppDbContext _dbContext;
+
+        public Handler(AppDbContext dbContext)
+        {
+            _dbContext = dbContext;
+        }
+
+        public async Task<ErrorOr<Guid>> Handle(
             Request request,
             CancellationToken cancellationToken)
         {
@@ -48,8 +53,8 @@ public static class CreateTodo
                 Text = request.Text
             };
 
-            await dbContext.Todos.AddAsync(todo, cancellationToken);
-            await dbContext.SaveChangesAsync(cancellationToken);
+            await _dbContext.Todos.AddAsync(todo, cancellationToken);
+            await _dbContext.SaveChangesAsync(cancellationToken);
 
             return todo.Id;
         }
