@@ -1,12 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
     <PropertyGroup>
-        <RootNamespace>VerticalSliceArchitecture</RootNamespace>
-        <AssemblyName>VerticalSliceArchitecture</AssemblyName>
+        <RootNamespace>VerticalSliceArchitectureTemplate</RootNamespace>
+        <AssemblyName>VerticalSliceArchitectureTemplate</AssemblyName>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Immediate.Handlers" />
+        <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
         <PackageReference Include="MediatR" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
         <PackageReference Include="Microsoft.EntityFrameworkCore" />

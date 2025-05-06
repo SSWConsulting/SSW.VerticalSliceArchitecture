@@ -1,5 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Microsoft.AspNetCore.Diagnostics;
+﻿using Microsoft.AspNetCore.Diagnostics;
+using ValidationException = System.ComponentModel.DataAnnotations.ValidationException;
 
 namespace VerticalSliceArchitectureTemplate.Host;
 

@@ -14,9 +14,8 @@ builder.Services.AddSwaggerGen( options =>
     options.CustomSchemaIds(x => x.FullName?.Replace("+", ".", StringComparison.Ordinal));
 });
 
-builder.Services.AddMediatR(configure => configure.RegisterServicesFromAssemblyContaining<Program>());
+builder.Services.AddApplication();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 
 builder.Services.AddExceptionHandler<ExceptionHandler.KnownExceptionsHandler>();
 

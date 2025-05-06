@@ -1,36 +1,57 @@
-﻿using VerticalSliceArchitectureTemplate.Features.Todos.Domain;
+﻿using MediatR;
+using VerticalSliceArchitectureTemplate.Common.Extensions;
+using VerticalSliceArchitectureTemplate.Features.Todos.Domain;
 
 namespace VerticalSliceArchitectureTemplate.Features.Todos.Commands;
 
-[Handler]
-public sealed partial class CreateTodo : IEndpoint
+public static class CreateTodo
 {
-    public static void MapEndpoint(IEndpointRouteBuilder endpoints)
+    public record Request(string Text) : IRequest<Guid>;
+
+    public class Endpoint : IEndpoint
     {
-        endpoints.MapPost("/todos",
-                async (Command command, Handler handler, CancellationToken cancellationToken) =>
-                {
-                    var id = await handler.HandleAsync(command, cancellationToken);
-                    return Results.Created($"/todos/{id}", id);
-                })
-            .Produces<Todo>(StatusCodes.Status201Created)
-            .ProducesValidationProblem()
-            .ProducesProblem(StatusCodes.Status500InternalServerError)
-            .WithTags(nameof(Todo));
+        public static void MapEndpoint(IEndpointRouteBuilder endpoints)
+        {
+            endpoints.MapPost("/todos",
+                    async (
+                        Request request,
+                        ISender sender,
+                        CancellationToken cancellationToken) =>
+                    {
+                        await sender.Send(request, cancellationToken);
+                        return TypedResults.Ok();
+                    })
+                .WithName("CreateTodo")
+                // SM: 'With Tags'?
+                .ProducesPost();
+        }
+    }
+
+    public class Validator : AbstractValidator<Request>
+    {
+        public Validator()
+        {
+            RuleFor(r => r.Text)
+                .NotEmpty();
+        }
     }
     
-    public sealed record Command(string Text);
-
-    private static async ValueTask<Guid> HandleAsync(Command request, AppDbContext dbContext, CancellationToken cancellationToken)
+    internal sealed class Handler(AppDbContext dbContext)
+        : IRequestHandler<Request, Guid>
     {
-        var todo = new Todo
+        public async Task<Guid> Handle(
+            Request request,
+            CancellationToken cancellationToken)
         {
-            Text = request.Text
-        };
+            var todo = new Todo
+            {
+                Text = request.Text
+            };
 
-        await dbContext.Todos.AddAsync(todo, cancellationToken);
-        await dbContext.SaveChangesAsync(cancellationToken);
+            await dbContext.Todos.AddAsync(todo, cancellationToken);
+            await dbContext.SaveChangesAsync(cancellationToken);
 
-        return todo.Id;
+            return todo.Id;
+        }
     }
 }

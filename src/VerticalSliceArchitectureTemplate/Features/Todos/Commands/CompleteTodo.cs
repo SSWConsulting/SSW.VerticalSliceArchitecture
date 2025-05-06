@@ -1,34 +1,61 @@
-﻿using VerticalSliceArchitectureTemplate.Features.Todos.Domain;
+﻿using System.Text.Json.Serialization;
+using MediatR;
+using VerticalSliceArchitectureTemplate.Common.Extensions;
+using VerticalSliceArchitectureTemplate.Features.Todos.Domain;
 
 namespace VerticalSliceArchitectureTemplate.Features.Todos.Commands;
 
-
-[Handler]
-public sealed partial class CompleteTodo : IEndpoint
+public static class CompleteTodo
 {
-    public static void MapEndpoint(IEndpointRouteBuilder endpoints)
+    public record Request : IRequest
     {
-        endpoints.MapPut("/todos/{id:guid}/complete",
-                async ([FromRoute] Guid id, Handler handler, CancellationToken cancellationToken) =>
-                {
-                    await handler.HandleAsync(new Command(id), cancellationToken);
-                    return Results.NoContent();
-                })
-            .Produces(StatusCodes.Status204NoContent)
-            .Produces(StatusCodes.Status404NotFound)
-            .ProducesValidationProblem()
-            .ProducesProblem(StatusCodes.Status500InternalServerError)
-            .WithTags(nameof(Todo));
+        [JsonIgnore]
+        public Guid Id { get; set; }
     }
-    public sealed record Command(Guid Id);
-    private static async ValueTask HandleAsync(Command request, AppDbContext dbContext, CancellationToken cancellationToken)
+
+    public class Endpoint : IEndpoint
     {
-        var todo = await dbContext.Todos.FindAsync([request.Id], cancellationToken);
+        public static void MapEndpoint(IEndpointRouteBuilder endpoints)
+        {
+            endpoints.MapPut("/todos/{id:guid}/complete",
+                    async (
+                        Guid id,
+                        ISender sender, 
+                        CancellationToken cancellationToken) =>
+                    {
+                        var request = new Request { Id = id };
+                        await sender.Send(request, cancellationToken);
+                        return Results.NoContent();
+                    })
+                .WithName("CompleteTodo")
+                // SM: 'With Tags'?
+                .ProducesPut();
+        }
+    }
 
-        if (todo == null) throw new NotFoundException(nameof(Todo), request.Id);
+    public class Validator : AbstractValidator<Request>
+    {
+        public Validator()
+        {
+            RuleFor(r => r.Id)
+                .NotEmpty();
+        }
+    }
+    
+    internal sealed class Handler(AppDbContext dbContext)
+        : IRequestHandler<Request>
+    {
+        public async Task Handle(
+            Request request,
+            CancellationToken cancellationToken)
+        {
+            var todo = await dbContext.Todos.FindAsync([request.Id], cancellationToken);
 
-        todo.Complete();
+            if (todo == null) throw new NotFoundException(nameof(Todo), request.Id);
 
-        await dbContext.SaveChangesAsync(cancellationToken);
+            todo.Complete();
+
+            await dbContext.SaveChangesAsync(cancellationToken);
+        }
     }
 }
