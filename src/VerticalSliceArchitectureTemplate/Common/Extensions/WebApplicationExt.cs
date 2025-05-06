@@ -1,14 +1,14 @@
-namespace SSW.CleanArchitecture.WebApi.Extensions;
+namespace VerticalSliceArchitectureTemplate.Common.Extensions;
 
 public static class WebApplicationExt
 {
     /// <summary>
     /// Adds an 'api' prefix to the route, and adds the group name as a tag and enables OpenAPI.
     /// </summary>
-    public static RouteGroupBuilder MapApiGroup(this WebApplication app, string groupName)
+    public static RouteGroupBuilder WithGroup(this IEndpointRouteBuilder endpoints, string groupName)
     {
-        var group = app
-            .MapGroup($"api/{groupName}")
+        var group = endpoints
+            .MapGroup($"api/{groupName.ToLowerInvariant()}")
             .WithTags(groupName)
             .WithOpenApi();
 

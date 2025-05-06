@@ -12,7 +12,9 @@ public static class CreateTodo
     {
         public static void MapEndpoint(IEndpointRouteBuilder endpoints)
         {
-            endpoints.MapPost("/todos",
+            endpoints
+                .WithGroup(TodoFeature.FeatureName)
+                .MapPost("/",
                     async (
                         Request request,
                         ISender sender,

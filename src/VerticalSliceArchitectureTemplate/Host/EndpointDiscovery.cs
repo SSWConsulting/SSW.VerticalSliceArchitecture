@@ -5,7 +5,7 @@ namespace VerticalSliceArchitectureTemplate.Host;
 // TODO: Source generate this
 public static class EndpointDiscovery
 {
-    private static readonly Type EndpointType = typeof(IEndpoints);
+    private static readonly Type EndpointType = typeof(IEndpoint);
 
     public static void RegisterEndpoints(this IEndpointRouteBuilder endpoints, params Assembly[] assemblies)
     {
@@ -32,7 +32,7 @@ public static class EndpointDiscovery
 
     private static MethodInfo? GetMapEndpointsMethod(Type type)
     {
-        return type.GetMethod(nameof(IEndpoints.MapEndpoints),
+        return type.GetMethod(nameof(IEndpoint.MapEndpoint),
             BindingFlags.Static | BindingFlags.Public);
     }
 }

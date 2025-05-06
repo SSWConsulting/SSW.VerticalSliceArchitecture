@@ -12,7 +12,9 @@ public static class GetAllTodos
     {
         public static void MapEndpoint(IEndpointRouteBuilder endpoints)
         {
-            endpoints.MapGet("/todos",
+            endpoints
+                .WithGroup(TodoFeature.FeatureName)
+                .MapGet("/",
                     async (ISender sender, CancellationToken cancellationToken, bool? isCompleted = null) =>
                     {
                         var request = new Request(isCompleted);

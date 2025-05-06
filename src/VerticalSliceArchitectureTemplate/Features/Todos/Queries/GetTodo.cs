@@ -17,7 +17,9 @@ public static class GetTodo
     {
         public static void MapEndpoint(IEndpointRouteBuilder endpoints)
         {
-            endpoints.MapGet("/todos/{id:guid}",
+            endpoints
+                .WithGroup(TodoFeature.FeatureName)
+                .MapGet("/{id:guid}",
                     (Guid id, ISender sender, CancellationToken cancellationToken) =>
                     {
                         var request = new Request { Id = id };

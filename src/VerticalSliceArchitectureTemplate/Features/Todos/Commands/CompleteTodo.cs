@@ -17,7 +17,9 @@ public static class CompleteTodo
     {
         public static void MapEndpoint(IEndpointRouteBuilder endpoints)
         {
-            endpoints.MapPut("/todos/{id:guid}/complete",
+            endpoints
+                .WithGroup(TodoFeature.FeatureName)
+                .MapPut("/{id:guid}/complete",
                     async (
                         Guid id,
                         ISender sender,
