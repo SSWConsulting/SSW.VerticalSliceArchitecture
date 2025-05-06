@@ -20,7 +20,7 @@ public static class GetAllTodos
                         return TypedResults.Ok(response);
                     })
                 .WithName("GetAllTodos")
-                // SM: 'With Tags'?
+                .WithTags("Todos")
                 .ProducesGet<IReadOnlyList<Todo>>();
         }
     }

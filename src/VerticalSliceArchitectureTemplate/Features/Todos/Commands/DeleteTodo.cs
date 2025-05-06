@@ -28,7 +28,7 @@ public static class DeleteTodo
                         return Results.NoContent();
                     })
                 .WithName("DeleteTodo")
-                // SM: 'With Tags'?
+                .WithTags("Todos")
                 .ProducesDelete();
         }
     }

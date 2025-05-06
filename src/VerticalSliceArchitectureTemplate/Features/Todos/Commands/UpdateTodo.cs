@@ -25,7 +25,7 @@ public static class UpdateTodo
                         return Results.NoContent();
                     })
                 .WithName("UpdateTodo")
-                // SM: 'With Tags'?
+                .WithTags("Todos")
                 .ProducesPut();
         }
     }

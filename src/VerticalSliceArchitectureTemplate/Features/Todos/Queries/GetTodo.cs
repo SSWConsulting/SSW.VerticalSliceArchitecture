@@ -24,7 +24,7 @@ public static class GetTodo
                         return sender.Send(request, cancellationToken);
                     })
                 .WithName("GetTodo")
-                // SM: 'With Tags'?
+                .WithTags("Todos")
                 .ProducesGet<Todo>();
         }
     }

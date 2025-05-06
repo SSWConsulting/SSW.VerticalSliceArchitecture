@@ -22,7 +22,7 @@ public static class CreateTodo
                         return TypedResults.Ok();
                     })
                 .WithName("CreateTodo")
-                // SM: 'With Tags'?
+                .WithTags("Todos")
                 .ProducesPost();
         }
     }

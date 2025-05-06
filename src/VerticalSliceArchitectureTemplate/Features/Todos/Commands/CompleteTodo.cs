@@ -28,7 +28,7 @@ public static class CompleteTodo
                         return Results.NoContent();
                     })
                 .WithName("CompleteTodo")
-                // SM: 'With Tags'?
+                .WithTags("Todos")
                 .ProducesPut();
         }
     }

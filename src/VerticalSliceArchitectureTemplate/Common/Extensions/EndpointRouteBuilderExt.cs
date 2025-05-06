@@ -1,6 +1,5 @@
 ﻿namespace VerticalSliceArchitectureTemplate.Common.Extensions;
 
-// SM: Do we want these extension classes?
 public static class EndpointRouteBuilderExt
 {
     /// <summary>
