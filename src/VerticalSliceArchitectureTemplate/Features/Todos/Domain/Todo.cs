@@ -8,7 +8,7 @@ public class Todo : BaseEntity
 {
     public Todo()
     {
-        StagedEvents.Add(new TodoCreatedEvent(Id));
+        AddEvent(new TodoCreatedEvent(Id));
     }
     
     public Guid Id { get; init; }
@@ -27,6 +27,6 @@ public class Todo : BaseEntity
         
         IsCompleted = true;
     
-        StagedEvents.Add(new TodoCompletedEvent(Id));
+        AddEvent(new TodoCompletedEvent(Id));
     }
 }

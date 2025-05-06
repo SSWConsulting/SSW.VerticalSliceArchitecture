@@ -19,8 +19,8 @@ public static class ExceptionHandler
 
     public sealed class KnownExceptionsHandler : IExceptionHandler
     {
-        private static readonly IDictionary<Type, Func<HttpContext, Exception, IResult>> ExceptionHandlers =
-            new Dictionary<Type, Func<HttpContext, Exception, IResult>>
+        private static readonly Dictionary<Type, Func<HttpContext, Exception, IResult>> ExceptionHandlers =
+            new()
             {
                 { typeof(ValidationException), HandleValidationException },
                 { typeof(InvalidOperationException), HandleInvalidOperationException },

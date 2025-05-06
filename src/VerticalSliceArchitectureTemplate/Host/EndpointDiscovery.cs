@@ -30,7 +30,7 @@ public static class EndpointDiscovery
                         x is { IsInterface: false, IsAbstract: false });
     }
 
-    private static MethodInfo? GetMapEndpointsMethod(IReflect type)
+    private static MethodInfo? GetMapEndpointsMethod(Type type)
     {
         return type.GetMethod(nameof(IEndpoints.MapEndpoints),
             BindingFlags.Static | BindingFlags.Public);

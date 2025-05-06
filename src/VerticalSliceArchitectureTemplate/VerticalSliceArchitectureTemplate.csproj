@@ -15,4 +15,8 @@
         <PackageReference Include="ErrorOr" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Common\Logging\" />
+    </ItemGroup>
+
 </Project>

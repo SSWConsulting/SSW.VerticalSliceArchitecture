@@ -4,6 +4,18 @@ using VerticalSliceArchitectureTemplate.Common.Services;
 
 namespace VerticalSliceArchitectureTemplate.Common.Behaviours;
 
+public static class LongRunningRequestLog
+{
+    private static readonly Action<ILogger, string, long, string, object, Exception?> LogAction =
+        LoggerMessage.Define<string, long, string, object>(
+            LogLevel.Warning,
+            new EventId(3, nameof(LongRunningRequestLog)),
+            "VerticalSliceArchitecture Long Running Request: {Name} ({ElapsedMilliseconds} milliseconds) {@UserId} {@Request}");
+
+    public static void Log(ILogger logger, string name, long elapsedMilliseconds, string userId, object request) =>
+        LogAction(logger, name, elapsedMilliseconds, userId, request, null);
+}
+
 public class PerformanceBehaviour<TRequest, TResponse>(
     ILogger<TRequest> logger,
     CurrentUserService currentUserService)
@@ -28,9 +40,7 @@ public class PerformanceBehaviour<TRequest, TResponse>(
             var requestName = typeof(TRequest).Name;
             var userId = currentUserService.UserId ?? string.Empty;
 
-            logger.LogWarning(
-                "CleanArchitecture Long Running Request: {Name} ({ElapsedMilliseconds} milliseconds) {@UserId} {@Request}",
-                requestName, elapsedMilliseconds, userId, request);
+            LongRunningRequestLog.Log(logger, requestName, elapsedMilliseconds, userId, request);
         }
 
         return response;
