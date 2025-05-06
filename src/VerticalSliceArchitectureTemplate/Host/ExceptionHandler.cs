@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Diagnostics;
-using ValidationException = System.ComponentModel.DataAnnotations.ValidationException;
 
 namespace VerticalSliceArchitectureTemplate.Host;
 
@@ -48,7 +47,7 @@ public static class ExceptionHandler
                                       throw new InvalidOperationException(
                                           "Exception is not of type ValidationException");
 
-            return Results.Problem(validationException.ValidationResult.ErrorMessage,
+            return Results.Problem(validationException.Message,
                 type: "https://tools.ietf.org/html/rfc7231#section-6.5.1",
                 statusCode: StatusCodes.Status400BadRequest);
         }

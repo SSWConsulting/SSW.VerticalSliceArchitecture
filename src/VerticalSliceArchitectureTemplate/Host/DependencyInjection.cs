@@ -1,4 +1,5 @@
 ﻿using VerticalSliceArchitectureTemplate.Common.Behaviours;
+using VerticalSliceArchitectureTemplate.Common.Services;
 
 namespace VerticalSliceArchitectureTemplate.Host;
 
@@ -6,6 +7,10 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {
+        services.AddHttpContextAccessor();
+        
+        services.AddScoped<CurrentUserService>();
+        
         var applicationAssembly = typeof(DependencyInjection).Assembly;
 
         services.AddValidatorsFromAssembly(applicationAssembly, includeInternalTypes: true);
