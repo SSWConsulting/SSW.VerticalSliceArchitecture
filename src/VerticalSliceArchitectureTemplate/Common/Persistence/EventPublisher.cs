@@ -35,7 +35,7 @@ public class EventPublisher(IPublisher mediator) : SaveChangesInterceptor
             .SelectMany(e => e.StagedEvents)
             .ToList();
 
-        entities.ForEach(e => e.ClearEvents());
+        entities.ForEach(e => e.StagedEvents.Clear());
 
         foreach (var domainEvent in domainEvents)
             await mediator.Publish(domainEvent);
