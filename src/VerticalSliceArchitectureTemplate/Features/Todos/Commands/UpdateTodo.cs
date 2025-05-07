@@ -18,7 +18,7 @@ public static class UpdateTodo
         public static void MapEndpoint(IEndpointRouteBuilder endpoints)
         {
             endpoints
-                .WithGroup(TodoFeature.FeatureName)
+                .MapApiGroup(TodoFeature.FeatureName)
                 .MapPut("/{id:guid}",
                     async (Guid id, [FromBody] Request request, ISender sender, CancellationToken cancellationToken) =>
                     {

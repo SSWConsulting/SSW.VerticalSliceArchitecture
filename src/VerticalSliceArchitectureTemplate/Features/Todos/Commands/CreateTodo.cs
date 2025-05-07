@@ -13,7 +13,7 @@ public static class CreateTodo
         public static void MapEndpoint(IEndpointRouteBuilder endpoints)
         {
             endpoints
-                .WithGroup(TodoFeature.FeatureName)
+                .MapApiGroup(TodoFeature.FeatureName)
                 .MapPost("/",
                     async (
                         Request request,

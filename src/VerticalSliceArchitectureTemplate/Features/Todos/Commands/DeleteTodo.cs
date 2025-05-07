@@ -18,7 +18,7 @@ public static class DeleteTodo
         public static void MapEndpoint(IEndpointRouteBuilder endpoints)
         {
             endpoints
-                .WithGroup(TodoFeature.FeatureName)
+                .MapApiGroup(TodoFeature.FeatureName)
                 .MapDelete("/{id:guid}",
                     async (
                         Guid id,
