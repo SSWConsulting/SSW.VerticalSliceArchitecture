@@ -1,5 +1,4 @@
-using NetArchTest.Rules;
-using Xunit.Abstractions;
+using TestResult = NetArchTest.Rules.TestResult;
 
 namespace VerticalSliceArchitecture.ArchTests.Common;
 
@@ -13,6 +12,11 @@ public static class TestResultExtensions
         outputHelper.WriteLine("Failing Types:");
 
         foreach (var type in result.FailingTypes)
+        {
+            if (type.FullName is null)
+                continue;
+
             outputHelper.WriteLine(type.FullName);
+        }
     }
 }

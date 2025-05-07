@@ -1,6 +1,4 @@
-using FluentAssertions;
 using VerticalSliceArchitecture.ArchTests.Common;
-using Xunit.Abstractions;
 
 namespace VerticalSliceArchitecture.ArchTests;
 

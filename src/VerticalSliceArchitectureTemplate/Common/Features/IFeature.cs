@@ -2,6 +2,6 @@
 
 public interface IFeature
 {
-    public abstract static string FeatureName { get; }
+    abstract static string FeatureName { get; }
     static abstract void ConfigureServices(IServiceCollection services, IConfiguration config);
 }
