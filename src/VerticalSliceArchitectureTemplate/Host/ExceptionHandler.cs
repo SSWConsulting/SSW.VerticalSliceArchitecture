@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Microsoft.AspNetCore.Diagnostics;
+﻿using Microsoft.AspNetCore.Diagnostics;
 
 namespace VerticalSliceArchitectureTemplate.Host;
 
@@ -19,8 +18,8 @@ public static class ExceptionHandler
 
     public sealed class KnownExceptionsHandler : IExceptionHandler
     {
-        private static readonly IDictionary<Type, Func<HttpContext, Exception, IResult>> ExceptionHandlers =
-            new Dictionary<Type, Func<HttpContext, Exception, IResult>>
+        private static readonly Dictionary<Type, Func<HttpContext, Exception, IResult>> ExceptionHandlers =
+            new()
             {
                 { typeof(ValidationException), HandleValidationException },
                 { typeof(InvalidOperationException), HandleInvalidOperationException },
@@ -48,7 +47,7 @@ public static class ExceptionHandler
                                       throw new InvalidOperationException(
                                           "Exception is not of type ValidationException");
 
-            return Results.Problem(validationException.ValidationResult.ErrorMessage,
+            return Results.Problem(validationException.Message,
                 type: "https://tools.ietf.org/html/rfc7231#section-6.5.1",
                 statusCode: StatusCodes.Status400BadRequest);
         }

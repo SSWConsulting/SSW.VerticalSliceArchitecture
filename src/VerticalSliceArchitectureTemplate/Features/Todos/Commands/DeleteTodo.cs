@@ -1,35 +1,70 @@
-﻿using VerticalSliceArchitectureTemplate.Features.Todos.Domain;
+﻿using System.Text.Json.Serialization;
+using MediatR;
+using VerticalSliceArchitectureTemplate.Common.Extensions;
+using VerticalSliceArchitectureTemplate.Features.Todos.Domain;
 
 namespace VerticalSliceArchitectureTemplate.Features.Todos.Commands;
 
-[Handler]
-public sealed partial class DeleteTodo : IEndpoint
+public static class DeleteTodo
 {
-    public static void MapEndpoint(IEndpointRouteBuilder endpoints)
+    public record Request : IRequest<ErrorOr<Success>>
     {
-        endpoints.MapDelete("/todos/{id:guid}",
-                async ([FromRoute] Guid id, Handler handler, CancellationToken cancellationToken) =>
-                {
-                    await handler.HandleAsync(new Command(id), cancellationToken);
-                    return Results.NoContent();
-                })
-            .Produces(StatusCodes.Status204NoContent)
-            .Produces(StatusCodes.Status404NotFound)
-            .ProducesValidationProblem()
-            .ProducesProblem(StatusCodes.Status500InternalServerError)
-            .WithTags(nameof(Todo));
+        [JsonIgnore]
+        public Guid Id { get; set; }
+    }
+
+    public class Endpoint : IEndpoint
+    {
+        public static void MapEndpoint(IEndpointRouteBuilder endpoints)
+        {
+            endpoints
+                .MapApiGroup(TodoFeature.FeatureName)
+                .MapDelete("/{id:guid}",
+                    async (
+                        Guid id,
+                        ISender sender,
+                        CancellationToken cancellationToken) =>
+                    {
+                        var request = new Request { Id = id };
+                        await sender.Send(request, cancellationToken);
+                        return Results.NoContent();
+                    })
+                .WithName("DeleteTodo")
+                .ProducesDelete();
+        }
+    }
+
+    public class Validator : AbstractValidator<Request>
+    {
+        public Validator()
+        {
+            RuleFor(r => r.Id)
+                .NotEmpty();
+        }
     }
     
-    public sealed record Command(Guid Id);
-
-    private static async ValueTask HandleAsync(Command request, AppDbContext dbContext, CancellationToken cancellationToken)
+    internal sealed class Handler : IRequestHandler<Request, ErrorOr<Success>>
     {
-        var todo = await dbContext.Todos.FindAsync([request.Id], cancellationToken);
+        private readonly AppDbContext _dbContext;
 
-        if (todo == null) throw new NotFoundException(nameof(Todo), request.Id);
+        public Handler(AppDbContext dbContext)
+        {
+            _dbContext = dbContext;
+        }
 
-        dbContext.Todos.Remove(todo);
+        public async Task<ErrorOr<Success>> Handle(
+            Request request,
+            CancellationToken cancellationToken)
+        {
+            var todo = await _dbContext.Todos.FindAsync([request.Id], cancellationToken);
 
-        await dbContext.SaveChangesAsync(cancellationToken);
+            if (todo == null) throw new NotFoundException(nameof(Todo), request.Id);
+
+            _dbContext.Todos.Remove(todo);
+
+            await _dbContext.SaveChangesAsync(cancellationToken);
+
+            return new Success();
+        }
     }
 }

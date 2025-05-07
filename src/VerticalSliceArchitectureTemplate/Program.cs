@@ -9,18 +9,13 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEfCore();
 
 // Host
-builder.Services.AddHandlers();
-builder.Services.AddBehaviors();
 builder.Services.AddSwaggerGen( options =>
 {
     options.CustomSchemaIds(x => x.FullName?.Replace("+", ".", StringComparison.Ordinal));
 });
 
-builder.Services.AddMediatR(configure => configure.RegisterServicesFromAssemblyContaining<Program>());
+builder.Services.AddApplication();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
-builder.Services.AddExceptionHandler<ExceptionHandler.KnownExceptionsHandler>();
 
 builder.Services.ConfigureFeatures(builder.Configuration, appAssembly);
 
@@ -32,9 +27,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseProductionExceptionHandler();
-
 app.RegisterEndpoints(appAssembly);
+
+app.UseProductionExceptionHandler();
 
 app.Run();
 

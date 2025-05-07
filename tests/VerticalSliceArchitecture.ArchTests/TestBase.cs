@@ -7,7 +7,7 @@ public abstract class TestBase
 {
     private static readonly Types ProgramTypes = Types.InAssembly(typeof(Program).Assembly);
 
-    protected PredicateList TypesMatchingAnyPattern(params string[] patterns)
+    protected static PredicateList TypesMatchingAnyPattern(params string[] patterns)
     {
         var output = ProgramTypes.That();
 

@@ -1,29 +1,62 @@
-﻿using VerticalSliceArchitectureTemplate.Features.Todos.Domain;
+﻿using System.Text.Json.Serialization;
+using MediatR;
+using VerticalSliceArchitectureTemplate.Common.Extensions;
+using VerticalSliceArchitectureTemplate.Features.Todos.Domain;
 
 namespace VerticalSliceArchitectureTemplate.Features.Todos.Queries;
 
-[Handler]
-public sealed partial class GetTodo : IEndpoint
+public static class GetTodo
 {
-    public static void MapEndpoint(IEndpointRouteBuilder endpoints)
+    public record Request : IRequest<ErrorOr<Todo>>
     {
-        endpoints.MapGet("/todos/{id:guid}",
-                (Guid id, Handler handler, CancellationToken cancellationToken)
-                    => handler.HandleAsync(new Query(id), cancellationToken))
-            .Produces<Todo>()
-            .Produces(StatusCodes.Status404NotFound)
-            .ProducesProblem(StatusCodes.Status500InternalServerError)
-            .WithTags(nameof(Todo));
+        [JsonIgnore]
+        public Guid Id { get; set; }
+    }
+
+    public class Endpoint : IEndpoint
+    {
+        public static void MapEndpoint(IEndpointRouteBuilder endpoints)
+        {
+            endpoints
+                .MapApiGroup(TodoFeature.FeatureName)
+                .MapGet("/{id:guid}",
+                    (Guid id, ISender sender, CancellationToken cancellationToken) =>
+                    {
+                        var request = new Request { Id = id };
+                        return sender.Send(request, cancellationToken);
+                    })
+                .WithName("GetTodo")
+                .ProducesGet<Todo>();
+        }
     }
     
-    public sealed record Query(Guid Id);
-
-    private static async ValueTask<Todo> HandleAsync(Query request, AppDbContext dbContext, CancellationToken cancellationToken)
+    public class Validator : AbstractValidator<Request>
     {
-        var todo = await dbContext.Todos.FindAsync([request.Id], cancellationToken);
+        public Validator()
+        {
+            RuleFor(r => r.Id)
+                .NotEmpty();
+        }
+    }
 
-        if (todo == null) throw new NotFoundException(nameof(Todo), request.Id);
+    internal sealed class Handler : IRequestHandler<Request, ErrorOr<Todo>>
+    {
+        private readonly AppDbContext _dbContext;
 
-        return todo;
+        public Handler(AppDbContext dbContext)
+        {
+            _dbContext = dbContext;
+        }
+
+        public async Task<ErrorOr<Todo>> Handle(
+            Request request,
+            CancellationToken cancellationToken)
+        {
+            var todo = await _dbContext.Todos.FindAsync([request.Id], cancellationToken);
+
+            if (todo == null) throw new NotFoundException(nameof(Todo), request.Id);
+
+            return todo;
+        }
     }
 }
