@@ -1,4 +1,4 @@
-﻿using VerticalSliceArchitectureTemplate.Features.Todos.Domain;
+﻿using VerticalSliceArchitectureTemplate.Common.Domain.Todos;
 
 // Disable as we want the partial class to be in the same namespace as the original class
 // ReSharper disable once CheckNamespace

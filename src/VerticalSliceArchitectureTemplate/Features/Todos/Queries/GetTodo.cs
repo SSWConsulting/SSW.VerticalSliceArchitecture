@@ -1,7 +1,7 @@
 ﻿using System.Text.Json.Serialization;
 using MediatR;
+using VerticalSliceArchitectureTemplate.Common.Domain.Todos;
 using VerticalSliceArchitectureTemplate.Common.Extensions;
-using VerticalSliceArchitectureTemplate.Features.Todos.Domain;
 
 namespace VerticalSliceArchitectureTemplate.Features.Todos.Queries;
 
@@ -54,7 +54,7 @@ public static class GetTodo
         {
             var todo = await _dbContext.Todos.FindAsync([request.Id], cancellationToken);
 
-            if (todo == null) throw new NotFoundException(nameof(Todo), request.Id);
+            if (todo == null) return TodoErrors.NotFound;
 
             return todo;
         }
