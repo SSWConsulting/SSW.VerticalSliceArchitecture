@@ -1,12 +1,13 @@
 ﻿using MediatR;
 using VerticalSliceArchitectureTemplate.Common.Extensions;
 using VerticalSliceArchitectureTemplate.Features.Todos.Domain;
+using TodoId = VerticalSliceArchitectureTemplate.Features.Todos.Domain.TodoId;
 
 namespace VerticalSliceArchitectureTemplate.Features.Todos.Commands;
 
 public static class CreateTodo
 {
-    public record Request(string Text) : IRequest<ErrorOr<Guid>>;
+    public record Request(string Text) : IRequest<ErrorOr<TodoId>>;
 
     public class Endpoint : IEndpoint
     {
@@ -36,8 +37,8 @@ public static class CreateTodo
                 .NotEmpty();
         }
     }
-    
-    internal sealed class Handler : IRequestHandler<Request, ErrorOr<Guid>>
+
+    internal sealed class Handler : IRequestHandler<Request, ErrorOr<TodoId>>
     {
         private readonly AppDbContext _dbContext;
 
@@ -46,7 +47,7 @@ public static class CreateTodo
             _dbContext = dbContext;
         }
 
-        public async Task<ErrorOr<Guid>> Handle(
+        public async Task<ErrorOr<TodoId>> Handle(
             Request request,
             CancellationToken cancellationToken)
         {

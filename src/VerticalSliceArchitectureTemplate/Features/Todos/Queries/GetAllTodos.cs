@@ -1,6 +1,6 @@
-﻿using VerticalSliceArchitectureTemplate.Features.Todos.Domain;
-using MediatR;
+﻿using MediatR;
 using VerticalSliceArchitectureTemplate.Common.Extensions;
+using VerticalSliceArchitectureTemplate.Features.Todos.Domain;
 
 namespace VerticalSliceArchitectureTemplate.Features.Todos.Queries;
 

@@ -1,12 +1,11 @@
 using System.Reflection;
-using VerticalSliceArchitectureTemplate;
 using VerticalSliceArchitectureTemplate.Host;
 
 var appAssembly = Assembly.GetExecutingAssembly();
 var builder = WebApplication.CreateBuilder(args);
 
 // Common
-builder.Services.AddEfCore();
+builder.Services.AddInfrastructure();
 
 // Host
 builder.Services.AddSwaggerGen( options =>

@@ -1,5 +1,5 @@
 ﻿using VerticalSliceArchitectureTemplate.Features.Todos.Domain;
-using VerticalSliceArchitectureTemplate.Features.Todos.Domain.Events;
+using TodoId = VerticalSliceArchitectureTemplate.Features.Todos.Domain.TodoId;
 
 namespace VerticalSliceArchitectureTemplate.Unit.Tests.Features.Todos.Models;
 
@@ -11,7 +11,7 @@ public class TodoTests
         // Arrange
         var item = new Todo
         {
-            Id = Guid.NewGuid(),
+            Id = TodoId.From(Guid.CreateVersion7()),
             Text = "My todo item"
         };
         
@@ -28,7 +28,7 @@ public class TodoTests
         // Arrange
         var item = new Todo
         {
-            Id = Guid.NewGuid(),
+            Id = TodoId.From(Guid.CreateVersion7()),
             Text = "My todo item"
         };
         
@@ -36,6 +36,13 @@ public class TodoTests
         item.Complete();
         
         // Assert
-        item.StagedEvents.Should().ContainSingle(x => x is TodoCompletedEvent, "because the item was completed");
+        var domainEvents = item.PopDomainEvents();
+        domainEvents.Should().NotBeNull();
+        domainEvents.Should().HaveCount(2);
+        domainEvents.Last().Should().BeOfType<TodoCompletedEvent>()
+            .Which.Invoking(e =>
+            {
+                e.TodoId.Should().Be(item.Id);
+            });
     }
 }

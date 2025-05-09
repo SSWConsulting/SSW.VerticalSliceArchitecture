@@ -10,6 +10,9 @@
     <PackageVersion Include="Swashbuckle.AspNetCore" Version="6.5.0" />
     <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0" />
     <PackageVersion Include="ErrorOr" Version="2.0.1" />
+    <PackageVersion Include="Vogen" Version="7.0.3" />
+    <PackageVersion Include="Ardalis.Specification" Version="9.0.1" />
+    <PackageVersion Include="Ardalis.Specification.EntityFrameworkCore" Version="9.0.1" />
   </ItemGroup>
   
   <ItemGroup Condition="$(IsTestProject) == 'true'">

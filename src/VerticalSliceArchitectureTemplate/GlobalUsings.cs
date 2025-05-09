@@ -1,7 +1,12 @@
 ﻿global using Microsoft.EntityFrameworkCore;
+global using static System.ArgumentException;
+global using static System.ArgumentNullException;
+global using static System.ArgumentOutOfRangeException;
+global using Microsoft.AspNetCore.Mvc;
+global using Ardalis.Specification;
+global using FluentValidation;
+global using ErrorOr;
+global using Vogen;
 global using VerticalSliceArchitectureTemplate.Common.Exceptions;
 global using VerticalSliceArchitectureTemplate.Common.Features;
 global using VerticalSliceArchitectureTemplate.Common.Persistence;
-global using Microsoft.AspNetCore.Mvc;
-global using FluentValidation;
-global using ErrorOr;

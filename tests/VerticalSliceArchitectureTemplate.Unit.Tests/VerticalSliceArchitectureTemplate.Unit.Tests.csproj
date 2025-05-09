@@ -22,7 +22,6 @@
     </PackageReference>
   </ItemGroup>
 
-
   <ItemGroup>
     <ProjectReference Include="..\..\src\VerticalSliceArchitectureTemplate\VerticalSliceArchitectureTemplate.csproj" />
   </ItemGroup>

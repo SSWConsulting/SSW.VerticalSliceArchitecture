@@ -4,7 +4,7 @@ namespace VerticalSliceArchitectureTemplate.Common.Persistence;
 
 public static class DependencyInjection
 {
-    public static void AddEfCore(this IServiceCollection services)
+    public static void AddInfrastructure(this IServiceCollection services)
     {
         services.AddScoped<ISaveChangesInterceptor, EventPublisher>();
 

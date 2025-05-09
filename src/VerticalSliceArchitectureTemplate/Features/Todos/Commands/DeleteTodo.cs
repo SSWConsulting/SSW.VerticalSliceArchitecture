@@ -58,7 +58,7 @@ public static class DeleteTodo
         {
             var todo = await _dbContext.Todos.FindAsync([request.Id], cancellationToken);
 
-            if (todo == null) throw new NotFoundException(nameof(Todo), request.Id);
+            if (todo == null) return TodoErrors.NotFound;
 
             _dbContext.Todos.Remove(todo);
 
