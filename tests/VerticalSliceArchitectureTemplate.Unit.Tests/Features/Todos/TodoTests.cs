@@ -1,4 +1,5 @@
-﻿using VerticalSliceArchitectureTemplate.Common.Domain.Todos;
+﻿using VerticalSliceArchitectureTemplate.Features.Todos.Domain;
+using TodoId = VerticalSliceArchitectureTemplate.Features.Todos.Domain.TodoId;
 
 namespace VerticalSliceArchitectureTemplate.Unit.Tests.Features.Todos.Models;
 

@@ -1,6 +1,7 @@
 ﻿using MediatR;
-using VerticalSliceArchitectureTemplate.Common.Domain.Todos;
 using VerticalSliceArchitectureTemplate.Common.Extensions;
+using VerticalSliceArchitectureTemplate.Features.Todos.Domain;
+using TodoId = VerticalSliceArchitectureTemplate.Features.Todos.Domain.TodoId;
 
 namespace VerticalSliceArchitectureTemplate.Features.Todos.Commands;
 

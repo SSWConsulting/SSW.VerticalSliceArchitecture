@@ -1,7 +1,7 @@
 ﻿using System.Text.Json.Serialization;
 using MediatR;
-using VerticalSliceArchitectureTemplate.Common.Domain.Todos;
 using VerticalSliceArchitectureTemplate.Common.Extensions;
+using VerticalSliceArchitectureTemplate.Features.Todos.Domain;
 
 namespace VerticalSliceArchitectureTemplate.Features.Todos.Queries;
 

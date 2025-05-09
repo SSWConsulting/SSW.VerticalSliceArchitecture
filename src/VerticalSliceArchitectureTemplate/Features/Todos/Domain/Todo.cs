@@ -1,11 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using VerticalSliceArchitectureTemplate.Common.Domain.Base;
 
-namespace VerticalSliceArchitectureTemplate.Common.Domain.Todos;
+namespace VerticalSliceArchitectureTemplate.Features.Todos.Domain;
 
 // For strongly typed IDs, check out the rule: https://www.ssw.com.au/rules/do-you-use-strongly-typed-ids/
 [ValueObject<Guid>]
 public readonly partial struct TodoId;
+
+[EfCoreConverter<TodoId>]
+internal sealed partial class VogenEfCoreConverters;
 
 public class Todo : AggregateRoot<TodoId>
 {
@@ -27,7 +30,7 @@ public class Todo : AggregateRoot<TodoId>
         }
 
         IsCompleted = true;
-        
+
         AddDomainEvent(new TodoCompletedEvent(Id));
     }
 }

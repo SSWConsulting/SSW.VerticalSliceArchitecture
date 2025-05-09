@@ -1,4 +1,4 @@
-namespace VerticalSliceArchitectureTemplate.Common.Domain.Todos;
+namespace VerticalSliceArchitectureTemplate.Features.Todos.Domain;
 
 public class TodoErrors
 {

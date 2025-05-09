@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using VerticalSliceArchitectureTemplate.Common.Domain.Todos;
+using VerticalSliceArchitectureTemplate.Features.Todos.Domain;
 
-namespace VerticalSliceArchitectureTemplate.Common.Persistence.Todos;
+namespace VerticalSliceArchitectureTemplate.Features.Todos.Persistence;
 
 public class TodoEfConfiguration : IEntityTypeConfiguration<Todo>
 {
