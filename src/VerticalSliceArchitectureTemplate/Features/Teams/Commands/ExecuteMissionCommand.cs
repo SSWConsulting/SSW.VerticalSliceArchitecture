@@ -10,7 +10,8 @@ public static class ExecuteMissionCommand
 {
     public record Request(string Description) : IRequest<ErrorOr<Success>>
     {
-        [JsonIgnore] public Guid TeamId { get; set; }
+        [JsonIgnore]
+        public Guid TeamId { get; set; }
     }
     
     public class Endpoint : IEndpoint

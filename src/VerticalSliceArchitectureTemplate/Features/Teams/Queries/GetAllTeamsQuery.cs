@@ -15,15 +15,15 @@ public static class GetAllTeamsQuery
         {
             endpoints
                 .MapApiGroup(TeamsFeature.FeatureName)
-                .MapGet("/{teamId:guid}",
+                .MapGet("/",
                     async (ISender sender, CancellationToken ct) =>
                     {
                         var request = new Request();
                         var result = await sender.Send(request, ct);
-                        return Results.Ok(result);
+                        return result.Match(TypedResults.Ok, CustomResult.Problem);
                     })
                 .WithName("GetAllTeams")
-                .ProducesGet<TeamDto>();
+                .ProducesGet<IReadOnlyList<TeamDto>>();
         }
     }
     

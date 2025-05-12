@@ -11,8 +11,10 @@ public static class AddHeroToTeamCommand
 {
     public record Request : IRequest<ErrorOr<Success>>
     {
-        [JsonIgnore] public Guid TeamId { get; set; }
-        [JsonIgnore] public Guid HeroId { get; set; }
+        [JsonIgnore]
+        public Guid TeamId { get; set; }
+        [JsonIgnore]
+        public Guid HeroId { get; set; }
     }
     
     public class Endpoint : IEndpoint

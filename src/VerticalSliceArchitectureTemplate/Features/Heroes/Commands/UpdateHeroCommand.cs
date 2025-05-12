@@ -24,7 +24,7 @@ public static class UpdateHeroCommand
         {
             endpoints
                 .MapApiGroup(HeroesFeature.FeatureName)
-                .MapGet("/{heroId:guid}",
+                .MapPut("/{heroId:guid}",
                     async (ISender sender, Guid heroId, Request request, CancellationToken cancellationToken) =>
                     {
                         request.HeroId = heroId;
