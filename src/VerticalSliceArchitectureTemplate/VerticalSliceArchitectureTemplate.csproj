@@ -12,6 +12,9 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" />
     <PackageReference Include="Swashbuckle.AspNetCore" />
     <PackageReference Include="ErrorOr" />
+    <PackageReference Include="Vogen" />
+    <PackageReference Include="Ardalis.Specification" />
+    <PackageReference Include="Ardalis.Specification.EntityFrameworkCore" />
   </ItemGroup>
 
   <ItemGroup>

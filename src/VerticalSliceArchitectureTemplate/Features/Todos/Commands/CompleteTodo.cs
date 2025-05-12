@@ -42,7 +42,7 @@ public static class CompleteTodo
                 .NotEmpty();
         }
     }
-    
+
     internal sealed class Handler : IRequestHandler<Request, ErrorOr<Success>>
     {
         private readonly AppDbContext _dbContext;
@@ -58,7 +58,7 @@ public static class CompleteTodo
         {
             var todo = await _dbContext.Todos.FindAsync([request.Id], cancellationToken);
 
-            if (todo == null) throw new NotFoundException(nameof(Todo), request.Id);
+            if (todo == null) return TodoErrors.NotFound;
 
             todo.Complete();
 
