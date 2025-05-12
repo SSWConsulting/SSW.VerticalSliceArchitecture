@@ -4,7 +4,7 @@ using VerticalSliceArchitectureTemplate.Common.Domain.Base.EventualConsistency;
 using VerticalSliceArchitectureTemplate.Common.Domain.Heroes;
 using VerticalSliceArchitectureTemplate.Common.Domain.Teams;
 
-namespace VerticalSliceArchitectureTemplate.Features.Heroes.Events;
+namespace VerticalSliceArchitectureTemplate.Features.Teams.Events;
 
 internal sealed class PowerLevelUpdatedEventHandler(
     AppDbContext dbContext,

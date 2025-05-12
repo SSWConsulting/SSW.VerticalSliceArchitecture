@@ -1,6 +1,6 @@
 using VerticalSliceArchitectureTemplate.Common.Domain.Heroes;
 
-namespace VerticalSliceArchitectureTemplate.Unit.Tests.Features.Heroes.Models;
+namespace VerticalSliceArchitectureTemplate.Unit.Tests.Features.Heroes;
 
 public class HeroTests
 {
