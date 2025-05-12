@@ -5,7 +5,6 @@ namespace VerticalSliceArchitectureTemplate.Features.Heroes.Queries;
 
 public static class GetAllHeroesQuery
 {
-    // SM: Duplication of DTO's?
     public record HeroDto(Guid Id, string Name, string Alias, int PowerLevel, IEnumerable<HeroPowerDto> Powers);
     public record HeroPowerDto(string Name, int PowerLevel);
     
