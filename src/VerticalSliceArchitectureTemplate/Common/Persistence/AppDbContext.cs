@@ -6,7 +6,7 @@ namespace VerticalSliceArchitectureTemplate.Common.Persistence;
 
 public partial class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
 {
-    public DbSet<Hero> Heroes { get; set; } = null!;
+    public DbSet<Hero> Heroes => AggregateRootSet<Hero>();
     public DbSet<Team> Teams => AggregateRootSet<Team>();
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
