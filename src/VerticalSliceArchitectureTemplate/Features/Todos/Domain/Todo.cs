@@ -7,9 +7,6 @@ namespace VerticalSliceArchitectureTemplate.Features.Todos.Domain;
 [ValueObject<Guid>]
 public readonly partial struct TodoId;
 
-[EfCoreConverter<TodoId>]
-internal sealed partial class VogenEfCoreConverters;
-
 public class Todo : AggregateRoot<TodoId>
 {
     public Todo()

@@ -1,20 +1,24 @@
 using System.Reflection;
 using VerticalSliceArchitectureTemplate.Host;
+using VerticalSliceArchitectureTemplate.Common.Extensions;
+using VerticalSliceArchitectureTemplate.Common.HealthChecks;
 
 var appAssembly = Assembly.GetExecutingAssembly();
 var builder = WebApplication.CreateBuilder(args);
 
-// Common
-builder.Services.AddInfrastructure();
+builder.AddServiceDefaults();
 
-// Host
-builder.Services.AddSwaggerGen( options =>
-{
+builder.Services.AddCustomProblemDetails();
+
+builder.Services.AddSwaggerGen(options =>
+{ 
     options.CustomSchemaIds(x => x.FullName?.Replace("+", ".", StringComparison.Ordinal));
 });
 
-builder.Services.AddApplication();
+builder.AddApplication();
 builder.Services.AddEndpointsApiExplorer();
+
+builder.AddInfrastructure();
 
 builder.Services.ConfigureFeatures(builder.Configuration, appAssembly);
 
@@ -27,8 +31,15 @@ if (app.Environment.IsDevelopment())
 }
 
 app.RegisterEndpoints(appAssembly);
+app.MapOpenApi();
+app.UseHealthChecks();
+app.UseHttpsRedirection();
+app.UseStaticFiles();
 
-app.UseProductionExceptionHandler();
+app.UseEventualConsistencyMiddleware();
+
+app.MapDefaultEndpoints();
+app.UseExceptionHandler();
 
 app.Run();
 

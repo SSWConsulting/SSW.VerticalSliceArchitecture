@@ -1,15 +1,18 @@
 ﻿using VerticalSliceArchitectureTemplate.Common.Behaviours;
+using VerticalSliceArchitectureTemplate.Common.Interfaces;
 using VerticalSliceArchitectureTemplate.Common.Services;
 
 namespace VerticalSliceArchitectureTemplate.Host;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddApplication(this IServiceCollection services)
+    public static IServiceCollection AddApplication(this IHostApplicationBuilder builder)
     {
+        var services = builder.Services;
+        
         services.AddHttpContextAccessor();
         
-        services.AddScoped<CurrentUserService>();
+        services.AddScoped<ICurrentUserService, CurrentUserService>();
         
         var applicationAssembly = typeof(DependencyInjection).Assembly;
 
