@@ -1,5 +1,4 @@
 ﻿using VerticalSliceArchitectureTemplate.Common.Behaviours;
-using VerticalSliceArchitectureTemplate.Common.Interfaces;
 using VerticalSliceArchitectureTemplate.Common.Services;
 
 namespace VerticalSliceArchitectureTemplate.Host;
