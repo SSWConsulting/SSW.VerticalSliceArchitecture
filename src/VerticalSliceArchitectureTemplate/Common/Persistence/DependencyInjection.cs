@@ -16,18 +16,18 @@ public static class DependencyInjection
                 options.AddInterceptors(
                     serviceProvider.GetRequiredService<EntitySaveChangesInterceptor>(),
                     serviceProvider.GetRequiredService<DispatchDomainEventsInterceptor>());
-
+                
                 // Return strongly typed useful exceptions
                 options.UseExceptionProcessor();
             });
-
+        
         var services = builder.Services;
-
+        
         services.AddScoped<AppDbContext>(sp => sp.GetRequiredService<AppDbContext>());
         
         services.AddScoped<EntitySaveChangesInterceptor>();
         services.AddScoped<DispatchDomainEventsInterceptor>();
-
+        
         services.AddSingleton(TimeProvider.System);
     }
 }
