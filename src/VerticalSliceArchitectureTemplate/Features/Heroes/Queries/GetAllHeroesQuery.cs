@@ -5,7 +5,7 @@ namespace VerticalSliceArchitectureTemplate.Features.Heroes.Queries;
 
 public static class GetAllHeroesQuery
 {
-    public record HeroDto(Guid Id, string Name, string Alias, int PowerLevel, IEnumerable<HeroPowerDto> Powers);
+    public record HeroDto(Guid Id, string Name, string Alias, int PowerLevel, IReadOnlyList<HeroPowerDto> Powers);
     public record HeroPowerDto(string Name, int PowerLevel);
     
     public record Request : IRequest<ErrorOr<IReadOnlyList<HeroDto>>>;
@@ -21,7 +21,7 @@ public static class GetAllHeroesQuery
                     {
                         var request = new Request();
                         var result = await sender.Send(request, cancellationToken);
-                        return TypedResults.Ok(result);
+                        return result.Match(TypedResults.Ok, CustomResult.Problem);
                     })
                 .WithName("GetAllHeroes")
                 .ProducesGet<IReadOnlyList<HeroDto>>();
@@ -46,14 +46,15 @@ public static class GetAllHeroesQuery
             Request request,
             CancellationToken cancellationToken)
         {
-            return await _dbContext.Heroes
+            var xxx = await _dbContext.Heroes
                 .Select(h => new HeroDto(
                     h.Id.Value,
                     h.Name,
                     h.Alias,
                     h.PowerLevel,
-                    h.Powers.Select(p => new HeroPowerDto(p.Name, p.PowerLevel))))
+                    h.Powers.Select(p => new HeroPowerDto(p.Name, p.PowerLevel)).ToList()))
                 .ToListAsync(cancellationToken);
+            return xxx;
         }
     }
 }
