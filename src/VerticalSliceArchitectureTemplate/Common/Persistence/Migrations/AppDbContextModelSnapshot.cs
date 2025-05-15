@@ -62,7 +62,7 @@ namespace VerticalSliceArchitectureTemplate.Common.Persistence.Migrations
 
                     b.HasIndex("TeamId");
 
-                    b.ToTable("Heroes");
+                    b.ToTable("Heroes", (string)null);
                 });
 
             modelBuilder.Entity("VerticalSliceArchitectureTemplate.Common.Domain.Teams.Mission", b =>
@@ -100,7 +100,7 @@ namespace VerticalSliceArchitectureTemplate.Common.Persistence.Migrations
 
                     b.HasIndex("TeamId");
 
-                    b.ToTable("Mission");
+                    b.ToTable("Mission", (string)null);
                 });
 
             modelBuilder.Entity("VerticalSliceArchitectureTemplate.Common.Domain.Teams.Team", b =>
@@ -136,39 +136,7 @@ namespace VerticalSliceArchitectureTemplate.Common.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Teams");
-                });
-
-            modelBuilder.Entity("VerticalSliceArchitectureTemplate.Features.Todos.Domain.Todo", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsCompleted")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Text")
-                        .IsRequired()
-                        .HasMaxLength(1024)
-                        .HasColumnType("nvarchar(1024)");
-
-                    b.Property<DateTimeOffset?>("UpdatedAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Todos");
+                    b.ToTable("Teams", (string)null);
                 });
 
             modelBuilder.Entity("VerticalSliceArchitectureTemplate.Common.Domain.Heroes.Hero", b =>
@@ -196,7 +164,7 @@ namespace VerticalSliceArchitectureTemplate.Common.Persistence.Migrations
 
                             b1.HasKey("HeroId", "__synthesizedOrdinal");
 
-                            b1.ToTable("Heroes");
+                            b1.ToTable("Heroes", (string)null);
 
                             b1.ToJson("Powers");
 
