@@ -15,6 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\ServiceDefaults\ServiceDefaults.csproj" />
     <ProjectReference Include="..\..\src\VerticalSliceArchitectureTemplate\VerticalSliceArchitectureTemplate.csproj" />
     <ProjectReference Include="..\MigrationService\MigrationService.csproj" />
   </ItemGroup>
