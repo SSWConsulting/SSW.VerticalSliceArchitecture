@@ -15,7 +15,7 @@ public class EventualConsistencyMiddleware
         _next = next;
     }
 
-    public async Task InvokeAsync(HttpContext context, IPublisher publisher, AppDbContext dbContext)
+    public async Task InvokeAsync(HttpContext context, IPublisher publisher, ApplicationDbContext dbContext)
     {
         context.Response.OnCompleted(async () =>
         {

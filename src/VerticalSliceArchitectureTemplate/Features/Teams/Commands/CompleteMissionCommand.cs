@@ -41,7 +41,7 @@ public static class CompleteMissionCommand
         }
     }
     
-    internal sealed class Handler(AppDbContext dbContext)
+    internal sealed class Handler(ApplicationDbContext dbContext)
         : IRequestHandler<Request, ErrorOr<Success>>
     {
         public async Task<ErrorOr<Success>> Handle(Request request, CancellationToken cancellationToken)

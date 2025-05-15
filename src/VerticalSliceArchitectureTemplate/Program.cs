@@ -1,7 +1,6 @@
 using System.Reflection;
 using VerticalSliceArchitectureTemplate.Host;
 using VerticalSliceArchitectureTemplate.Common.Extensions;
-using VerticalSliceArchitectureTemplate.Common.HealthChecks;
 
 var appAssembly = Assembly.GetExecutingAssembly();
 var builder = WebApplication.CreateBuilder(args);
@@ -40,13 +39,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.RegisterEndpoints(appAssembly);
-app.MapDefaultEndpoints();
-
 app.MapOpenApi();
-app.UseHealthChecks();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+
+app.RegisterEndpoints(appAssembly);
+app.MapDefaultEndpoints();
 app.UseEventualConsistencyMiddleware();
 
 app.UseExceptionHandler();

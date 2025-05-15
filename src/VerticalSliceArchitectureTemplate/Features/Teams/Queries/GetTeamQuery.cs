@@ -40,7 +40,7 @@ public static class GetTeamQuery
         }
     }
     
-    internal sealed class Handler(AppDbContext dbContext)
+    internal sealed class Handler(ApplicationDbContext dbContext)
         : IRequestHandler<Request, ErrorOr<TeamDto>>
     {
         public async Task<ErrorOr<TeamDto>> Handle(

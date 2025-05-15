@@ -11,7 +11,7 @@ using VerticalSliceArchitectureTemplate.Common.Persistence;
 
 namespace VerticalSliceArchitectureTemplate.Common.Persistence.Migrations
 {
-    [DbContext(typeof(AppDbContext))]
+    [DbContext(typeof(ApplicationDbContext))]
     [Migration("20250514063620_Initial")]
     partial class Initial
     {

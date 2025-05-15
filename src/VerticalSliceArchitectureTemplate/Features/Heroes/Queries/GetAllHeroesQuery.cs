@@ -35,9 +35,9 @@ public static class GetAllHeroesQuery
     
     internal sealed class Handler : IRequestHandler<Request, ErrorOr<IReadOnlyList<HeroDto>>>
     {
-        private readonly AppDbContext _dbContext;
+        private readonly ApplicationDbContext _dbContext;
 
-        public Handler(AppDbContext dbContext)
+        public Handler(ApplicationDbContext dbContext)
         {
             _dbContext = dbContext;
         }

@@ -7,7 +7,7 @@ using VerticalSliceArchitectureTemplate.Common.Domain.Teams;
 namespace VerticalSliceArchitectureTemplate.Features.Teams.Events;
 
 internal sealed class PowerLevelUpdatedEventHandler(
-    AppDbContext dbContext,
+    ApplicationDbContext dbContext,
     ILogger<PowerLevelUpdatedEventHandler> logger)
     : INotificationHandler<PowerLevelUpdatedEvent>
 {

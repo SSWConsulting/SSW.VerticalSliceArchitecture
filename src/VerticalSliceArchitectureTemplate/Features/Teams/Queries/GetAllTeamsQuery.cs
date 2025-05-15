@@ -32,7 +32,7 @@ public static class GetAllTeamsQuery
         public Validator() { }
     }
     
-    internal sealed class Handler(AppDbContext dbContext)
+    internal sealed class Handler(ApplicationDbContext dbContext)
         : IRequestHandler<Request, ErrorOr<IReadOnlyList<TeamDto>>>
     {
         public async Task<ErrorOr<IReadOnlyList<TeamDto>>> Handle(

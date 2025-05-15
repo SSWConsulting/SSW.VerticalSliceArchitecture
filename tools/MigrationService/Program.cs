@@ -23,7 +23,7 @@ builder.Services.AddScoped<EntitySaveChangesInterceptor>();
 builder.Services.AddScoped<ICurrentUserService, MigrationUserService>();
 builder.Services.AddSingleton(TimeProvider.System);
 
-builder.AddSqlServerDbContext<AppDbContext>("app-db",
+builder.AddSqlServerDbContext<ApplicationDbContext>("app-db",
     null,
     options =>
     {

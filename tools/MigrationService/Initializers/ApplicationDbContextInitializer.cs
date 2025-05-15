@@ -6,7 +6,7 @@ using VerticalSliceArchitectureTemplate.Common.Persistence;
 
 namespace MigrationService.Initializers;
 
-public class ApplicationDbContextInitializer(AppDbContext dbContext) : DbContextInitializerBase<AppDbContext>(dbContext)
+public class ApplicationDbContextInitializer(ApplicationDbContext dbContext) : DbContextInitializerBase<ApplicationDbContext>(dbContext)
 {
     private const int NumHeroes = 20;
 

@@ -10,8 +10,8 @@ using VerticalSliceArchitectureTemplate.Common.Persistence;
 
 namespace VerticalSliceArchitectureTemplate.Common.Persistence.Migrations
 {
-    [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [DbContext(typeof(ApplicationDbContext))]
+    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
         {

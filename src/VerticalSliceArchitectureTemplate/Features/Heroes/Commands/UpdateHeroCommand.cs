@@ -51,7 +51,7 @@ public static class UpdateHeroCommand
         }
     }
     
-    internal sealed class Handler(AppDbContext dbContext)
+    internal sealed class Handler(ApplicationDbContext dbContext)
         : IRequestHandler<Request, ErrorOr<Guid>>
     {
         public async Task<ErrorOr<Guid>> Handle(Request request, CancellationToken cancellationToken)
