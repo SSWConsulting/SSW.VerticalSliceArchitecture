@@ -3,9 +3,8 @@ using Projects;
 
 var builder = DistributedApplication.CreateBuilder(args);
 
-// Ensure the port doesn't conflict with other docker containers (or remove it altogether)
 var sqlServer = builder
-    .AddSqlServer("sql", port: 1800)
+    .AddSqlServer("sql")
     .WithLifetime(ContainerLifetime.Persistent);
 
 var db = sqlServer
@@ -20,6 +19,6 @@ builder
     .AddProject<VerticalSliceArchitectureTemplate>("web-api")
     .WithEndpoint("https", endpoint => endpoint.IsProxied = false)
     .WithReference(db)
-    .WaitFor(migrationService);
+    .WaitForCompletion(migrationService);
 
 builder.Build().Run();

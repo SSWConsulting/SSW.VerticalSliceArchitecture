@@ -12,7 +12,7 @@ using VerticalSliceArchitectureTemplate.Common.Persistence;
 namespace VerticalSliceArchitectureTemplate.Common.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250513055145_Initial")]
+    [Migration("20250514063620_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -140,38 +140,6 @@ namespace VerticalSliceArchitectureTemplate.Common.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Teams");
-                });
-
-            modelBuilder.Entity("VerticalSliceArchitectureTemplate.Features.Todos.Domain.Todo", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsCompleted")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Text")
-                        .IsRequired()
-                        .HasMaxLength(1024)
-                        .HasColumnType("nvarchar(1024)");
-
-                    b.Property<DateTimeOffset?>("UpdatedAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Todos");
                 });
 
             modelBuilder.Entity("VerticalSliceArchitectureTemplate.Common.Domain.Heroes.Hero", b =>

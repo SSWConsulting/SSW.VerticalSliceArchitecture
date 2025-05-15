@@ -1,6 +1,7 @@
 ﻿using VerticalSliceArchitectureTemplate.Common.Behaviours;
 using VerticalSliceArchitectureTemplate.Common.Interfaces;
 using VerticalSliceArchitectureTemplate.Common.Services;
+using VerticalSliceArchitectureTemplate.Common.HealthChecks;
 
 namespace VerticalSliceArchitectureTemplate.Host;
 
@@ -13,6 +14,10 @@ public static class DependencyInjection
         services.AddHttpContextAccessor();
         
         services.AddScoped<ICurrentUserService, CurrentUserService>();
+        
+        services.AddOpenApi();
+        
+        services.AddHealthChecks(builder.Configuration);
         
         var applicationAssembly = typeof(DependencyInjection).Assembly;
 

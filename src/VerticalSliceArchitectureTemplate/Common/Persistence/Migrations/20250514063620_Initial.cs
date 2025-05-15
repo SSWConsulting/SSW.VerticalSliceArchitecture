@@ -30,23 +30,6 @@ namespace VerticalSliceArchitectureTemplate.Common.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Todos",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Text = table.Column<string>(type: "nvarchar(1024)", maxLength: 1024, nullable: false),
-                    IsCompleted = table.Column<bool>(type: "bit", nullable: false),
-                    CreatedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    UpdatedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    UpdatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Todos", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Heroes",
                 columns: table => new
                 {
@@ -114,9 +97,6 @@ namespace VerticalSliceArchitectureTemplate.Common.Persistence.Migrations
 
             migrationBuilder.DropTable(
                 name: "Mission");
-
-            migrationBuilder.DropTable(
-                name: "Todos");
 
             migrationBuilder.DropTable(
                 name: "Teams");
