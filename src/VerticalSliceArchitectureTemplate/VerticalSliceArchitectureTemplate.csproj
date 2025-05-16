@@ -2,6 +2,7 @@
   <PropertyGroup>
     <RootNamespace>VerticalSliceArchitectureTemplate</RootNamespace>
     <AssemblyName>VerticalSliceArchitectureTemplate</AssemblyName>
+    <UserSecretsId>bc1e6cf9-bf77-4de7-bfdc-2de7a778673c</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -9,15 +10,22 @@
     <PackageReference Include="MediatR" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" />
+    <PackageReference Include="EntityFrameworkCore.Exceptions.SqlServer" />
     <PackageReference Include="Swashbuckle.AspNetCore" />
     <PackageReference Include="ErrorOr" />
     <PackageReference Include="Vogen" />
     <PackageReference Include="Ardalis.Specification" />
     <PackageReference Include="Ardalis.Specification.EntityFrameworkCore" />
+    <PackageReference Include="Aspire.Microsoft.EntityFrameworkCore.SqlServer" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Common\Logging\" />
+    <ProjectReference Include="..\ServiceDefaults\ServiceDefaults.csproj" />
   </ItemGroup>
 </Project>

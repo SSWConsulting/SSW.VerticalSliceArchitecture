@@ -1,5 +1,5 @@
 ﻿using MediatR.Pipeline;
-using VerticalSliceArchitectureTemplate.Common.Services;
+using VerticalSliceArchitectureTemplate.Common.Interfaces;
 
 namespace VerticalSliceArchitectureTemplate.Common.Behaviours;
 
@@ -15,7 +15,7 @@ public static class RequestInformationLogger
         LogAction(logger, name, userId, request, null);
 }
 
-public class LoggingBehaviour<TRequest>(ILogger<TRequest> logger, CurrentUserService currentUserService)
+public class LoggingBehaviour<TRequest>(ILogger<TRequest> logger, ICurrentUserService currentUserService)
     : IRequestPreProcessor<TRequest>
     where TRequest : notnull
 {

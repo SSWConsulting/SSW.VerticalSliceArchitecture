@@ -9,11 +9,9 @@ public static class FeatureDiscovery
 
     public static void ConfigureFeatures(this IServiceCollection services, IConfiguration config, params Assembly[] assemblies)
     {
-        if (assemblies.Length == 0)
-        {
+        if (assemblies.Length == 0) 
             throw new ArgumentException("At least one assembly must be provided.", nameof(assemblies));
-        }
-        
+
         var moduleTypes = GetFeatureTypes(assemblies);
 
         foreach (var type in moduleTypes)

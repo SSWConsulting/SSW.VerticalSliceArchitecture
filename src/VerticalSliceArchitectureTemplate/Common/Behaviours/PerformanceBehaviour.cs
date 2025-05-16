@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 using MediatR;
-using VerticalSliceArchitectureTemplate.Common.Services;
+using VerticalSliceArchitectureTemplate.Common.Interfaces;
 
 namespace VerticalSliceArchitectureTemplate.Common.Behaviours;
 
@@ -18,7 +18,7 @@ public static class LongRunningRequestLog
 
 public class PerformanceBehaviour<TRequest, TResponse>(
     ILogger<TRequest> logger,
-    CurrentUserService currentUserService)
+    ICurrentUserService currentUserService)
     : IPipelineBehavior<TRequest, TResponse>
     where TRequest : notnull
 {

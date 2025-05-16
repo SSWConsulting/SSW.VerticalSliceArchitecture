@@ -1,18 +1,30 @@
-﻿using Microsoft.EntityFrameworkCore.Diagnostics;
+﻿using EntityFramework.Exceptions.SqlServer;
+using VerticalSliceArchitectureTemplate.Common.Interceptors;
 
 namespace VerticalSliceArchitectureTemplate.Common.Persistence;
 
 public static class DependencyInjection
 {
-    public static void AddInfrastructure(this IServiceCollection services)
+    public static void AddInfrastructure(this IHostApplicationBuilder builder)
     {
-        services.AddScoped<ISaveChangesInterceptor, EventPublisher>();
+        var services = builder.Services;
+        
+        services.AddScoped<EntitySaveChangesInterceptor>();
+        services.AddScoped<DispatchDomainEventsInterceptor>();
+        services.AddSingleton(TimeProvider.System);
+        
+        builder.AddSqlServerDbContext<ApplicationDbContext>("app-db",
+            null,
+            options =>
+            {
+                var serviceProvider = builder.Services.BuildServiceProvider();
 
-        services.AddDbContext<AppDbContext>((sp, options) =>
-        {
-            options.UseInMemoryDatabase("InMemoryDbForTesting");
+                options.AddInterceptors(
+                    serviceProvider.GetRequiredService<EntitySaveChangesInterceptor>(),
+                    serviceProvider.GetRequiredService<DispatchDomainEventsInterceptor>());
 
-            options.AddInterceptors(sp.GetServices<ISaveChangesInterceptor>());
-        });
+                // Return strongly typed useful exceptions
+                options.UseExceptionProcessor();
+            });
     }
 }
