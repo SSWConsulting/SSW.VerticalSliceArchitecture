@@ -1,24 +1,31 @@
 ﻿using System.Reflection;
-using VerticalSliceArchitecture.ArchTests.Common;
+using VerticalSliceArchitecture.ArchitectureTests.Common;
 using VerticalSliceArchitectureTemplate.Common.Domain.Base;
 using VerticalSliceArchitectureTemplate.Common.Domain.Base.Interfaces;
 
-namespace VerticalSliceArchitecture.ArchTests;
+namespace VerticalSliceArchitecture.ArchitectureTests;
 
-public class DomainModel(ITestOutputHelper output) : TestBase
+public class DomainTests : TestBase
 {
     private static readonly Type AggregateRoot = typeof(AggregateRoot<>);
     private static readonly Type Entity = typeof(Entity<>);
     private static readonly Type DomainEvent = typeof(IDomainEvent);
     private static readonly Type ValueObject = typeof(IValueObject);
 
+    private readonly ITestOutputHelper _output;
+
+    public DomainTests(ITestOutputHelper output)
+    {
+        _output = output;
+    }
+
     [Fact]
-    public void DomainModel_ShouldInheritsBaseClasses()
+    public void DomainModel_Should_InheritsBaseClasses()
     {
         // Arrange
-        var domainModels = Types.InAssembly(DomainAssembly)
+        var domainModels = Types.InAssembly(RootAssembly)
             .That()
-            .ResideInNamespaceContaining("Domain")
+            .ResideInNamespaceContaining(DomainAssemblyName)
             .And().DoNotResideInNamespaceContaining("Base")
             .And().DoNotHaveNameMatching(".*Id.*")
             .And().DoNotHaveNameMatching(".*Vogen.*")
@@ -26,8 +33,9 @@ public class DomainModel(ITestOutputHelper output) : TestBase
             .And().DoNotHaveNameEndingWith("Spec")
             .And().DoNotHaveNameEndingWith("Errors")
             .And().MeetCustomRule(new IsNotEnumRule());
-
-        domainModels.GetTypes().Dump(output);
+        var types = domainModels.GetTypes().ToList();
+        
+        types.Dump(_output);
 
         // Act
         var result = domainModels
@@ -39,30 +47,33 @@ public class DomainModel(ITestOutputHelper output) : TestBase
             .GetResult();
 
         // Assert
+        types.Should().NotBeEmpty();
         result.Should().BeSuccessful();
     }
 
     [Fact]
-    public void EntitiesAndAggregates_ShouldHavePrivateParameterlessConstructor()
+    public void EntitiesAndAggregates_Should_HavePrivateParameterlessConstructor()
     {
-        var entityTypes = Types.InAssembly(DomainAssembly)
+        // Arrange
+        var entityTypes = Types
+            .InAssembly(RootAssembly)
             .That()
             .Inherit(Entity)
             .Or()
-            .Inherit(AggregateRoot)
+            .Inherit(AggregateRoot);
+        var types = entityTypes.GetTypes().ToList();
+        
+        types.Dump(_output);
+
+        // Act
+        var failingTypes = entityTypes
             .GetTypes()
-            .Where(t => t != AggregateRoot);
+            .Where(t => t != AggregateRoot && !t.GetConstructors(BindingFlags.NonPublic | BindingFlags.Instance)
+                .Any(c => c.IsPrivate && c.GetParameters().Length == 0))
+            .ToList();
 
-        var failingTypes = new List<Type>();
-
-        foreach (var entityType in entityTypes)
-        {
-            var constructors = entityType.GetConstructors(BindingFlags.NonPublic | BindingFlags.Instance);
-
-            if (!constructors.Any(c => c.IsPrivate && c.GetParameters().Length == 0))
-                failingTypes.Add(entityType);
-
-            failingTypes.Should().BeEmpty();
-        }
+        // Assert
+        types.Should().NotBeEmpty();
+        failingTypes.Should().BeEmpty();
     }
 }

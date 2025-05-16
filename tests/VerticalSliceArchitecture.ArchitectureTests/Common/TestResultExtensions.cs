@@ -1,7 +1,7 @@
 ﻿using FluentAssertions.Execution;
 using TestResult = NetArchTest.Rules.TestResult;
 
-namespace VerticalSliceArchitecture.ArchTests.Common;
+namespace VerticalSliceArchitecture.ArchitectureTests.Common;
 
 public static class TestResultExtensions
 {

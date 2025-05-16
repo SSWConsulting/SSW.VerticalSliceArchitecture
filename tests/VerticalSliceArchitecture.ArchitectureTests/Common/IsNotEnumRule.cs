@@ -1,6 +1,6 @@
 ﻿using Mono.Cecil;
 
-namespace VerticalSliceArchitecture.ArchTests.Common;
+namespace VerticalSliceArchitecture.ArchitectureTests.Common;
 
 public class IsNotEnumRule : ICustomRule
 {

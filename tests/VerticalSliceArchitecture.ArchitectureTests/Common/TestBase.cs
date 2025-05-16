@@ -1,14 +1,12 @@
 using System.Reflection;
-using VerticalSliceArchitectureTemplate.Common.Domain.Base;
-using VerticalSliceArchitectureTemplate.Common.Interfaces;
-using VerticalSliceArchitectureTemplate.Common.Persistence;
 
-namespace VerticalSliceArchitecture.ArchTests.Common;
+namespace VerticalSliceArchitecture.ArchitectureTests.Common;
 
 public abstract class TestBase
 {
-    protected static readonly Assembly DomainAssembly = typeof(AggregateRoot<>).Assembly;
-    protected static readonly Assembly ApplicationAssembly = typeof(ApplicationDbContext).Assembly;
-    protected static readonly Assembly InfrastructureAssembly = typeof(ApplicationDbContext).Assembly;
-    protected static readonly Assembly PresentationAssembly = typeof(IWebApiMarker).Assembly;
+    protected const string DomainAssemblyName = "Domain";
+    protected const string CommandsAssemblyName = "Commands";
+    protected const string QueriesAssemblyName = "Queries";
+    
+    protected static readonly Assembly RootAssembly = typeof(Program).Assembly;
 }

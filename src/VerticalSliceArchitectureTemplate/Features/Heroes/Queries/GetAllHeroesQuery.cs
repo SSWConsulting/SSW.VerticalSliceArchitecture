@@ -46,7 +46,7 @@ public static class GetAllHeroesQuery
             Request request,
             CancellationToken cancellationToken)
         {
-            var xxx = await _dbContext.Heroes
+            return await _dbContext.Heroes
                 .Select(h => new HeroDto(
                     h.Id.Value,
                     h.Name,
@@ -54,7 +54,6 @@ public static class GetAllHeroesQuery
                     h.PowerLevel,
                     h.Powers.Select(p => new HeroPowerDto(p.Name, p.PowerLevel)).ToList()))
                 .ToListAsync(cancellationToken);
-            return xxx;
         }
     }
 }

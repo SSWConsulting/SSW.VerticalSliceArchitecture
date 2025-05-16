@@ -2,7 +2,6 @@
   <PropertyGroup>
     <RootNamespace>VerticalSliceArchitectureTemplate.IntegrationTests</RootNamespace>
     <PackageId>VerticalSliceArchitectureTemplate.IntegrationTests</PackageId>
-
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
   </PropertyGroup>

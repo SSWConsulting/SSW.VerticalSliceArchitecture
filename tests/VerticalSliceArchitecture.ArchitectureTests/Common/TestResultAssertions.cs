@@ -3,7 +3,7 @@ using FluentAssertions.Primitives;
 using System.Text;
 using TestResult = NetArchTest.Rules.TestResult;
 
-namespace VerticalSliceArchitecture.ArchTests.Common;
+namespace VerticalSliceArchitecture.ArchitectureTests.Common;
 
 public class TestResultAssertions : ReferenceTypeAssertions<TestResult, TestResultAssertions>
 {
