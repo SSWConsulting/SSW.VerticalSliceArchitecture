@@ -1,10 +1,10 @@
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Respawn;
+using SSW.VerticalSliceArchitecture.Common.Persistence;
 using System.Data.Common;
-using VerticalSliceArchitectureTemplate.Common.Persistence;
 
-namespace VerticalSliceArchitectureTemplate.IntegrationTests.Common.Infrastructure.Database;
+namespace SSW.VerticalSliceArchitecture.IntegrationTests.Common.Infrastructure.Database;
 
 /// <summary>
 /// Manages the schema and data for the database container

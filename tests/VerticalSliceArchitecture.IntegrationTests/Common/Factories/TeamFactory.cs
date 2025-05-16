@@ -1,7 +1,6 @@
-﻿using Bogus;
-using VerticalSliceArchitectureTemplate.Common.Domain.Teams;
+﻿using SSW.VerticalSliceArchitecture.Common.Domain.Teams;
 
-namespace VerticalSliceArchitectureTemplate.IntegrationTests.Common.Factories;
+namespace SSW.VerticalSliceArchitecture.IntegrationTests.Common.Factories;
 
 public static class TeamFactory
 {

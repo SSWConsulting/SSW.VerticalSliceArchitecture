@@ -1,4 +1,4 @@
-namespace VerticalSliceArchitecture.ArchitectureTests.Common;
+namespace SSW.VerticalSliceArchitecture.ArchitectureTests.Common;
 
 public static class TypeExtensions
 {

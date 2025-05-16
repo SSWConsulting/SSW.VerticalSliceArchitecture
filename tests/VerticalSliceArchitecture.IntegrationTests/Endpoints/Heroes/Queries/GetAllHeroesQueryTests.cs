@@ -1,9 +1,9 @@
+using SSW.VerticalSliceArchitecture.Features.Heroes.Queries;
+using SSW.VerticalSliceArchitecture.IntegrationTests.Common;
+using SSW.VerticalSliceArchitecture.IntegrationTests.Common.Factories;
 using System.Net.Http.Json;
-using VerticalSliceArchitectureTemplate.Features.Heroes.Queries;
-using VerticalSliceArchitectureTemplate.IntegrationTests.Common;
-using VerticalSliceArchitectureTemplate.IntegrationTests.Common.Factories;
 
-namespace VerticalSliceArchitectureTemplate.IntegrationTests.Endpoints.Heroes.Queries;
+namespace SSW.VerticalSliceArchitecture.IntegrationTests.Endpoints.Heroes.Queries;
 
 public class GetAllHeroesQueryTests(TestingDatabaseFixture fixture) : IntegrationTestBase(fixture)
 {

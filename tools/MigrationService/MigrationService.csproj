@@ -14,6 +14,6 @@
   </ItemGroup>
   
   <ItemGroup>
-    <ProjectReference Include="..\..\src\VerticalSliceArchitectureTemplate\VerticalSliceArchitectureTemplate.csproj" />
+    <ProjectReference Include="..\..\src\VerticalSliceArchitecture\VerticalSliceArchitecture.csproj" />
   </ItemGroup>
 </Project>

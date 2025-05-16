@@ -1,4 +1,4 @@
-using VerticalSliceArchitectureTemplate.Common.Interfaces;
+using SSW.VerticalSliceArchitecture.Common.Interfaces;
 
 namespace MigrationService;
 

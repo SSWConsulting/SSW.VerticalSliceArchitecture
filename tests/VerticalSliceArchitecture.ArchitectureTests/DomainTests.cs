@@ -1,9 +1,9 @@
 ﻿using System.Reflection;
-using VerticalSliceArchitecture.ArchitectureTests.Common;
-using VerticalSliceArchitectureTemplate.Common.Domain.Base;
-using VerticalSliceArchitectureTemplate.Common.Domain.Base.Interfaces;
+using SSW.VerticalSliceArchitecture.ArchitectureTests.Common;
+using SSW.VerticalSliceArchitecture.Common.Domain.Base;
+using SSW.VerticalSliceArchitecture.Common.Domain.Base.Interfaces;
 
-namespace VerticalSliceArchitecture.ArchitectureTests;
+namespace SSW.VerticalSliceArchitecture.ArchitectureTests;
 
 public class DomainTests : TestBase
 {

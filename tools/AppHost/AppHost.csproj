@@ -18,7 +18,7 @@
     <ProjectReference Include="..\..\src\ServiceDefaults\ServiceDefaults.csproj">
       <IsAspireProjectResource>false</IsAspireProjectResource>
     </ProjectReference>
-    <ProjectReference Include="..\..\src\VerticalSliceArchitectureTemplate\VerticalSliceArchitectureTemplate.csproj" />
+    <ProjectReference Include="..\..\src\VerticalSliceArchitecture\VerticalSliceArchitecture.csproj" />
     <ProjectReference Include="..\MigrationService\MigrationService.csproj" />
   </ItemGroup>
 

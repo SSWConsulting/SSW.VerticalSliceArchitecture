@@ -1,0 +1,10 @@
+﻿global using Microsoft.EntityFrameworkCore;
+global using static System.ArgumentException;
+global using static System.ArgumentNullException;
+global using static System.ArgumentOutOfRangeException;
+global using Ardalis.Specification;
+global using FluentValidation;
+global using ErrorOr;
+global using Vogen;
+global using SSW.VerticalSliceArchitecture.Common.Features;
+global using SSW.VerticalSliceArchitecture.Common.Persistence;

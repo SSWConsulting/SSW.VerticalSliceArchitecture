@@ -1,15 +1,15 @@
 using Ardalis.Specification.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using VerticalSliceArchitectureTemplate.Common.Domain.Heroes;
-using VerticalSliceArchitectureTemplate.Common.Domain.Teams;
+using SSW.VerticalSliceArchitecture.Common.Domain.Heroes;
+using SSW.VerticalSliceArchitecture.Common.Domain.Teams;
+using SSW.VerticalSliceArchitecture.Features.Heroes.Commands;
+using SSW.VerticalSliceArchitecture.IntegrationTests.Common;
+using SSW.VerticalSliceArchitecture.IntegrationTests.Common.Factories;
+using SSW.VerticalSliceArchitecture.IntegrationTests.Common.Utilities;
 using System.Net;
 using System.Net.Http.Json;
-using VerticalSliceArchitectureTemplate.Features.Heroes.Commands;
-using VerticalSliceArchitectureTemplate.IntegrationTests.Common;
-using VerticalSliceArchitectureTemplate.IntegrationTests.Common.Factories;
-using VerticalSliceArchitectureTemplate.IntegrationTests.Common.Utilities;
 
-namespace VerticalSliceArchitectureTemplate.IntegrationTests.Endpoints.Teams.Events;
+namespace SSW.VerticalSliceArchitecture.IntegrationTests.Endpoints.Teams.Events;
 
 public class UpdatePowerLevelEventTests(TestingDatabaseFixture fixture) : IntegrationTestBase(fixture)
 {

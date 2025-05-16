@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
+using SSW.VerticalSliceArchitecture.Common.Interfaces;
 using System.Data.Common;
-using VerticalSliceArchitectureTemplate.Common.Interfaces;
 
-namespace VerticalSliceArchitectureTemplate.IntegrationTests.Common.Infrastructure.Web;
+namespace SSW.VerticalSliceArchitecture.IntegrationTests.Common.Infrastructure.Web;
 
 /// <summary>
 /// Host builder (services, DI and configuration) for integration tests

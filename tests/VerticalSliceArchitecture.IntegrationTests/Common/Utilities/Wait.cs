@@ -1,4 +1,4 @@
-namespace VerticalSliceArchitectureTemplate.IntegrationTests.Common.Utilities;
+namespace SSW.VerticalSliceArchitecture.IntegrationTests.Common.Utilities;
 
 internal static class Wait
 {

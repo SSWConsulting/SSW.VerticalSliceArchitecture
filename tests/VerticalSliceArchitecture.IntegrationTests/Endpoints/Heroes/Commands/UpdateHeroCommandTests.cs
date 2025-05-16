@@ -1,12 +1,12 @@
 using Microsoft.EntityFrameworkCore;
-using VerticalSliceArchitectureTemplate.Common.Domain.Heroes;
+using SSW.VerticalSliceArchitecture.Common.Domain.Heroes;
+using SSW.VerticalSliceArchitecture.Features.Heroes.Commands;
+using SSW.VerticalSliceArchitecture.IntegrationTests.Common;
+using SSW.VerticalSliceArchitecture.IntegrationTests.Common.Factories;
 using System.Net;
 using System.Net.Http.Json;
-using VerticalSliceArchitectureTemplate.Features.Heroes.Commands;
-using VerticalSliceArchitectureTemplate.IntegrationTests.Common;
-using VerticalSliceArchitectureTemplate.IntegrationTests.Common.Factories;
 
-namespace VerticalSliceArchitectureTemplate.IntegrationTests.Endpoints.Heroes.Commands;
+namespace SSW.VerticalSliceArchitecture.IntegrationTests.Endpoints.Heroes.Commands;
 
 public class UpdateHeroCommandTests(TestingDatabaseFixture fixture) : IntegrationTestBase(fixture)
 {

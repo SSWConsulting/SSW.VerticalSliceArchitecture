@@ -1,6 +1,6 @@
-﻿using VerticalSliceArchitectureTemplate.Common.Domain.Heroes;
+﻿using SSW.VerticalSliceArchitecture.Common.Domain.Heroes;
 
-namespace VerticalSliceArchitectureTemplate.IntegrationTests.Common.Factories;
+namespace SSW.VerticalSliceArchitecture.IntegrationTests.Common.Factories;
 
 public static class HeroFactory
 {

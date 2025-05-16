@@ -1,11 +1,11 @@
 using Microsoft.EntityFrameworkCore;
-using VerticalSliceArchitectureTemplate.Common.Domain.Teams;
+using SSW.VerticalSliceArchitecture.Common.Domain.Teams;
+using SSW.VerticalSliceArchitecture.Features.Teams.Commands;
+using SSW.VerticalSliceArchitecture.IntegrationTests.Common;
 using System.Net;
 using System.Net.Http.Json;
-using VerticalSliceArchitectureTemplate.Features.Teams.Commands;
-using VerticalSliceArchitectureTemplate.IntegrationTests.Common;
 
-namespace VerticalSliceArchitectureTemplate.IntegrationTests.Endpoints.Teams.Commands;
+namespace SSW.VerticalSliceArchitecture.IntegrationTests.Endpoints.Teams.Commands;
 
 public class CreateTeamCommandTests(TestingDatabaseFixture fixture) : IntegrationTestBase(fixture)
 {
