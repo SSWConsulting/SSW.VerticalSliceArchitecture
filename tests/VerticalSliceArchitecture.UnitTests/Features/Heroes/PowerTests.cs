@@ -1,6 +1,6 @@
-using VerticalSliceArchitectureTemplate.Common.Domain.Heroes;
+using SSW.VerticalSliceArchitecture.Common.Domain.Heroes;
 
-namespace VerticalSliceArchitectureTemplate.UnitTests.Features.Heroes;
+namespace SSW.VerticalSliceArchitecture.UnitTests.Features.Heroes;
 
 public class PowerTests
 {

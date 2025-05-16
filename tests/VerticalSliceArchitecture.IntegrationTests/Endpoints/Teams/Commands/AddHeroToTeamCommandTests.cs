@@ -1,13 +1,13 @@
 using Ardalis.Specification.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using VerticalSliceArchitectureTemplate.Common.Domain.Teams;
+using SSW.VerticalSliceArchitecture.Common.Domain.Teams;
+using SSW.VerticalSliceArchitecture.Features.Teams.Commands;
+using SSW.VerticalSliceArchitecture.IntegrationTests.Common;
+using SSW.VerticalSliceArchitecture.IntegrationTests.Common.Factories;
 using System.Net;
 using System.Net.Http.Json;
-using VerticalSliceArchitectureTemplate.Features.Teams.Commands;
-using VerticalSliceArchitectureTemplate.IntegrationTests.Common;
-using VerticalSliceArchitectureTemplate.IntegrationTests.Common.Factories;
 
-namespace VerticalSliceArchitectureTemplate.IntegrationTests.Endpoints.Teams.Commands;
+namespace SSW.VerticalSliceArchitecture.IntegrationTests.Endpoints.Teams.Commands;
 
 public class AddHeroToTeamCommandTests(TestingDatabaseFixture fixture) : IntegrationTestBase(fixture)
 {

@@ -1,6 +1,6 @@
-using VerticalSliceArchitectureTemplate.Common.Domain.Teams;
+using SSW.VerticalSliceArchitecture.Common.Domain.Teams;
 
-namespace VerticalSliceArchitectureTemplate.UnitTests.Features.Teams;
+namespace SSW.VerticalSliceArchitecture.UnitTests.Features.Teams;
 
 public class MissionTests
 {

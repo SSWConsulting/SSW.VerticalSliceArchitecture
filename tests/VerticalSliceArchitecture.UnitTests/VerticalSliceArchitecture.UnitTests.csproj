@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <RootNamespace>VerticalSliceArchitectureTemplate.UnitTests</RootNamespace>
-    <PackageId>VerticalSliceArchitectureTemplate.UnitTests</PackageId>
+    <RootNamespace>SSW.VerticalSliceArchitecture.UnitTests</RootNamespace>
+    <PackageId>SSW.VerticalSliceArchitecture.UnitTests</PackageId>
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
   </PropertyGroup>
@@ -18,6 +18,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\VerticalSliceArchitectureTemplate\VerticalSliceArchitectureTemplate.csproj" />
+    <ProjectReference Include="..\..\src\VerticalSliceArchitecture\VerticalSliceArchitecture.csproj" />
   </ItemGroup>
 </Project>

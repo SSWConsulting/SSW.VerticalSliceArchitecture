@@ -1,8 +1,8 @@
 using Bogus;
 using Microsoft.EntityFrameworkCore;
-using VerticalSliceArchitectureTemplate.Common.Domain.Heroes;
-using VerticalSliceArchitectureTemplate.Common.Domain.Teams;
-using VerticalSliceArchitectureTemplate.Common.Persistence;
+using SSW.VerticalSliceArchitecture.Common.Domain.Heroes;
+using SSW.VerticalSliceArchitecture.Common.Domain.Teams;
+using SSW.VerticalSliceArchitecture.Common.Persistence;
 
 namespace MigrationService.Initializers;
 

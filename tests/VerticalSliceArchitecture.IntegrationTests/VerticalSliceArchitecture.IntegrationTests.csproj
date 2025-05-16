@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <RootNamespace>VerticalSliceArchitectureTemplate.IntegrationTests</RootNamespace>
-    <PackageId>VerticalSliceArchitectureTemplate.IntegrationTests</PackageId>
+    <RootNamespace>SSW.VerticalSliceArchitecture.IntegrationTests</RootNamespace>
+    <PackageId>SSW.VerticalSliceArchitecture.IntegrationTests</PackageId>
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
   </PropertyGroup>
@@ -25,7 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\VerticalSliceArchitectureTemplate\VerticalSliceArchitectureTemplate.csproj" />
+    <ProjectReference Include="..\..\src\VerticalSliceArchitecture\VerticalSliceArchitecture.csproj" />
     <ProjectReference Include="..\..\tools\MigrationService\MigrationService.csproj" />
   </ItemGroup>
 </Project>

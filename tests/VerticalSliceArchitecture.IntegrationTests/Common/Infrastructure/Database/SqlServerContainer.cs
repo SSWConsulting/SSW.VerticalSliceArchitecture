@@ -2,7 +2,7 @@ using Microsoft.Data.SqlClient;
 using Polly;
 using Testcontainers.MsSql;
 
-namespace VerticalSliceArchitectureTemplate.IntegrationTests.Common.Infrastructure.Database;
+namespace SSW.VerticalSliceArchitecture.IntegrationTests.Common.Infrastructure.Database;
 
 /// <summary>
 /// Wrapper for SQL Server container

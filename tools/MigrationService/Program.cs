@@ -1,12 +1,10 @@
-﻿
-
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MigrationService;
 using MigrationService.Initializers;
-using VerticalSliceArchitectureTemplate.Common.Interceptors;
-using VerticalSliceArchitectureTemplate.Common.Interfaces;
-using VerticalSliceArchitectureTemplate.Common.Persistence;
+using SSW.VerticalSliceArchitecture.Common.Interceptors;
+using SSW.VerticalSliceArchitecture.Common.Interfaces;
+using SSW.VerticalSliceArchitecture.Common.Persistence;
 
 var builder = Host.CreateApplicationBuilder(args);
 

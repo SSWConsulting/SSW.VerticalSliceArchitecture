@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using VerticalSliceArchitectureTemplate.Common.Persistence;
+using SSW.VerticalSliceArchitecture.Common.Persistence;
 
-namespace VerticalSliceArchitectureTemplate.IntegrationTests.Common;
+namespace SSW.VerticalSliceArchitecture.IntegrationTests.Common;
 
 /// <summary>
 /// Integration tests inherit from this to access helper classes

@@ -1,8 +1,8 @@
 using Microsoft.Extensions.DependencyInjection;
-using VerticalSliceArchitectureTemplate.IntegrationTests.Common.Infrastructure.Database;
-using VerticalSliceArchitectureTemplate.IntegrationTests.Common.Infrastructure.Web;
+using SSW.VerticalSliceArchitecture.IntegrationTests.Common.Infrastructure.Database;
+using SSW.VerticalSliceArchitecture.IntegrationTests.Common.Infrastructure.Web;
 
-namespace VerticalSliceArchitectureTemplate.IntegrationTests.Common;
+namespace SSW.VerticalSliceArchitecture.IntegrationTests.Common;
 
 /// <summary>
 /// Initializes and resets the database before and after each test. Shared across all integration tests.

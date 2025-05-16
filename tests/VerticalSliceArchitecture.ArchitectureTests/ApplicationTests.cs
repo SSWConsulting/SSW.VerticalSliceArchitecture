@@ -1,7 +1,7 @@
 using MediatR;
-using VerticalSliceArchitecture.ArchitectureTests.Common;
+using SSW.VerticalSliceArchitecture.ArchitectureTests.Common;
 
-namespace VerticalSliceArchitecture.ArchitectureTests;
+namespace SSW.VerticalSliceArchitecture.ArchitectureTests;
 
 public class ApplicationTests: TestBase
 {

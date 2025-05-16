@@ -1,6 +1,6 @@
 using System.Reflection;
 
-namespace VerticalSliceArchitecture.ArchitectureTests.Common;
+namespace SSW.VerticalSliceArchitecture.ArchitectureTests.Common;
 
 public abstract class TestBase
 {
@@ -8,5 +8,5 @@ public abstract class TestBase
     protected const string CommandsAssemblyName = "Commands";
     protected const string QueriesAssemblyName = "Queries";
     
-    protected static readonly Assembly RootAssembly = typeof(Program).Assembly;
+    protected static readonly Assembly RootAssembly = typeof(SSW.VerticalSliceArchitecture.Program).Assembly;
 }

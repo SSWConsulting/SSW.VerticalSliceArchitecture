@@ -17,7 +17,7 @@
       "language": "C#",
       "type": "project"
     },
-    "sourceName": "VerticalSliceArchitectureTemplate",
+    "sourceName": "SSW.VerticalSliceArchitecture",
     "preferNameDirectory": true,
     "sources": [
       {
