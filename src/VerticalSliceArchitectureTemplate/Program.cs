@@ -14,9 +14,8 @@ builder.Services.AddSwaggerGen(options =>
     options.CustomSchemaIds(x => x.FullName?.Replace("+", ".", StringComparison.Ordinal));
 });
 
+builder.AddWebApi();
 builder.AddApplication();
-builder.Services.AddEndpointsApiExplorer();
-
 builder.AddInfrastructure();
 
 builder.Services.ConfigureFeatures(builder.Configuration, appAssembly);
@@ -44,9 +43,9 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.RegisterEndpoints(appAssembly);
-app.MapDefaultEndpoints();
 app.UseEventualConsistencyMiddleware();
 
+app.MapDefaultEndpoints();
 app.UseExceptionHandler();
 
 app.Run();

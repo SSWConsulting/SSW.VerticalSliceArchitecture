@@ -6,7 +6,7 @@ namespace VerticalSliceArchitectureTemplate.Host;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddApplication(this IHostApplicationBuilder builder)
+    public static void AddWebApi(this IHostApplicationBuilder builder)
     {
         var services = builder.Services;
         
@@ -15,9 +15,13 @@ public static class DependencyInjection
         services.AddScoped<ICurrentUserService, CurrentUserService>();
         
         services.AddOpenApi();
-        
+    }
+    
+    public static void AddApplication(this IHostApplicationBuilder builder)
+    {
         var applicationAssembly = typeof(DependencyInjection).Assembly;
-
+        var services = builder.Services;
+        
         services.AddValidatorsFromAssembly(applicationAssembly, includeInternalTypes: true);
 
         services.AddMediatR(config =>
@@ -32,7 +36,5 @@ public static class DependencyInjection
 
             config.AddOpenBehavior(typeof(PerformanceBehaviour<,>));
         });
-        
-        return services;
     }
 }
