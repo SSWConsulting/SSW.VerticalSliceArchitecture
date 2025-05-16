@@ -32,14 +32,20 @@ public static class GetAllTeamsQuery
         public Validator() { }
     }
     
-    internal sealed class Handler(ApplicationDbContext dbContext)
-        : IRequestHandler<Request, ErrorOr<IReadOnlyList<TeamDto>>>
+    internal sealed class Handler : IRequestHandler<Request, ErrorOr<IReadOnlyList<TeamDto>>>
     {
+        private readonly ApplicationDbContext _dbContext;
+
+        public Handler(ApplicationDbContext dbContext)
+        {
+            _dbContext = dbContext;
+        }
+
         public async Task<ErrorOr<IReadOnlyList<TeamDto>>> Handle(
             Request request,
             CancellationToken cancellationToken)
         {
-            return await dbContext.Teams
+            return await _dbContext.Teams
                 .Select(t => new TeamDto(t.Id.Value, t.Name))
                 .ToListAsync(cancellationToken);
         }

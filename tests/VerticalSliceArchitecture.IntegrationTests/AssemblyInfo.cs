@@ -1,0 +1,2 @@
+[assembly: CaptureConsole]
+[assembly: CaptureTrace]
