@@ -42,19 +42,12 @@ dotnet new update
 To speed up development there is a `dotnet new` template to create a full Vertical Slice.
 
 ```bash
-dotnet new ssw-vsa-slice -f Student
-```
-`-f` or `--feature` where the feature name is the **singular** name of the feature.
+cd src/Sprout/
 
-Of course, there are always exceptions where appending an 's' is not enough. For example, `Person` becomes `People` and `Child` becomes `Children`.
-
-For this, use the optional parameter:
-
-```bash
 dotnet new ssw-vsa-slice -f Person -fp People
 ```
-
-optional: `-fp` or `--feature-plural` where the feature name is the **plural** name of the feature.
+`-f` or `--feature` where the feature name is the **singular** name of the feature.
+`-fp` or `--feature-plural` where the feature name is the **plural** name of the feature.
 
 This creates everything you need to get started with a new feature.
 

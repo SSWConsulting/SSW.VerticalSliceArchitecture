@@ -1,8 +1,6 @@
 ﻿using MediatR;
 using SSW.VerticalSliceArchitecture.Common.Domain.Heroes;
 using SSW.VerticalSliceArchitecture.Common.Extensions;
-using SSW.VerticalSliceArchitecture.Common.Features;
-using SSW.VerticalSliceArchitecture.Common.Persistence;
 using System.Text.Json.Serialization;
 
 namespace SSW.VerticalSliceArchitecture.Features.Heroes.Commands;

@@ -1,46 +1,51 @@
 {
-    "$schema": "http://json.schemastore.org/template",
-    "author": "SSW Consulting",
-    "classifications": [
-      ".NET",
-      "Vertical Slice Architecture",
-      "API",
-      "ASP.NET Core",
-      "EF Core"
-    ],
-    "name": "Vertical Slice Architecture Solution",
-    "description": "Creates a new Vertical Slice Architecture Solution",
-    "identity": "SSW.VerticalSliceArchitecture.Solution.CSharp",
-    "groupIdentity": "SSW.VerticalSliceArchitecture.Solution",
-    "shortName": "ssw-vsa",
-    "tags": {
-      "language": "C#",
-      "type": "project"
-    },
-    "sourceName": "SSW.VerticalSliceArchitecture",
-    "preferNameDirectory": true,
-    "sources": [
-      {
-        "source": "./",
-        "target": "./",
-        "exclude": [
-          "**/[Bb]in/**",
-          "**/[Oo]bj/**",
-          "**/.template.config/**/*",
-          ".vs/**/*",
-          "**/*.filelist",
-          "**/*.user",
-          "**/*.lock.json",
-          "**/.git/**",
-          "**/.idea/**",
-          "**/.vscode/**",
-          "*.nuspec",
-          "**/node_modules/**",
-          "docs/banner.png",
-          "templates/",
-          "**/*.nupkg",
-          "**/.github/**"
-        ]
-      }
-    ]
-  }
+  "$schema": "http://json.schemastore.org/template",
+  "author": "SSW Consulting",
+  "classifications": [
+    ".NET",
+    "Vertical Slice Architecture",
+    "API",
+    "ASP.NET Core",
+    "EF Core"
+  ],
+  "name": "Vertical Slice Architecture Solution",
+  "description": "Creates a new Vertical Slice Architecture Solution",
+  "identity": "SSW.VerticalSliceArchitecture.Solution.CSharp",
+  "groupIdentity": "SSW.VerticalSliceArchitecture.Solution",
+  "shortName": "ssw-vsa",
+  "tags": {
+    "language": "C#",
+    "type": "project"
+  },
+  "sourceName": "VerticalSliceArchitecture",
+  "preferNameDirectory": true,
+  "removeSswPrefix": {
+    "type": "computed",
+    "value": "",
+    "replaces": "SSW."
+  },
+  "sources": [
+    {
+      "source": "./",
+      "target": "./",
+      "exclude": [
+        "**/[Bb]in/**",
+        "**/[Oo]bj/**",
+        "**/.template.config/**/*",
+        ".vs/**/*",
+        "**/*.filelist",
+        "**/*.user",
+        "**/*.lock.json",
+        "**/.git/**",
+        "**/.idea/**",
+        "**/.vscode/**",
+        "*.nuspec",
+        "**/node_modules/**",
+        "docs/banner.png",
+        "templates/",
+        "**/*.nupkg",
+        "**/.github/**"
+      ]
+    }
+  ]
+}
