@@ -42,12 +42,14 @@ dotnet new update
 To speed up development there is a `dotnet new` template to create a full Vertical Slice.
 
 ```bash
-cd src/Sprout/
+cd src/WebApi/
 
 dotnet new ssw-vsa-slice -f Person -fp People
 ```
 `-f` or `--feature` where the feature name is the **singular** name of the feature.
 `-fp` or `--feature-plural` where the feature name is the **plural** name of the feature.
+
+You will now need a migration for the new Entity, and an `EfCoreConverter` for its [strongly typed Entity ID](https://www.ssw.com.au/rules/do-you-use-strongly-typed-ids/).
 
 This creates everything you need to get started with a new feature.
 

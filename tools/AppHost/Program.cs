@@ -16,7 +16,7 @@ var migrationService = builder.AddProject<MigrationService>("migrations")
     .WaitFor(sqlServer);
 
 builder
-    .AddProject<VerticalSliceArchitecture>("web-api")
+    .AddProject<WebApi>("web-api")
     .WithEndpoint("https", endpoint => endpoint.IsProxied = false)
     .WithReference(db)
     .WaitForCompletion(migrationService);

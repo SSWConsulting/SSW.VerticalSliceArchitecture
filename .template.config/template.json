@@ -17,13 +17,8 @@
     "language": "C#",
     "type": "project"
   },
-  "sourceName": "VerticalSliceArchitecture",
+  "sourceName": "SSW.VerticalSliceArchitecture",
   "preferNameDirectory": true,
-  "removeSswPrefix": {
-    "type": "computed",
-    "value": "",
-    "replaces": "SSW."
-  },
   "sources": [
     {
       "source": "./",
