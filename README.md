@@ -49,7 +49,14 @@ dotnet new ssw-vsa-slice -f Person -fp People
 `-f` or `--feature` where the feature name is the **singular** name of the feature.
 `-fp` or `--feature-plural` where the feature name is the **plural** name of the feature.
 
-You will now need a migration for the new Entity, and an `EfCoreConverter` for its [strongly typed Entity ID](https://www.ssw.com.au/rules/do-you-use-strongly-typed-ids/).
+This project uses [strongly typed IDs](https://www.ssw.com.au/rules/do-you-use-strongly-typed-ids/),
+which require registration in the `VogenEfCoreConverters` class:
+
+```csharp
+// Register the newly created Entity ID here
+[EfCoreConverter<PersonId>]
+internal sealed partial class VogenEfCoreConverters;
+```
 
 This creates everything you need to get started with a new feature.
 

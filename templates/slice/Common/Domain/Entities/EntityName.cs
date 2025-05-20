@@ -2,6 +2,7 @@
 
 namespace SSW.VerticalSliceArchitecture.Common.Domain.Entities;
 
+// Ensure stongly typed IDs are registered in 'VogenEfCoreConverters'
 // For strongly typed IDs, check out the rule: https://www.ssw.com.au/rules/do-you-use-strongly-typed-ids/
 [ValueObject<Guid>]
 public readonly partial struct EntityNameId;

@@ -30,7 +30,7 @@ internal sealed class PowerLevelUpdatedEventHandler(
             .FirstOrDefault();
 
         if (team is null)
-            throw new EventualConsistencyException(TeamErrors.NotFound);
+            throw new EventualConsistencyException(PowerLevelUpdatedEvent.TeamNotFound);
 
         team.ReCalculatePowerLevel();
         await dbContext.SaveChangesAsync(cancellationToken);
