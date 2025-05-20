@@ -24,7 +24,7 @@ public class TestDatabase : IAsyncDisposable
 
         var builder = new SqlConnectionStringBuilder(_sqlServer.Connection!.ConnectionString)
         {
-            InitialCatalog = "CleanArchitecture-IntegrationTests"
+            InitialCatalog = "WebApi-IntegrationTests"
         };
 
         _connectionString = builder.ConnectionString;

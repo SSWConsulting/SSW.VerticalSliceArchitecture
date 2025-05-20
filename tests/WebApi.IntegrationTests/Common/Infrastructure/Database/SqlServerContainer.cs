@@ -11,7 +11,7 @@ public class SqlServerContainer : IAsyncDisposable
 {
     private readonly MsSqlContainer _container = new MsSqlBuilder()
         .WithImage("mcr.microsoft.com/mssql/server:2022-CU14-ubuntu-22.04")
-        .WithName($"CleanArchitecture-IntegrationTests-{Guid.NewGuid()}")
+        .WithName($"WebApi-IntegrationTests-{Guid.NewGuid()}")
         .WithPassword("Password123")
         .WithPortBinding(1433, true)
         .WithAutoRemove(true)

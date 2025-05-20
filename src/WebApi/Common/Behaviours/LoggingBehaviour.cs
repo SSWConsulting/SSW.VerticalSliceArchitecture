@@ -9,7 +9,7 @@ public static class RequestInformationLogger
         LoggerMessage.Define<string, object, object>(
             LogLevel.Information,
             new EventId(2, nameof(RequestInformationLogger)),
-            "CleanArchitecture Request: {Name} {@UserId} {@Request}");
+            "WebApi Request: {Name} {@UserId} {@Request}");
 
     public static void Log(ILogger logger, string name, object userId, object request) =>
         LogAction(logger, name, userId, request, null);
