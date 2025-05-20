@@ -1,0 +1,12 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Support Forum
+    url: https://github.com/SSWConsulting/SSW.Rules/discussions/new
+    about: The place for questions, support and feature requests
+  - name: Contact Us 
+    url: https://www.ssw.com.au/ssw/Company/ContactUs.aspx
+    about: Contact us for all your consulting $ needs!
+  - name: About - see the SSW Rule - Do you have the best GitHub issue template?
+    url: https://www.ssw.com.au/rules/do-you-have-the-best-github-issue-template
+    about: See our rule on GitHub issue templates
+ 
