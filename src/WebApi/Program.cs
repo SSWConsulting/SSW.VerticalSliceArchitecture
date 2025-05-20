@@ -9,11 +9,6 @@ builder.AddServiceDefaults();
 
 builder.Services.AddCustomProblemDetails();
 
-builder.Services.AddSwaggerGen(options =>
-{ 
-    options.CustomSchemaIds(x => x.FullName?.Replace("+", ".", StringComparison.Ordinal));
-});
-
 builder.AddWebApi();
 builder.AddApplication();
 builder.AddInfrastructure();
@@ -32,13 +27,8 @@ else
     app.UseHsts();
 }
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
 app.MapOpenApi();
+app.MapCustomScalarApiReference();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
