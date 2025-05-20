@@ -94,8 +94,8 @@ graph TD;
 # ✨ Features
 
 - C# 12
-- .NET 8
+- .NET 9
 - ASP.NET Core
 - Minimal APIs
 - EF Core
-- Swagger UI
+- OpenAPI/Scalar
