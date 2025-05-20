@@ -13,7 +13,6 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
     <PackageReference Include="NSubstitute" />
     <PackageReference Include="Respawn" />
-    <PackageReference Include="Testcontainers" />
     <PackageReference Include="Testcontainers.MsSql" />
     <PackageReference Include="Polly" />
     <PackageReference Include="Microsoft.NET.Test.Sdk"/>

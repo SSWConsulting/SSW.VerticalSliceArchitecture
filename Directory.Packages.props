@@ -3,11 +3,8 @@
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
   </PropertyGroup>
   <ItemGroup>
-<!-- TODO: Review packages https://github.com/SSWConsulting/SSW.VerticalSliceArchitecture/issues/117  -->
     <PackageVersion Include="MediatR" Version="12.5.0" />
     <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="9.0.4" />
-    <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="9.0.4" />
-    <PackageVersion Include="Microsoft.EntityFrameworkCore.Abstractions" Version="9.0.4" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.4">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
@@ -21,7 +18,6 @@
     <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0" />
     <PackageVersion Include="ErrorOr" Version="2.0.1" />
     <PackageVersion Include="Vogen" Version="7.0.3" />
-    <PackageVersion Include="Ardalis.Specification" Version="9.1.0" />
     <PackageVersion Include="Ardalis.Specification.EntityFrameworkCore" Version="9.1.0" />
     <PackageVersion Include="Bogus" Version="35.6.2" />
   </ItemGroup>
@@ -47,7 +43,6 @@
     <PackageVersion Include="AwesomeAssertions" Version="8.1.0" />
     <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="9.0.3" />
     <PackageVersion Include="Respawn" Version="6.2.1" />
-    <PackageVersion Include="Testcontainers" Version="4.3.0" />
     <PackageVersion Include="Testcontainers.MsSql" Version="4.3.0" />
     <PackageVersion Include="Polly" Version="8.5.2" />
   </ItemGroup>
