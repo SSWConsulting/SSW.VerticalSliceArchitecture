@@ -40,7 +40,7 @@ jobs:
             git push https://${{ github.token }}@github.com/SSWConsulting/VerticalSliceArchitecture
 
       - name: Create release
-        uses: ncipollo/release-action@v1.14.0
+        uses: ncipollo/release-action@v1.16.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
