@@ -1,0 +1,5 @@
+project:
+  name: VerticalSliceArchitecture
+  tz: Australia/Sydney
+  adrFolder: ./docs/adr
+  packages: []
