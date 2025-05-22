@@ -37,7 +37,7 @@
         "*.nuspec",
         "**/node_modules/**",
         "docs/banner.png",
-        "templates/",
+        "**/templates/**",
         "**/*.nupkg",
         "**/.github/**"
       ]
