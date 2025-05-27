@@ -19,6 +19,9 @@ jobs:
         with:
           nuget-version: '6.x'
 
+      - name: Install Mono
+        run: sudo apt-get update && sudo apt-get install -y mono-complete
+
       - name: Create the package
         run: nuget pack VerticalSliceArchitecture.nuspec -NoDefaultExcludes
         
