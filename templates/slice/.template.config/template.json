@@ -32,7 +32,7 @@
       "isRequired": true,
       "replaces": "EntityName",
       "fileRename": "EntityName",
-      "description": "The name of a single entity (e.g. Hero)."
+      "description": "The single name of the entity (e.g. Hero)."
     },
     "featureNamePlural": {
       "type": "parameter",
@@ -40,7 +40,7 @@
       "isRequired": true,
       "replaces": "Entities",
       "fileRename": "Entities",
-      "description": "The name of the feature (e.g. Heroes)."
+      "description": "The plural name of the entity (e.g. Heroes)."
     },
     "featureNameCamel": {
       "type": "derived",

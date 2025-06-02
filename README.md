@@ -125,18 +125,24 @@ dotnet new ssw-vsa --name {{SolutionName}} --output .\
 
 ### Adding a Feature Slice
 
-To speed up development there is a `dotnet new` template to create a full Vertical Slice.
+To speed up development there is a `dotnet new` template to create a full Vertical Slice:
+- Creates a domain object in `Common/Domain/*`
+- Adds domain configuration in `Common/Persistence/*`
+- Creates Command & Query API endpoints in `Features/*`
+
+1. Add a new Feature
 
 ```bash
 cd src/WebApi/
 
-dotnet new ssw-vsa-slice -f Person -fp People
+dotnet new ssw-vsa-slice --feature Person --feature-plural People
 ```
-`-f` or `--feature` where the feature name is the **singular** name of the feature.
-`-fp` or `--feature-plural` where the feature name is the **plural** name of the feature.
+`--feature` or `-f` where the value is the **singular** name of the feature.
+`--feature-plural` or `-fp` where the value is the **plural** name of the feature.
 
-This project uses [strongly typed IDs](https://www.ssw.com.au/rules/do-you-use-strongly-typed-ids/),
-which require registration in the `VogenEfCoreConverters` class:
+2. Configure this Feature
+
+This project uses [strongly typed IDs](https://www.ssw.com.au/rules/do-you-use-strongly-typed-ids/), which require registration in the `VogenEfCoreConverters` class:
 
 ```csharp
 // Register the newly created Entity ID here
