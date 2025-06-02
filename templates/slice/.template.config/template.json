@@ -32,7 +32,7 @@
       "isRequired": true,
       "replaces": "EntityName",
       "fileRename": "EntityName",
-      "description": "The single name of the entity (e.g. Hero)."
+      "description": "The singular name of the entity (e.g. Hero)."
     },
     "featureNamePlural": {
       "type": "parameter",
