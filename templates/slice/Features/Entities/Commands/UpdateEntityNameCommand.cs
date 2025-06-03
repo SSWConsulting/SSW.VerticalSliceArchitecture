@@ -1,6 +1,6 @@
 ﻿using MediatR;
 using SSW.VerticalSliceArchitecture.Common.Domain.Entities;
-using SSW.VerticalSliceArchitecture.Common.Extensions;
+using SSW.VerticalSliceArchitecture.Host.Extensions;
 using System.Text.Json.Serialization;
 
 namespace SSW.VerticalSliceArchitecture.Features.Entities.Commands;
