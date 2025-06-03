@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Http.Features;
 
-namespace SSW.VerticalSliceArchitecture.Common.Extensions;
+namespace SSW.VerticalSliceArchitecture.Host.Extensions;
 
 public static class CustomProblemDetailsExt
 {

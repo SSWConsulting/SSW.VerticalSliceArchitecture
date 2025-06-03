@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 
-namespace SSW.VerticalSliceArchitecture.Common.Extensions;
+namespace SSW.VerticalSliceArchitecture.Host.Extensions;
 
 public static class CustomResult
 {

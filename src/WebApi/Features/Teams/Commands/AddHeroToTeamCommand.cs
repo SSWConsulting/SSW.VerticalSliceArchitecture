@@ -2,7 +2,7 @@
 using MediatR;
 using SSW.VerticalSliceArchitecture.Common.Domain.Heroes;
 using SSW.VerticalSliceArchitecture.Common.Domain.Teams;
-using SSW.VerticalSliceArchitecture.Common.Extensions;
+using SSW.VerticalSliceArchitecture.Host.Extensions;
 using System.Text.Json.Serialization;
 
 namespace SSW.VerticalSliceArchitecture.Features.Teams.Commands;

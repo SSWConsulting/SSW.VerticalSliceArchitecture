@@ -1,5 +1,5 @@
 using System.Reflection;
-using SSW.VerticalSliceArchitecture.Common.Extensions;
+using SSW.VerticalSliceArchitecture.Host.Extensions;
 using SSW.VerticalSliceArchitecture.Host;
 
 var appAssembly = Assembly.GetExecutingAssembly();
