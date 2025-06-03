@@ -1,5 +1,5 @@
 ﻿using MediatR;
-using SSW.VerticalSliceArchitecture.Host.Domain.Entities;
+using SSW.VerticalSliceArchitecture.Common.Domain.Entities;
 using SSW.VerticalSliceArchitecture.Host.Extensions;
 
 namespace SSW.VerticalSliceArchitecture.Features.Entities.Commands;
