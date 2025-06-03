@@ -23,15 +23,18 @@ public static class SqlServerDatabaseCommandExt
 
                 return CommandResults.Success();
             },
-            context =>
-            {
-                if (context.ResourceSnapshot.HealthStatus is HealthStatus.Healthy)
+            new CommandOptions {
+                UpdateState = context =>
                 {
-                    return ResourceCommandState.Enabled;
-                }
+                    if (context.ResourceSnapshot.HealthStatus is HealthStatus.Healthy)
+                    {
+                        return ResourceCommandState.Enabled;
+                    }
 
-                return ResourceCommandState.Disabled;
+                    return ResourceCommandState.Disabled;
+                }
             });
+        
         return builder;
     }
 }
