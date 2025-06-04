@@ -30,4 +30,10 @@
   <ItemGroup>
     <ProjectReference Include="..\ServiceDefaults\ServiceDefaults.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="templates\slice\.template.config\dotnetcli.host.json" />
+    <Content Include="templates\slice\.template.config\icon.png" />
+    <Content Include="templates\slice\.template.config\template.json" />
+  </ItemGroup>
 </Project>
