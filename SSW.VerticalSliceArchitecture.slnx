@@ -7,7 +7,6 @@
   <Folder Name="/Solution Items/">
     <File Path=".gitignore" />
     <File Path="global.json" />
-    <File Path="LICENSE" />
     <File Path="README.md" />
     <File Path="Directory.Build.props" />
     <File Path="Directory.Packages.props" />
