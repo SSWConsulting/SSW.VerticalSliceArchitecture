@@ -1,4 +1,4 @@
-﻿using FluentAssertions.Execution;
+﻿using AwesomeAssertions.Execution;
 using TestResult = NetArchTest.Rules.TestResult;
 
 namespace SSW.VerticalSliceArchitecture.ArchitectureTests.Common;
