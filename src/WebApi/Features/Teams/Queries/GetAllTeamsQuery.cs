@@ -1,5 +1,5 @@
 using MediatR;
-using SSW.VerticalSliceArchitecture.Common.Extensions;
+using SSW.VerticalSliceArchitecture.Host.Extensions;
 
 namespace SSW.VerticalSliceArchitecture.Features.Teams.Queries;
 

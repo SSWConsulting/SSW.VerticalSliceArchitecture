@@ -22,7 +22,7 @@ namespace SSW.VerticalSliceArchitecture.Common.Persistence.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("SSW.WebApi.Common.Domain.Heroes.Hero", b =>
+            modelBuilder.Entity("SSW.VerticalSliceArchitecture.WebApi.Common.Domain.Heroes.Hero", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -66,7 +66,7 @@ namespace SSW.VerticalSliceArchitecture.Common.Persistence.Migrations
                     b.ToTable("Heroes");
                 });
 
-            modelBuilder.Entity("SSW.WebApi.Common.Domain.Teams.Mission", b =>
+            modelBuilder.Entity("SSW.VerticalSliceArchitecture.WebApi.Common.Domain.Teams.Mission", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -105,7 +105,7 @@ namespace SSW.VerticalSliceArchitecture.Common.Persistence.Migrations
                     b.ToTable("Mission");
                 });
 
-            modelBuilder.Entity("SSW.WebApi.Common.Domain.Teams.Team", b =>
+            modelBuilder.Entity("SSW.VerticalSliceArchitecture.WebApi.Common.Domain.Teams.Team", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -142,13 +142,13 @@ namespace SSW.VerticalSliceArchitecture.Common.Persistence.Migrations
                     b.ToTable("Teams");
                 });
 
-            modelBuilder.Entity("SSW.WebApi.Common.Domain.Heroes.Hero", b =>
+            modelBuilder.Entity("SSW.VerticalSliceArchitecture.WebApi.Common.Domain.Heroes.Hero", b =>
                 {
-                    b.HasOne("SSW.WebApi.Common.Domain.Teams.Team", null)
+                    b.HasOne("SSW.VerticalSliceArchitecture.WebApi.Common.Domain.Teams.Team", null)
                         .WithMany("Heroes")
                         .HasForeignKey("TeamId");
 
-                    b.OwnsMany("SSW.WebApi.Common.Domain.Heroes.Power", "Powers", b1 =>
+                    b.OwnsMany("SSW.VerticalSliceArchitecture.WebApi.Common.Domain.Heroes.Power", "Powers", b1 =>
                         {
                             b1.Property<Guid>("HeroId")
                                 .HasColumnType("uniqueidentifier");
@@ -178,16 +178,16 @@ namespace SSW.VerticalSliceArchitecture.Common.Persistence.Migrations
                     b.Navigation("Powers");
                 });
 
-            modelBuilder.Entity("SSW.WebApi.Common.Domain.Teams.Mission", b =>
+            modelBuilder.Entity("SSW.VerticalSliceArchitecture.WebApi.Common.Domain.Teams.Mission", b =>
                 {
-                    b.HasOne("SSW.WebApi.Common.Domain.Teams.Team", null)
+                    b.HasOne("SSW.VerticalSliceArchitecture.WebApi.Common.Domain.Teams.Team", null)
                         .WithMany("Missions")
                         .HasForeignKey("TeamId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("SSW.WebApi.Common.Domain.Teams.Team", b =>
+            modelBuilder.Entity("SSW.VerticalSliceArchitecture.WebApi.Common.Domain.Teams.Team", b =>
                 {
                     b.Navigation("Heroes");
 

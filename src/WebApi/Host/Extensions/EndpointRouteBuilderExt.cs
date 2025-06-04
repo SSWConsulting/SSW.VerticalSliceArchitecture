@@ -1,4 +1,4 @@
-﻿namespace SSW.VerticalSliceArchitecture.Common.Extensions;
+﻿namespace SSW.VerticalSliceArchitecture.Host.Extensions;
 
 public static class EndpointRouteBuilderExt
 {
