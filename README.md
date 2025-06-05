@@ -96,32 +96,32 @@ Read more on [SSW Rules to Better Vertical Slice Architecture](https://www.ssw.c
 
 1. Install the SSW CA template
 
-```bash
-dotnet new install SSW.VerticalSliceArchitecture.Template
-```
+    ```bash
+    dotnet new install SSW.VerticalSliceArchitecture.Template
+    ```
 
 > NOTE: The template only needs to be installed once. Running this command again will update your version of the template.
 
 2. Create a new directory
 
-```bash
-mkdir Sprout
-cd Sprout
-```
+    ```bash
+    mkdir Sprout
+    cd Sprout
+    ```
 
 3. Create a new solution
 
-```bash
-dotnet new ssw-vsa
-```
+    ```bash
+    dotnet new ssw-vsa
+    ```
 
 > NOTE: `name` is optional; if you don't specify it, the directory name will be used as the solution name and project namespaces.
 
 Alternatively, you can specify the `name` and `output` directory as follows:
 
-```bash
-dotnet new ssw-vsa --name {{SolutionName}} --output .\
-```
+    ```bash
+    dotnet new ssw-vsa --name {{SolutionName}} --output .\
+    ```
 
 ### Adding a Feature Slice
 
@@ -132,11 +132,12 @@ To speed up development there is a `dotnet new` template to create a full Vertic
 
 1. Add a new Feature
 
-```bash
-cd src/WebApi/
+    ```bash
+    cd src/WebApi/
 
-dotnet new ssw-vsa-slice --feature Person --feature-plural People
-```
+    dotnet new ssw-vsa-slice --feature Person --feature-plural People
+    ```
+    
 `--feature` or `-f` where the value is the **singular** name of the feature.
 `--feature-plural` or `-fp` where the value is the **plural** name of the feature.
 
@@ -144,11 +145,17 @@ dotnet new ssw-vsa-slice --feature Person --feature-plural People
 
 This project uses [strongly typed IDs](https://www.ssw.com.au/rules/do-you-use-strongly-typed-ids/), which require registration in the `VogenEfCoreConverters` class:
 
-```csharp
-// Register the newly created Entity ID here
-[EfCoreConverter<PersonId>]
-internal sealed partial class VogenEfCoreConverters;
-```
+    ```csharp
+    // Register the newly created Entity ID here
+    [EfCoreConverter<PersonId>]
+    internal sealed partial class VogenEfCoreConverters;
+    ```
+
+3. Add a migration for the new Entity
+
+    ```bash
+    dotnet ef migrations add --project src/WebApi/WebApi.csproj --startup-project src/WebApi/WebApi.csproj --output-dir Common/Database/Migrations PersonTable 
+    ```
 
 ### Running the Solution
 
