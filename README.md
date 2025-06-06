@@ -97,7 +97,7 @@ Read more on [SSW Rules to Better Vertical Slice Architecture](https://www.ssw.c
 
 ### Installing the Template
 
-1. Install the SSW CA template
+1. Install the SSW VSA template
    ```bash
    dotnet new install SSW.VerticalSliceArchitecture.Template
    ```
