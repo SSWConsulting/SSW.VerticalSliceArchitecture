@@ -120,7 +120,7 @@ Read more on [SSW Rules to Better Vertical Slice Architecture](https://www.ssw.c
 Alternatively, you can specify the `name` and `output` directory as follows:
 
 ```bash
-dotnet new ssw-vsa --name {{SolutionName}} --output .\
+dotnet new ssw-vsa --name {{SolutionName}}
 ```
 
 ### Adding a Feature Slice
