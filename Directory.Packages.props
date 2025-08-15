@@ -32,7 +32,7 @@
   </ItemGroup>
   <ItemGroup Condition="$(IsAspireHost) == 'true'">
     <PackageVersion Include="Aspire.Hosting.AppHost" Version="9.3.0" />
-    <PackageVersion Include="Aspire.Hosting.SqlServer" Version="9.3.0" />
+    <PackageVersion Include="Aspire.Hosting.SqlServer" Version="9.4.1" />
   </ItemGroup>
   <ItemGroup Condition="$(IsTestProject) == 'true'">
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.14.0" />
