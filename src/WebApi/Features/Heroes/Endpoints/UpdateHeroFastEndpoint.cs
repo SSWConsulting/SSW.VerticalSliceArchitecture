@@ -27,15 +27,12 @@ public class UpdateHeroFastEndpoint : Endpoint<UpdateHeroRequest>
 
     public override void Configure()
     {
-        Put("/heroes/{heroId}");
+        Put("/{heroId}");
         Group<HeroesGroup>();
+        AllowAnonymous();
         Description(x => x
             .WithName("UpdateHeroFast")
-            .WithTags("Heroes")
-            .Produces(204)
-            .ProducesProblemDetails(400)
-            .ProducesProblemDetails(404)
-            .ProducesProblemDetails(500));
+            .WithDescription("Updates a hero"));
     }
 
     public override async Task HandleAsync(UpdateHeroRequest req, CancellationToken ct)
@@ -68,7 +65,8 @@ public class UpdateHeroFastEndpoint : Endpoint<UpdateHeroRequest>
             _eventPublisher.QueueDomainEvent(domainEvent);
         }
 
-        await Send.NoContentAsync(ct);
+        // await Send.NoContentAsync(ct);
+        await Send.OkAsync(null);
     }
 }
 

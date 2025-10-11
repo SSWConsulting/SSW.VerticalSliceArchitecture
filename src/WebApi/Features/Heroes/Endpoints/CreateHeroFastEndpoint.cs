@@ -27,15 +27,12 @@ public class CreateHeroFastEndpoint : EndpointBase<CreateHeroRequest, CreateHero
 
     public override void Configure()
     {
-        // DM: Check the group stuff works
-        Post("/heroes");
+        Post("/");
         Group<HeroesGroup>();
+        AllowAnonymous();
         Description(x => x
-            .WithName("CreateHeroFast")
-            .WithTags("Heroes")
-            .Produces<CreateHeroResponse>(201)
-            .ProducesProblemDetails(400)
-            .ProducesProblemDetails(500));
+                .WithName("CreateHeroFast")
+                .WithDescription("Creates a new hero"));
     }
 
     public override async Task HandleAsync(CreateHeroRequest req, CancellationToken ct)

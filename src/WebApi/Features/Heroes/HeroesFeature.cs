@@ -16,12 +16,13 @@ public class HeroesGroup : Group
 {
     public HeroesGroup()
     {
-        Configure("heroes", ep =>
+        base.Configure("heroes", ep =>
         {
             ep.Description(x => x
-                .WithGroupName("Heroes")
-                .WithTags("Heroes"));
-
+                // .WithGroupName("Heroes")
+                // .WithTags("Heroes")
+                .ProducesProblemDetails(500)
+            );
         });
     }
 }
