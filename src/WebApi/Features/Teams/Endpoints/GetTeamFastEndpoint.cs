@@ -69,14 +69,10 @@ public class GetTeamFastEndpoint : Endpoint<GetTeamRequest, GetTeamTeamDto>
 
         if (team is null)
         {
-            HttpContext.Response.StatusCode = StatusCodes.Status404NotFound;
-            await HttpContext.Response.WriteAsJsonAsync(new
-            {
-                errors = new[] { new { TeamErrors.NotFound.Code, TeamErrors.NotFound.Description } }
-            }, ct);
+            await Send.NotFoundAsync(ct);
             return;
         }
 
-        await HttpContext.Response.WriteAsJsonAsync(team, ct);
+        await Send.OkAsync(team, ct);
     }
 }

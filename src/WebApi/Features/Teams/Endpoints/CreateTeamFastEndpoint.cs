@@ -42,6 +42,6 @@ public class CreateTeamFastEndpoint : Endpoint<CreateTeamRequest>
         await _dbContext.Teams.AddAsync(team, ct);
         await _dbContext.SaveChangesAsync(ct);
 
-        HttpContext.Response.StatusCode = StatusCodes.Status201Created;
+        await Send.NoContentAsync(ct);
     }
 }

@@ -54,27 +54,20 @@ public class ExecuteMissionFastEndpoint : Endpoint<ExecuteMissionRequest>
 
         if (team is null)
         {
-            HttpContext.Response.StatusCode = StatusCodes.Status404NotFound;
-            await HttpContext.Response.WriteAsJsonAsync(new
-            {
-                errors = new[] { new { TeamErrors.NotFound.Code, TeamErrors.NotFound.Description } }
-            }, ct);
+            await Send.NotFoundAsync(ct);
             return;
         }
 
         var result = team.ExecuteMission(req.Description);
         if (result.IsError)
         {
-            HttpContext.Response.StatusCode = StatusCodes.Status400BadRequest;
-            await HttpContext.Response.WriteAsJsonAsync(new
-            {
-                errors = result.Errors.Select(e => new { e.Code, e.Description })
-            }, ct);
+            // DM: Figure out how to send errors
+            await Send.ErrorsAsync(cancellation: ct);
             return;
         }
 
         await _dbContext.SaveChangesAsync(ct);
 
-        HttpContext.Response.StatusCode = StatusCodes.Status200OK;
+        await Send.NoContentAsync(ct);
     }
 }

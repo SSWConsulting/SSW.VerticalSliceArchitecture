@@ -59,11 +59,7 @@ public class AddHeroToTeamFastEndpoint : Endpoint<AddHeroToTeamRequest>
 
         if (team is null)
         {
-            HttpContext.Response.StatusCode = StatusCodes.Status404NotFound;
-            await HttpContext.Response.WriteAsJsonAsync(new
-            {
-                errors = new[] { new { TeamErrors.NotFound.Code, TeamErrors.NotFound.Description } }
-            }, ct);
+            await Send.NotFoundAsync(ct);
             return;
         }
 
@@ -73,17 +69,13 @@ public class AddHeroToTeamFastEndpoint : Endpoint<AddHeroToTeamRequest>
 
         if (hero is null)
         {
-            HttpContext.Response.StatusCode = StatusCodes.Status404NotFound;
-            await HttpContext.Response.WriteAsJsonAsync(new
-            {
-                errors = new[] { new { HeroErrors.NotFound.Code, HeroErrors.NotFound.Description } }
-            }, ct);
+            await Send.NotFoundAsync(ct);
             return;
         }
 
         team.AddHero(hero);
         await _dbContext.SaveChangesAsync(ct);
 
-        HttpContext.Response.StatusCode = StatusCodes.Status201Created;
+        await Send.NoContentAsync(ct);
     }
 }

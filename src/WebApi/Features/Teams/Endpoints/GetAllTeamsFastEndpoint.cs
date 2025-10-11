@@ -32,6 +32,7 @@ public class GetAllTeamsFastEndpoint : EndpointBase<IReadOnlyList<GetAllTeamsTea
             .Select(t => new GetAllTeamsTeamDto(t.Id.Value, t.Name))
             .ToListAsync(ct);
 
-        await HttpContext.Response.WriteAsJsonAsync(teams, ct);
+
+        await Send.OkAsync(teams, ct);
     }
 }
