@@ -156,3 +156,67 @@ dotnet test tests/WebApi.IntegrationTests/
 ## What's NOT Included
 - **Authentication/Authorization**: This is a template - implement auth as needed for your use case
 - **Feature-specific service registration**: Most features don't need custom DI - use `IFeature.ConfigureServices()` only when required
+
+# CLI Task Documentation
+
+When creating documentation files (MD files) during CLI tasks, follow these guidelines to avoid unnecessary documentation noise:
+
+### When to Create New Documentation
+
+**DO create new documentation for**:
+- Significant architectural changes or new features
+- Major refactorings that affect multiple modules
+- New patterns or conventions being established
+- Implementation guides that will be referenced by others
+- Complex changes that need detailed explanation for future reference
+
+**DO NOT create new documentation for**:
+- Minor bug fixes or corrections
+- Small adjustments to existing code
+- Clarifications or improvements to existing implementations
+- Changes that can be adequately explained in commit messages
+
+**When unsure**: Ask if documentation should be created before writing it. It's better to update existing documentation than create redundant files.
+
+### Documentation File Naming Format
+All documentation files created during CLI tasks should be saved to `docs/cli-tasks/` with the following format:
+
+```
+yyyyMMdd-II-XX-description.md
+```
+
+Where:
+- `yyyyMMdd` = Current date (e.g., 20251002)
+- `II` = Author's initials from git config (e.g., GB for Gordon Beeming)
+- `XX` = Sequential number starting at 01 for the day (01, 02, 03, etc.)
+- `description` = Kebab-case description of the task/document
+
+### Examples
+- `20251002-GB-01-graceful-row-failure-implementation-summary.md`
+- `20251002-GB-02-graceful-row-failure-refactoring-guide.md`
+- `20251002-GB-03-graceful-row-failure-changes-summary.md`
+
+### Process
+1. **Determine if documentation is needed** - Is this a significant change?
+2. Get current date: `date +%Y%m%d`
+3. Get author initials from git config: `git config user.name`
+4. Check existing files in `docs/cli-tasks/` for today's date to determine next sequence number
+5. **Check if existing documentation should be updated instead** of creating new
+6. Create file with proper naming format only if genuinely needed
+7. If multiple related documents, use sequential numbers to maintain order
+
+### Updating Existing Documentation
+
+Prefer updating existing documentation when:
+- The change is related to a recent task documented today
+- It's a bug fix or improvement to something recently implemented
+- It adds clarification or correction to existing docs
+- The change is minor and fits within the scope of existing documentation
+
+### Purpose
+This approach:
+- Reduces documentation noise and clutter
+- Keeps related information together
+- Makes documentation easier to navigate and maintain
+- Ensures only significant changes are documented separately
+- Maintains high signal-to-noise ratio in documentation
