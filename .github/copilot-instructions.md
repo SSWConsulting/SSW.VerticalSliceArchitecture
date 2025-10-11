@@ -167,7 +167,7 @@ When creating documentation files (MD files) during CLI tasks, follow these guid
 - Significant architectural changes or new features
 - Major refactorings that affect multiple modules
 - New patterns or conventions being established
-- Implementation guides that will be referenced by others
+- Implementation guides that will be referenced by team members or future contributors
 - Complex changes that need detailed explanation for future reference
 
 **DO NOT create new documentation for**:
