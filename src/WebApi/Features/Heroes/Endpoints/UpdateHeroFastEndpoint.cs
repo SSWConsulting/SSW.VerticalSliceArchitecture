@@ -8,9 +8,9 @@ namespace SSW.VerticalSliceArchitecture.Features.Heroes.Endpoints;
 public record UpdateHeroRequest(
     string Name,
     string Alias,
+    Guid HeroId,
     IEnumerable<UpdateHeroRequest.HeroPowerDto> Powers)
 {
-    public Guid HeroId { get; set; }
     public record HeroPowerDto(string Name, int PowerLevel);
 }
 
@@ -36,8 +36,6 @@ public class UpdateHeroFastEndpoint : Endpoint<UpdateHeroRequest>
 
     public override async Task HandleAsync(UpdateHeroRequest req, CancellationToken ct)
     {
-        req.HeroId = Route<Guid>("heroId");
-        
         var heroId = HeroId.From(req.HeroId);
         var hero = await _dbContext.Heroes
             .Include(h => h.Powers)

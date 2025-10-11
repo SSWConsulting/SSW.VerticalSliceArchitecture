@@ -4,10 +4,7 @@ using SSW.VerticalSliceArchitecture.Common.Domain.Teams;
 
 namespace SSW.VerticalSliceArchitecture.Features.Teams.Endpoints;
 
-public record ExecuteMissionRequest(string Description)
-{
-    public Guid TeamId { get; set; }
-}
+public record ExecuteMissionRequest(Guid TeamId, string Description);
 
 public class ExecuteMissionFastEndpoint : Endpoint<ExecuteMissionRequest>
 {
@@ -29,8 +26,6 @@ public class ExecuteMissionFastEndpoint : Endpoint<ExecuteMissionRequest>
 
     public override async Task HandleAsync(ExecuteMissionRequest req, CancellationToken ct)
     {
-        req.TeamId = Route<Guid>("teamId");
-
         var teamId = TeamId.From(req.TeamId);
         var team = _dbContext.Teams
             .WithSpecification(new TeamByIdSpec(teamId))

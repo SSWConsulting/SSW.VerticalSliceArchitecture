@@ -5,11 +5,7 @@ using SSW.VerticalSliceArchitecture.Common.Domain.Teams;
 
 namespace SSW.VerticalSliceArchitecture.Features.Teams.Endpoints;
 
-public record AddHeroToTeamRequest
-{
-    public Guid TeamId { get; set; }
-    public Guid HeroId { get; set; }
-}
+public record AddHeroToTeamRequest(Guid TeamId, Guid HeroId);
 
 public class AddHeroToTeamFastEndpoint : Endpoint<AddHeroToTeamRequest>
 {
@@ -31,9 +27,6 @@ public class AddHeroToTeamFastEndpoint : Endpoint<AddHeroToTeamRequest>
 
     public override async Task HandleAsync(AddHeroToTeamRequest req, CancellationToken ct)
     {
-        req.TeamId = Route<Guid>("teamId");
-        req.HeroId = Route<Guid>("heroId");
-
         var teamId = TeamId.From(req.TeamId);
         var heroId = HeroId.From(req.HeroId);
 

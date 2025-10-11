@@ -10,11 +10,7 @@ public record GetTeamResponse(Guid Id, string Name, IEnumerable<GetTeamResponse.
     public record GetTeamHeroPowerDto(string Name, int PowerLevel);
 }
 
-public record GetTeamRequest
-{
-    // DM: Can we push this into the constructor?
-    public Guid TeamId { get; set; }
-}
+public record GetTeamRequest(Guid TeamId);
 
 public class GetTeamFastEndpoint : Endpoint<GetTeamRequest, GetTeamResponse>
 {
@@ -37,8 +33,6 @@ public class GetTeamFastEndpoint : Endpoint<GetTeamRequest, GetTeamResponse>
 
     public override async Task HandleAsync(GetTeamRequest req, CancellationToken ct)
     {
-        req.TeamId = Route<Guid>("teamId");
-
         var teamId = TeamId.From(req.TeamId);
 
         var team = await _dbContext.Teams
