@@ -1,4 +1,6 @@
-﻿using SSW.VerticalSliceArchitecture.Common.Behaviours;
+﻿using FastEndpoints;
+using SSW.VerticalSliceArchitecture.Common.Behaviours;
+using SSW.VerticalSliceArchitecture.Common.FastEndpoints;
 using SSW.VerticalSliceArchitecture.Common.Interfaces;
 using SSW.VerticalSliceArchitecture.Common.Services;
 
@@ -15,6 +17,15 @@ public static class DependencyInjection
         services.AddScoped<ICurrentUserService, CurrentUserService>();
         
         services.AddOpenApi();
+        
+        // Add FastEndpoints
+        services.AddFastEndpoints(options =>
+        {
+            options.Assemblies = [typeof(DependencyInjection).Assembly];
+        });
+        
+        // Register FastEndpoints event publisher for queuing domain events
+        services.AddScoped<IFastEndpointEventPublisher, FastEndpointEventPublisher>();
     }
     
     public static void AddApplication(this IHostApplicationBuilder builder)

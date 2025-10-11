@@ -1,4 +1,6 @@
 using System.Reflection;
+using FastEndpoints;
+using SSW.VerticalSliceArchitecture.Common.FastEndpoints;
 using SSW.VerticalSliceArchitecture.Host.Extensions;
 using SSW.VerticalSliceArchitecture.Host;
 
@@ -31,6 +33,22 @@ app.MapOpenApi();
 app.MapCustomScalarApiReference();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+
+// Use FastEndpoints alongside minimal APIs
+app.UseFastEndpoints(config =>
+{
+    config.Endpoints.RoutePrefix = "api";
+    config.Endpoints.Configurator = ep =>
+    {
+        // Add global pre-processors
+        ep.PreProcessor<LoggingPreProcessor>(Order.Before);
+        ep.PreProcessor<PerformancePreProcessor>(Order.Before);
+        
+        // Add global post-processors
+        ep.PostProcessor<PerformancePostProcessor>(Order.After);
+    };
+    config.Errors.UseProblemDetails();
+});
 
 app.RegisterEndpoints(appAssembly);
 app.UseEventualConsistencyMiddleware();

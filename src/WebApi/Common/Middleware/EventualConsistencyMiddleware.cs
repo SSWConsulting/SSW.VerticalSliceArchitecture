@@ -37,7 +37,10 @@ public class EventualConsistencyMiddleware
                 value is Queue<IDomainEvent> domainEvents)
             {
                 while (domainEvents.TryDequeue(out var nextEvent))
+                {
+                    // Publish to MediatR event handlers
                     await publisher.Publish(nextEvent);
+                }
             }
         }
         // ReSharper disable once RedundantCatchClause

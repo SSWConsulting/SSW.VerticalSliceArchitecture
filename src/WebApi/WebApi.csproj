@@ -21,6 +21,7 @@
     <PackageReference Include="Vogen" />
     <PackageReference Include="Ardalis.Specification.EntityFrameworkCore" />
     <PackageReference Include="Aspire.Microsoft.EntityFrameworkCore.SqlServer" />
+    <PackageReference Include="FastEndpoints" />
   </ItemGroup>
 
   <ItemGroup>
