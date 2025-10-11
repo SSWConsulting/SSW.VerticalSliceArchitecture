@@ -220,3 +220,32 @@ This approach:
 - Makes documentation easier to navigate and maintain
 - Ensures only significant changes are documented separately
 - Maintains high signal-to-noise ratio in documentation
+
+## Working Directory and File Management
+
+### Repository Boundaries
+All work, including temporary files, must be done within the repository boundaries:
+
+**DO**:
+- Create temporary files/directories within the repository root
+- Use `/tmp/` directory at repository root for temporary work files
+- Add temporary directories to `.gitignore` if they shouldn't be committed
+- Clean up temporary files after completing tasks
+
+**DO NOT**:
+- Create files outside the repository directory
+- Work in system temp directories or home directory
+- Leave temporary files scattered throughout the repository
+
+### Temporary Files
+- Use `/tmp/` at the repository root for scratch work
+- This directory is already in `.gitignore`
+- Always clean up temporary files when done
+- Document any temporary files that need to persist
+
+### Purpose
+This approach:
+- Keeps all work contained within the project
+- Prevents pollution of system directories
+- Makes cleanup easier and more predictable
+- Ensures proper git ignore handling
