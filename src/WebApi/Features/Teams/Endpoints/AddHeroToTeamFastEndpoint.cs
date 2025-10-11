@@ -11,18 +11,6 @@ public record AddHeroToTeamRequest
     public Guid HeroId { get; set; }
 }
 
-public class AddHeroToTeamRequestValidator : Validator<AddHeroToTeamRequest>
-{
-    public AddHeroToTeamRequestValidator()
-    {
-        RuleFor(v => v.TeamId)
-            .NotEmpty();
-
-        RuleFor(v => v.HeroId)
-            .NotEmpty();
-    }
-}
-
 public class AddHeroToTeamFastEndpoint : Endpoint<AddHeroToTeamRequest>
 {
     private readonly ApplicationDbContext _dbContext;
@@ -34,15 +22,11 @@ public class AddHeroToTeamFastEndpoint : Endpoint<AddHeroToTeamRequest>
 
     public override void Configure()
     {
-        Post("/teams/{teamId}/heroes/{heroId}");
+        Post("/{teamId}/heroes/{heroId}");
         Group<TeamsGroup>();
         Description(x => x
             .WithName("AddHeroToTeamFast")
-            .WithTags("Teams")
-            .Produces(201)
-            .ProducesProblemDetails(400)
-            .ProducesProblemDetails(404)
-            .ProducesProblemDetails(500));
+            .Produces(404));
     }
 
     public override async Task HandleAsync(AddHeroToTeamRequest req, CancellationToken ct)
@@ -77,5 +61,17 @@ public class AddHeroToTeamFastEndpoint : Endpoint<AddHeroToTeamRequest>
         await _dbContext.SaveChangesAsync(ct);
 
         await Send.NoContentAsync(ct);
+    }
+}
+
+public class AddHeroToTeamRequestValidator : Validator<AddHeroToTeamRequest>
+{
+    public AddHeroToTeamRequestValidator()
+    {
+        RuleFor(v => v.TeamId)
+            .NotEmpty();
+
+        RuleFor(v => v.HeroId)
+            .NotEmpty();
     }
 }

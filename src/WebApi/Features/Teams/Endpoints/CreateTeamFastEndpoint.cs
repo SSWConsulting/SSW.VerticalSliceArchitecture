@@ -5,15 +5,6 @@ namespace SSW.VerticalSliceArchitecture.Features.Teams.Endpoints;
 
 public record CreateTeamRequest(string Name);
 
-public class CreateTeamRequestValidator : Validator<CreateTeamRequest>
-{
-    public CreateTeamRequestValidator()
-    {
-        RuleFor(v => v.Name)
-            .NotEmpty();
-    }
-}
-
 public class CreateTeamFastEndpoint : Endpoint<CreateTeamRequest>
 {
     private readonly ApplicationDbContext _dbContext;
@@ -25,14 +16,10 @@ public class CreateTeamFastEndpoint : Endpoint<CreateTeamRequest>
 
     public override void Configure()
     {
-        Post("/teams");
+        Post("/");
         Group<TeamsGroup>();
         Description(x => x
-            .WithName("CreateTeamFast")
-            .WithTags("Teams")
-            .Produces(201)
-            .ProducesProblemDetails(400)
-            .ProducesProblemDetails(500));
+            .WithName("CreateTeamFast"));
     }
 
     public override async Task HandleAsync(CreateTeamRequest req, CancellationToken ct)
@@ -43,5 +30,14 @@ public class CreateTeamFastEndpoint : Endpoint<CreateTeamRequest>
         await _dbContext.SaveChangesAsync(ct);
 
         await Send.NoContentAsync(ct);
+    }
+}
+
+public class CreateTeamRequestValidator : Validator<CreateTeamRequest>
+{
+    public CreateTeamRequestValidator()
+    {
+        RuleFor(v => v.Name)
+            .NotEmpty();
     }
 }

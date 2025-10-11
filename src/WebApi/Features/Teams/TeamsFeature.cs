@@ -16,12 +16,14 @@ public class TeamsGroup : Group
 {
     public TeamsGroup()
     {
-        Configure("teams", ep =>
+        base.Configure("teams", ep =>
         {
             ep.Description(x => x
-                .WithGroupName("Teams")
-                .WithTags("Teams"));
-
+                // .WithGroupName("teams")
+                // .WithTags("teams")
+                .ProducesProblemDetails(500)
+            );
+            ep.AllowAnonymous();
         });
     }
 }

@@ -28,7 +28,6 @@ public class GetAllHeroesFastEndpoint : EndpointBase<GetAllHeroesResponse>
     {
         Get("/");
         Group<HeroesGroup>();
-        AllowAnonymous();
         Description(x => x
             .WithName("GetAllHeroesFast")
             .WithDescription("Gets all heroes"));

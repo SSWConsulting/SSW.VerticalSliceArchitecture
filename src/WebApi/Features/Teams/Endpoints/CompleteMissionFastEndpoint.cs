@@ -9,15 +9,6 @@ public record CompleteMissionRequest
     public Guid TeamId { get; set; }
 }
 
-public class CompleteMissionRequestValidator : Validator<CompleteMissionRequest>
-{
-    public CompleteMissionRequestValidator()
-    {
-        RuleFor(v => v.TeamId)
-            .NotEmpty();
-    }
-}
-
 public class CompleteMissionFastEndpoint : Endpoint<CompleteMissionRequest>
 {
     private readonly ApplicationDbContext _dbContext;
@@ -29,15 +20,11 @@ public class CompleteMissionFastEndpoint : Endpoint<CompleteMissionRequest>
 
     public override void Configure()
     {
-        Post("/teams/{teamId}/complete-mission");
+        Post("/{teamId}/complete-mission");
         Group<TeamsGroup>();
         Description(x => x
             .WithName("CompleteMissionFast")
-            .WithTags("Teams")
-            .Produces(200)
-            .ProducesProblemDetails(400)
-            .ProducesProblemDetails(404)
-            .ProducesProblemDetails(500));
+            .Produces(404));
     }
 
     public override async Task HandleAsync(CompleteMissionRequest req, CancellationToken ct)
@@ -66,5 +53,14 @@ public class CompleteMissionFastEndpoint : Endpoint<CompleteMissionRequest>
         await _dbContext.SaveChangesAsync(ct);
 
         await Send.NoContentAsync(ct);
+    }
+}
+
+public class CompleteMissionRequestValidator : Validator<CompleteMissionRequest>
+{
+    public CompleteMissionRequestValidator()
+    {
+        RuleFor(v => v.TeamId)
+            .NotEmpty();
     }
 }

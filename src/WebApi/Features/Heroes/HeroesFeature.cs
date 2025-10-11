@@ -23,6 +23,7 @@ public class HeroesGroup : Group
                 // .WithTags("Heroes")
                 .ProducesProblemDetails(500)
             );
+            ep.AllowAnonymous();
         });
     }
 }

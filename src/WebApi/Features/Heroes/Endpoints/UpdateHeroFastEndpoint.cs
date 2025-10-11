@@ -29,7 +29,6 @@ public class UpdateHeroFastEndpoint : Endpoint<UpdateHeroRequest>
     {
         Put("/{heroId}");
         Group<HeroesGroup>();
-        AllowAnonymous();
         Description(x => x
             .WithName("UpdateHeroFast")
             .WithDescription("Updates a hero"));

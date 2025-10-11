@@ -3,9 +3,12 @@ using SSW.VerticalSliceArchitecture.Common.FastEndpoints;
 
 namespace SSW.VerticalSliceArchitecture.Features.Teams.Endpoints;
 
-public record GetAllTeamsTeamDto(Guid Id, string Name);
+public record GetAllTeamsResponse(List<GetAllTeamsResponse.TeamDto> Teams)
+{
+    public record TeamDto(Guid Id, string Name);
+}
 
-public class GetAllTeamsFastEndpoint : EndpointBase<IReadOnlyList<GetAllTeamsTeamDto>>
+public class GetAllTeamsFastEndpoint : EndpointBase<GetAllTeamsResponse>
 {
     private readonly ApplicationDbContext _dbContext;
 
@@ -16,23 +19,18 @@ public class GetAllTeamsFastEndpoint : EndpointBase<IReadOnlyList<GetAllTeamsTea
 
     public override void Configure()
     {
-        Get("/teams");
+        Get("/");
         Group<TeamsGroup>();
-        AllowAnonymous();
         Description(x => x
-            .WithName("GetAllTeamsFast")
-            .WithTags("Teams")
-            .Produces<IReadOnlyList<GetAllTeamsTeamDto>>(200)
-            .ProducesProblemDetails(500));
+            .WithName("GetAllTeamsFast"));
     }
 
     public override async Task HandleAsync(EmptyRequest req, CancellationToken ct)
     {
         var teams = await _dbContext.Teams
-            .Select(t => new GetAllTeamsTeamDto(t.Id.Value, t.Name))
+            .Select(t => new GetAllTeamsResponse.TeamDto(t.Id.Value, t.Name))
             .ToListAsync(ct);
 
-
-        await Send.OkAsync(teams, ct);
+        await Send.OkAsync(new GetAllTeamsResponse(teams), ct);
     }
 }

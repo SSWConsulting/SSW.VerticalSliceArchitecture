@@ -3,27 +3,20 @@ using SSW.VerticalSliceArchitecture.Common.Domain.Teams;
 
 namespace SSW.VerticalSliceArchitecture.Features.Teams.Endpoints;
 
-public record GetTeamTeamDto(Guid Id, string Name, IEnumerable<GetTeamHeroDto> Heroes);
+public record GetTeamResponse(Guid Id, string Name, IEnumerable<GetTeamResponse.GetTeamHeroDto> Heroes)
+{
+    public record GetTeamHeroDto(Guid Id, string Name, string Alias, int PowerLevel, IEnumerable<GetTeamHeroPowerDto> Powers);
 
-public record GetTeamHeroDto(Guid Id, string Name, string Alias, int PowerLevel, IEnumerable<GetTeamHeroPowerDto> Powers);
-
-public record GetTeamHeroPowerDto(string Name, int PowerLevel);
+    public record GetTeamHeroPowerDto(string Name, int PowerLevel);
+}
 
 public record GetTeamRequest
 {
+    // DM: Can we push this into the constructor?
     public Guid TeamId { get; set; }
 }
 
-public class GetTeamRequestValidator : Validator<GetTeamRequest>
-{
-    public GetTeamRequestValidator()
-    {
-        RuleFor(v => v.TeamId)
-            .NotEmpty();
-    }
-}
-
-public class GetTeamFastEndpoint : Endpoint<GetTeamRequest, GetTeamTeamDto>
+public class GetTeamFastEndpoint : Endpoint<GetTeamRequest, GetTeamResponse>
 {
     private readonly ApplicationDbContext _dbContext;
 
@@ -34,15 +27,12 @@ public class GetTeamFastEndpoint : Endpoint<GetTeamRequest, GetTeamTeamDto>
 
     public override void Configure()
     {
-        Get("/teams/{teamId}");
+        Get("/{teamId}");
         Group<TeamsGroup>();
         AllowAnonymous();
         Description(x => x
             .WithName("GetTeamFast")
-            .WithTags("Teams")
-            .Produces<GetTeamTeamDto>(200)
-            .ProducesProblemDetails(404)
-            .ProducesProblemDetails(500));
+            .Produces(404));
     }
 
     public override async Task HandleAsync(GetTeamRequest req, CancellationToken ct)
@@ -53,16 +43,16 @@ public class GetTeamFastEndpoint : Endpoint<GetTeamRequest, GetTeamTeamDto>
 
         var team = await _dbContext.Teams
             .Where(t => t.Id == teamId)
-            .Select(t => new GetTeamTeamDto(
+            .Select(t => new GetTeamResponse(
                 t.Id.Value,
                 t.Name,
                 t.Heroes.Select(
-                    h => new GetTeamHeroDto(
+                    h => new GetTeamResponse.GetTeamHeroDto(
                         h.Id.Value, 
                         h.Name, 
                         h.Alias, 
                         h.PowerLevel, 
-                        h.Powers.Select(p => new GetTeamHeroPowerDto(p.Name, p.PowerLevel))
+                        h.Powers.Select(p => new GetTeamResponse.GetTeamHeroPowerDto(p.Name, p.PowerLevel))
                     )
                 )))
             .FirstOrDefaultAsync(ct);
@@ -74,5 +64,14 @@ public class GetTeamFastEndpoint : Endpoint<GetTeamRequest, GetTeamTeamDto>
         }
 
         await Send.OkAsync(team, ct);
+    }
+}
+
+public class GetTeamRequestValidator : Validator<GetTeamRequest>
+{
+    public GetTeamRequestValidator()
+    {
+        RuleFor(v => v.TeamId)
+            .NotEmpty();
     }
 }

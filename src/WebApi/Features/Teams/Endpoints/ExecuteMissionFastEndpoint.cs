@@ -9,18 +9,6 @@ public record ExecuteMissionRequest(string Description)
     public Guid TeamId { get; set; }
 }
 
-public class ExecuteMissionRequestValidator : Validator<ExecuteMissionRequest>
-{
-    public ExecuteMissionRequestValidator()
-    {
-        RuleFor(v => v.TeamId)
-            .NotEmpty();
-
-        RuleFor(v => v.Description)
-            .NotEmpty();
-    }
-}
-
 public class ExecuteMissionFastEndpoint : Endpoint<ExecuteMissionRequest>
 {
     private readonly ApplicationDbContext _dbContext;
@@ -32,15 +20,11 @@ public class ExecuteMissionFastEndpoint : Endpoint<ExecuteMissionRequest>
 
     public override void Configure()
     {
-        Post("/teams/{teamId}/execute-mission");
+        Post("/{teamId}/execute-mission");
         Group<TeamsGroup>();
         Description(x => x
             .WithName("ExecuteMissionFast")
-            .WithTags("Teams")
-            .Produces(200)
-            .ProducesProblemDetails(400)
-            .ProducesProblemDetails(404)
-            .ProducesProblemDetails(500));
+            .Produces(404));
     }
 
     public override async Task HandleAsync(ExecuteMissionRequest req, CancellationToken ct)
@@ -69,5 +53,17 @@ public class ExecuteMissionFastEndpoint : Endpoint<ExecuteMissionRequest>
         await _dbContext.SaveChangesAsync(ct);
 
         await Send.NoContentAsync(ct);
+    }
+}
+
+public class ExecuteMissionRequestValidator : Validator<ExecuteMissionRequest>
+{
+    public ExecuteMissionRequestValidator()
+    {
+        RuleFor(v => v.TeamId)
+            .NotEmpty();
+
+        RuleFor(v => v.Description)
+            .NotEmpty();
     }
 }

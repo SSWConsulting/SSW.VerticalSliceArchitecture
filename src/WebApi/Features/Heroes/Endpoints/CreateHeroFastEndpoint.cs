@@ -29,7 +29,6 @@ public class CreateHeroFastEndpoint : EndpointBase<CreateHeroRequest, CreateHero
     {
         Post("/");
         Group<HeroesGroup>();
-        AllowAnonymous();
         Description(x => x
                 .WithName("CreateHeroFast")
                 .WithDescription("Creates a new hero"));
