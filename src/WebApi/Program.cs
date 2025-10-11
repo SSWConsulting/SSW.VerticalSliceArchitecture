@@ -1,5 +1,6 @@
 using System.Reflection;
 using FastEndpoints;
+using FastEndpoints.Swagger;
 using SSW.VerticalSliceArchitecture.Common.FastEndpoints;
 using SSW.VerticalSliceArchitecture.Host.Extensions;
 using SSW.VerticalSliceArchitecture.Host;
@@ -16,6 +17,8 @@ builder.AddApplication();
 builder.AddInfrastructure();
 
 builder.Services.ConfigureFeatures(builder.Configuration, appAssembly);
+builder.Services.AddFastEndpoints();
+builder.Services.SwaggerDocument();
 
 var app = builder.Build();
 
@@ -29,8 +32,10 @@ else
     app.UseHsts();
 }
 
-app.MapOpenApi();
-app.MapCustomScalarApiReference();
+// Add back in to rest out Scalar
+// app.MapOpenApi();
+// app.MapCustomScalarApiReference();
+
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
@@ -50,7 +55,10 @@ app.UseFastEndpoints(config =>
     config.Errors.UseProblemDetails();
 });
 
+app.UseSwaggerGen();
+
 app.RegisterEndpoints(appAssembly);
+// app.MapFastEndpoints();
 app.UseEventualConsistencyMiddleware();
 
 app.MapDefaultEndpoints();
