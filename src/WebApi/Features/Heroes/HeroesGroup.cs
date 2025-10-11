@@ -11,6 +11,7 @@ public class HeroesGroup : Group
             ep.Description(x => x
                 .WithGroupName("Heroes")
                 .WithTags("Heroes"));
+
         });
     }
 }
