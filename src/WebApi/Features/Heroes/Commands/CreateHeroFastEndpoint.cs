@@ -4,26 +4,15 @@ using SSW.VerticalSliceArchitecture.Common.FastEndpoints;
 
 namespace SSW.VerticalSliceArchitecture.Features.Heroes.Commands;
 
-public record CreateHeroPowerDto(string Name, int PowerLevel);
-
 public record CreateHeroRequest(
     string Name,
     string Alias,
-    IEnumerable<CreateHeroPowerDto> Powers);
+    IEnumerable<CreateHeroRequest.HeroPowerDto> Powers)
+{
+    public record HeroPowerDto(string Name, int PowerLevel);
+}
 
 public record CreateHeroResponse(Guid Id);
-
-public class CreateHeroRequestValidator : Validator<CreateHeroRequest>
-{
-    public CreateHeroRequestValidator()
-    {
-        RuleFor(v => v.Name)
-            .NotEmpty();
-
-        RuleFor(v => v.Alias)
-            .NotEmpty();
-    }
-}
 
 public class CreateHeroFastEndpoint : EndpointBase<CreateHeroRequest, CreateHeroResponse>
 {
@@ -57,6 +46,8 @@ public class CreateHeroFastEndpoint : EndpointBase<CreateHeroRequest, CreateHero
 
         await _dbContext.Heroes.AddAsync(hero, ct);
         await _dbContext.SaveChangesAsync(ct);
+
+        // DM: Get events publishing via EF Interceptor
         
         // Queue domain events for eventual consistency processing
         // These will be processed by EventualConsistencyMiddleware after response is sent
@@ -66,7 +57,19 @@ public class CreateHeroFastEndpoint : EndpointBase<CreateHeroRequest, CreateHero
             _eventPublisher.QueueDomainEvent(domainEvent);
         }
 
-        HttpContext.Response.StatusCode = StatusCodes.Status201Created;
-        await HttpContext.Response.WriteAsJsonAsync(new CreateHeroResponse(hero.Id.Value), ct);
+        // DM: Look at sending a CreatedAt response
+        await Send.OkAsync(new CreateHeroResponse(hero.Id.Value), ct);
+    }
+}
+
+public class CreateHeroRequestValidator : Validator<CreateHeroRequest>
+{
+    public CreateHeroRequestValidator()
+    {
+        RuleFor(v => v.Name)
+            .NotEmpty();
+
+        RuleFor(v => v.Alias)
+            .NotEmpty();
     }
 }

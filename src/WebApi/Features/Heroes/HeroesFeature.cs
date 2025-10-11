@@ -1,4 +1,6 @@
-﻿namespace SSW.VerticalSliceArchitecture.Features.Heroes;
+﻿using FastEndpoints;
+
+namespace SSW.VerticalSliceArchitecture.Features.Heroes;
 
 public sealed class HeroesFeature : IFeature
 {
@@ -7,5 +9,19 @@ public sealed class HeroesFeature : IFeature
     public static void ConfigureServices(IServiceCollection services, IConfiguration config)
     {
 
+    }
+}
+
+public class HeroesGroup : Group
+{
+    public HeroesGroup()
+    {
+        Configure("heroes", ep =>
+        {
+            ep.Description(x => x
+                .WithGroupName("Heroes")
+                .WithTags("Heroes"));
+
+        });
     }
 }

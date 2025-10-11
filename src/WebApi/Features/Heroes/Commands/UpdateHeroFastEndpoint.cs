@@ -4,29 +4,14 @@ using SSW.VerticalSliceArchitecture.Common.FastEndpoints;
 
 namespace SSW.VerticalSliceArchitecture.Features.Heroes.Commands;
 
-public record UpdateHeroPowerDto(string Name, int PowerLevel);
 
 public record UpdateHeroRequest(
     string Name,
     string Alias,
-    IEnumerable<UpdateHeroPowerDto> Powers)
+    IEnumerable<UpdateHeroRequest.HeroPowerDto> Powers)
 {
     public Guid HeroId { get; set; }
-}
-
-public class UpdateHeroRequestValidator : Validator<UpdateHeroRequest>
-{
-    public UpdateHeroRequestValidator()
-    {
-        RuleFor(v => v.HeroId)
-            .NotEmpty();
-
-        RuleFor(v => v.Name)
-            .NotEmpty();
-
-        RuleFor(v => v.Alias)
-            .NotEmpty();
-    }
+    public record HeroPowerDto(string Name, int PowerLevel);
 }
 
 public class UpdateHeroFastEndpoint : Endpoint<UpdateHeroRequest>
@@ -64,11 +49,7 @@ public class UpdateHeroFastEndpoint : Endpoint<UpdateHeroRequest>
 
         if (hero is null)
         {
-            HttpContext.Response.StatusCode = StatusCodes.Status404NotFound;
-            await HttpContext.Response.WriteAsJsonAsync(new
-            {
-                errors = new[] { new { HeroErrors.NotFound.Code, HeroErrors.NotFound.Description } }
-            }, ct);
+            await Send.NotFoundAsync(ct);
             return;
         }
 
@@ -87,6 +68,21 @@ public class UpdateHeroFastEndpoint : Endpoint<UpdateHeroRequest>
             _eventPublisher.QueueDomainEvent(domainEvent);
         }
 
-        HttpContext.Response.StatusCode = StatusCodes.Status204NoContent;
+        await Send.NoContentAsync(ct);
+    }
+}
+
+public class UpdateHeroRequestValidator : Validator<UpdateHeroRequest>
+{
+    public UpdateHeroRequestValidator()
+    {
+        RuleFor(v => v.HeroId)
+            .NotEmpty();
+
+        RuleFor(v => v.Name)
+            .NotEmpty();
+
+        RuleFor(v => v.Alias)
+            .NotEmpty();
     }
 }

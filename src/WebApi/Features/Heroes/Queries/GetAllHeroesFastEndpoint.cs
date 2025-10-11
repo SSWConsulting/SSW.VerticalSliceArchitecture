@@ -3,9 +3,15 @@ using SSW.VerticalSliceArchitecture.Common.FastEndpoints;
 
 namespace SSW.VerticalSliceArchitecture.Features.Heroes.Queries;
 
-public record GetAllHeroesHeroDto(Guid Id, string Name, string Alias, int PowerLevel, IReadOnlyList<GetAllHeroesHeroPowerDto> Powers);
-
-public record GetAllHeroesHeroPowerDto(string Name, int PowerLevel);
+public record GetAllHeroesHeroDto(
+    Guid Id,
+    string Name,
+    string Alias,
+    int PowerLevel,
+    IReadOnlyList<GetAllHeroesHeroDto.HeroPowerDto> Powers)
+{
+    public record HeroPowerDto(string Name, int PowerLevel);
+}
 
 public class GetAllHeroesFastEndpoint : EndpointBase<IReadOnlyList<GetAllHeroesHeroDto>>
 {
@@ -36,9 +42,9 @@ public class GetAllHeroesFastEndpoint : EndpointBase<IReadOnlyList<GetAllHeroesH
                 h.Name,
                 h.Alias,
                 h.PowerLevel,
-                h.Powers.Select(p => new GetAllHeroesHeroPowerDto(p.Name, p.PowerLevel)).ToList()))
+                h.Powers.Select(p => new GetAllHeroesHeroDto.HeroPowerDto(p.Name, p.PowerLevel)).ToList()))
             .ToListAsync(ct);
 
-        await HttpContext.Response.WriteAsJsonAsync(heroes, ct);
+        await Send.OkAsync(heroes, ct);
     }
 }
