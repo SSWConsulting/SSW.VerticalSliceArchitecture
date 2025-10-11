@@ -1,8 +1,7 @@
 using FastEndpoints;
 using SSW.VerticalSliceArchitecture.Common.Domain.Teams;
-using SSW.VerticalSliceArchitecture.Common.FastEndpoints;
 
-namespace SSW.VerticalSliceArchitecture.Features.Teams.Queries;
+namespace SSW.VerticalSliceArchitecture.Features.Teams.Endpoints;
 
 public record GetTeamTeamDto(Guid Id, string Name, IEnumerable<GetTeamHeroDto> Heroes);
 

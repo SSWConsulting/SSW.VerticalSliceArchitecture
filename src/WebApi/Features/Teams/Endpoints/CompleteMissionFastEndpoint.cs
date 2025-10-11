@@ -1,42 +1,38 @@
 using Ardalis.Specification.EntityFrameworkCore;
 using FastEndpoints;
 using SSW.VerticalSliceArchitecture.Common.Domain.Teams;
-using SSW.VerticalSliceArchitecture.Common.FastEndpoints;
 
-namespace SSW.VerticalSliceArchitecture.Features.Teams.Commands;
+namespace SSW.VerticalSliceArchitecture.Features.Teams.Endpoints;
 
-public record ExecuteMissionRequest(string Description)
+public record CompleteMissionRequest
 {
     public Guid TeamId { get; set; }
 }
 
-public class ExecuteMissionRequestValidator : Validator<ExecuteMissionRequest>
+public class CompleteMissionRequestValidator : Validator<CompleteMissionRequest>
 {
-    public ExecuteMissionRequestValidator()
+    public CompleteMissionRequestValidator()
     {
         RuleFor(v => v.TeamId)
-            .NotEmpty();
-
-        RuleFor(v => v.Description)
             .NotEmpty();
     }
 }
 
-public class ExecuteMissionFastEndpoint : Endpoint<ExecuteMissionRequest>
+public class CompleteMissionFastEndpoint : Endpoint<CompleteMissionRequest>
 {
     private readonly ApplicationDbContext _dbContext;
 
-    public ExecuteMissionFastEndpoint(ApplicationDbContext dbContext)
+    public CompleteMissionFastEndpoint(ApplicationDbContext dbContext)
     {
         _dbContext = dbContext;
     }
 
     public override void Configure()
     {
-        Post("/teams/{teamId}/execute-mission");
+        Post("/teams/{teamId}/complete-mission");
         Group<TeamsGroup>();
         Description(x => x
-            .WithName("ExecuteMissionFast")
+            .WithName("CompleteMissionFast")
             .WithTags("Teams")
             .Produces(200)
             .ProducesProblemDetails(400)
@@ -44,7 +40,7 @@ public class ExecuteMissionFastEndpoint : Endpoint<ExecuteMissionRequest>
             .ProducesProblemDetails(500));
     }
 
-    public override async Task HandleAsync(ExecuteMissionRequest req, CancellationToken ct)
+    public override async Task HandleAsync(CompleteMissionRequest req, CancellationToken ct)
     {
         req.TeamId = Route<Guid>("teamId");
 
@@ -63,7 +59,7 @@ public class ExecuteMissionFastEndpoint : Endpoint<ExecuteMissionRequest>
             return;
         }
 
-        var result = team.ExecuteMission(req.Description);
+        var result = team.CompleteCurrentMission();
         if (result.IsError)
         {
             HttpContext.Response.StatusCode = StatusCodes.Status400BadRequest;

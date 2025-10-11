@@ -2,24 +2,24 @@ using FastEndpoints;
 using SSW.VerticalSliceArchitecture.Common.Domain.Heroes;
 using SSW.VerticalSliceArchitecture.Common.FastEndpoints;
 
-namespace SSW.VerticalSliceArchitecture.Features.Heroes.Commands;
+namespace SSW.VerticalSliceArchitecture.Features.Heroes.Endpoints;
 
-
-public record UpdateHeroRequest(
+public record CreateHeroRequest(
     string Name,
     string Alias,
-    IEnumerable<UpdateHeroRequest.HeroPowerDto> Powers)
+    IEnumerable<CreateHeroRequest.HeroPowerDto> Powers)
 {
-    public Guid HeroId { get; set; }
     public record HeroPowerDto(string Name, int PowerLevel);
 }
 
-public class UpdateHeroFastEndpoint : Endpoint<UpdateHeroRequest>
+public record CreateHeroResponse(Guid Id);
+
+public class CreateHeroFastEndpoint : EndpointBase<CreateHeroRequest, CreateHeroResponse>
 {
     private readonly ApplicationDbContext _dbContext;
     private readonly IFastEndpointEventPublisher _eventPublisher;
 
-    public UpdateHeroFastEndpoint(ApplicationDbContext dbContext, IFastEndpointEventPublisher eventPublisher)
+    public CreateHeroFastEndpoint(ApplicationDbContext dbContext, IFastEndpointEventPublisher eventPublisher)
     {
         _dbContext = dbContext;
         _eventPublisher = eventPublisher;
@@ -27,38 +27,27 @@ public class UpdateHeroFastEndpoint : Endpoint<UpdateHeroRequest>
 
     public override void Configure()
     {
-        Put("/heroes/{heroId}");
+        // DM: Check the group stuff works
+        Post("/heroes");
         Group<HeroesGroup>();
         Description(x => x
-            .WithName("UpdateHeroFast")
+            .WithName("CreateHeroFast")
             .WithTags("Heroes")
-            .Produces(204)
+            .Produces<CreateHeroResponse>(201)
             .ProducesProblemDetails(400)
-            .ProducesProblemDetails(404)
             .ProducesProblemDetails(500));
     }
 
-    public override async Task HandleAsync(UpdateHeroRequest req, CancellationToken ct)
+    public override async Task HandleAsync(CreateHeroRequest req, CancellationToken ct)
     {
-        req.HeroId = Route<Guid>("heroId");
-        
-        var heroId = HeroId.From(req.HeroId);
-        var hero = await _dbContext.Heroes
-            .Include(h => h.Powers)
-            .FirstOrDefaultAsync(h => h.Id == heroId, ct);
-
-        if (hero is null)
-        {
-            await Send.NotFoundAsync(ct);
-            return;
-        }
-
-        hero.Name = req.Name;
-        hero.Alias = req.Alias;
+        var hero = Hero.Create(req.Name, req.Alias);
         var powers = req.Powers.Select(p => new Power(p.Name, p.PowerLevel));
         hero.UpdatePowers(powers);
 
+        await _dbContext.Heroes.AddAsync(hero, ct);
         await _dbContext.SaveChangesAsync(ct);
+
+        // DM: Get events publishing via EF Interceptor
         
         // Queue domain events for eventual consistency processing
         // These will be processed by EventualConsistencyMiddleware after response is sent
@@ -68,17 +57,15 @@ public class UpdateHeroFastEndpoint : Endpoint<UpdateHeroRequest>
             _eventPublisher.QueueDomainEvent(domainEvent);
         }
 
-        await Send.NoContentAsync(ct);
+        // DM: Look at sending a CreatedAt response
+        await Send.OkAsync(new CreateHeroResponse(hero.Id.Value), ct);
     }
 }
 
-public class UpdateHeroRequestValidator : Validator<UpdateHeroRequest>
+public class CreateHeroRequestValidator : Validator<CreateHeroRequest>
 {
-    public UpdateHeroRequestValidator()
+    public CreateHeroRequestValidator()
     {
-        RuleFor(v => v.HeroId)
-            .NotEmpty();
-
         RuleFor(v => v.Name)
             .NotEmpty();
 

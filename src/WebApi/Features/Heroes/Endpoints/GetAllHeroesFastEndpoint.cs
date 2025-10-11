@@ -1,7 +1,7 @@
 using FastEndpoints;
 using SSW.VerticalSliceArchitecture.Common.FastEndpoints;
 
-namespace SSW.VerticalSliceArchitecture.Features.Heroes.Queries;
+namespace SSW.VerticalSliceArchitecture.Features.Heroes.Endpoints;
 
 public record GetAllHeroesHeroDto(
     Guid Id,

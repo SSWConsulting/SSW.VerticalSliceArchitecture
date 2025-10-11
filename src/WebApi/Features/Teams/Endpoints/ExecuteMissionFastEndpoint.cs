@@ -1,59 +1,53 @@
 using Ardalis.Specification.EntityFrameworkCore;
 using FastEndpoints;
-using SSW.VerticalSliceArchitecture.Common.Domain.Heroes;
 using SSW.VerticalSliceArchitecture.Common.Domain.Teams;
-using SSW.VerticalSliceArchitecture.Common.FastEndpoints;
 
-namespace SSW.VerticalSliceArchitecture.Features.Teams.Commands;
+namespace SSW.VerticalSliceArchitecture.Features.Teams.Endpoints;
 
-public record AddHeroToTeamRequest
+public record ExecuteMissionRequest(string Description)
 {
     public Guid TeamId { get; set; }
-    public Guid HeroId { get; set; }
 }
 
-public class AddHeroToTeamRequestValidator : Validator<AddHeroToTeamRequest>
+public class ExecuteMissionRequestValidator : Validator<ExecuteMissionRequest>
 {
-    public AddHeroToTeamRequestValidator()
+    public ExecuteMissionRequestValidator()
     {
         RuleFor(v => v.TeamId)
             .NotEmpty();
 
-        RuleFor(v => v.HeroId)
+        RuleFor(v => v.Description)
             .NotEmpty();
     }
 }
 
-public class AddHeroToTeamFastEndpoint : Endpoint<AddHeroToTeamRequest>
+public class ExecuteMissionFastEndpoint : Endpoint<ExecuteMissionRequest>
 {
     private readonly ApplicationDbContext _dbContext;
 
-    public AddHeroToTeamFastEndpoint(ApplicationDbContext dbContext)
+    public ExecuteMissionFastEndpoint(ApplicationDbContext dbContext)
     {
         _dbContext = dbContext;
     }
 
     public override void Configure()
     {
-        Post("/teams/{teamId}/heroes/{heroId}");
+        Post("/teams/{teamId}/execute-mission");
         Group<TeamsGroup>();
         Description(x => x
-            .WithName("AddHeroToTeamFast")
+            .WithName("ExecuteMissionFast")
             .WithTags("Teams")
-            .Produces(201)
+            .Produces(200)
             .ProducesProblemDetails(400)
             .ProducesProblemDetails(404)
             .ProducesProblemDetails(500));
     }
 
-    public override async Task HandleAsync(AddHeroToTeamRequest req, CancellationToken ct)
+    public override async Task HandleAsync(ExecuteMissionRequest req, CancellationToken ct)
     {
         req.TeamId = Route<Guid>("teamId");
-        req.HeroId = Route<Guid>("heroId");
 
         var teamId = TeamId.From(req.TeamId);
-        var heroId = HeroId.From(req.HeroId);
-
         var team = _dbContext.Teams
             .WithSpecification(new TeamByIdSpec(teamId))
             .FirstOrDefault();
@@ -68,23 +62,19 @@ public class AddHeroToTeamFastEndpoint : Endpoint<AddHeroToTeamRequest>
             return;
         }
 
-        var hero = _dbContext.Heroes
-            .WithSpecification(new HeroByIdSpec(heroId))
-            .FirstOrDefault();
-
-        if (hero is null)
+        var result = team.ExecuteMission(req.Description);
+        if (result.IsError)
         {
-            HttpContext.Response.StatusCode = StatusCodes.Status404NotFound;
+            HttpContext.Response.StatusCode = StatusCodes.Status400BadRequest;
             await HttpContext.Response.WriteAsJsonAsync(new
             {
-                errors = new[] { new { HeroErrors.NotFound.Code, HeroErrors.NotFound.Description } }
+                errors = result.Errors.Select(e => new { e.Code, e.Description })
             }, ct);
             return;
         }
 
-        team.AddHero(hero);
         await _dbContext.SaveChangesAsync(ct);
 
-        HttpContext.Response.StatusCode = StatusCodes.Status201Created;
+        HttpContext.Response.StatusCode = StatusCodes.Status200OK;
     }
 }

@@ -1,8 +1,7 @@
 using FastEndpoints;
 using SSW.VerticalSliceArchitecture.Common.Domain.Teams;
-using SSW.VerticalSliceArchitecture.Common.FastEndpoints;
 
-namespace SSW.VerticalSliceArchitecture.Features.Teams.Commands;
+namespace SSW.VerticalSliceArchitecture.Features.Teams.Endpoints;
 
 public record CreateTeamRequest(string Name);
 
