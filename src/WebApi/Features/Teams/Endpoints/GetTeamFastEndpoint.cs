@@ -19,7 +19,6 @@ public class GetTeamFastEndpoint(ApplicationDbContext dbContext)
     {
         Get("/{teamId}");
         Group<TeamsGroup>();
-        AllowAnonymous();
         Description(x => x
             .WithName("GetTeamFast")
             .Produces(404));
