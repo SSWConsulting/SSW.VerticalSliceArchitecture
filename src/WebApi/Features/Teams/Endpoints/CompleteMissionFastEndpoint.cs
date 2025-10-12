@@ -54,17 +54,3 @@ public class CompleteMissionRequestValidator : Validator<CompleteMissionRequest>
             .NotEmpty();
     }
 }
-
-// public static class FastEndpointsExtensions
-// {
-//     public static async Task SendResultAsync<TRequest>(this Endpoint<TRequest> endpoint, ErrorOr<Success> result, CancellationToken ct = default)
-//     {
-//         if (result.IsError)
-//         {
-//             var error = result.Errors.First();
-//             endpoint.AddError(error.Description, error.Code);
-//             await endpoint.Send.ErrorsAsync(cancellation: ct);
-//             return;
-//         }
-//     }
-// }

@@ -15,7 +15,7 @@ public record CreateHeroRequest(
 public record CreateHeroResponse(Guid Id);
 
 public class CreateHeroFastEndpoint(ApplicationDbContext dbContext, IFastEndpointEventPublisher eventPublisher) 
-    : EndpointBase<CreateHeroRequest, CreateHeroResponse>
+    : Endpoint<CreateHeroRequest, CreateHeroResponse>
 {
     public override void Configure()
     {

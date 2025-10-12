@@ -34,7 +34,7 @@ public class ExecuteMissionFastEndpoint(ApplicationDbContext dbContext)
         var result = team.ExecuteMission(req.Description);
         if (result.IsError)
         {
-            // DM: Figure out how to send errors
+            result.Errors.ForEach(e => AddError(e.Description, e.Code));
             await Send.ErrorsAsync(cancellation: ct);
             return;
         }

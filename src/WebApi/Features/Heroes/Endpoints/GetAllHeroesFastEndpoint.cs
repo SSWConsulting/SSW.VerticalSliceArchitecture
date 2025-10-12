@@ -1,5 +1,4 @@
 using FastEndpoints;
-using SSW.VerticalSliceArchitecture.Common.FastEndpoints;
 
 namespace SSW.VerticalSliceArchitecture.Features.Heroes.Endpoints;
 
@@ -16,7 +15,7 @@ public record GetAllHeroesResponse(List<GetAllHeroesResponse.HeroDto> Heroes)
 }
 
 public class GetAllHeroesFastEndpoint(ApplicationDbContext dbContext) 
-    : EndpointBase<GetAllHeroesResponse>
+    : EndpointWithoutRequest<GetAllHeroesResponse>
 {
     public override void Configure()
     {
@@ -27,7 +26,7 @@ public class GetAllHeroesFastEndpoint(ApplicationDbContext dbContext)
             .WithDescription("Gets all heroes"));
     }
 
-    public override async Task HandleAsync(EmptyRequest req, CancellationToken ct)
+    public async override Task HandleAsync(CancellationToken ct)
     {
         var heroes = await dbContext.Heroes
             .Select(h => new GetAllHeroesResponse.HeroDto(

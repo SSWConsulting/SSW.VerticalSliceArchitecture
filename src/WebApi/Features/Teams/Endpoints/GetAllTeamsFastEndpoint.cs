@@ -1,5 +1,4 @@
 using FastEndpoints;
-using SSW.VerticalSliceArchitecture.Common.FastEndpoints;
 
 namespace SSW.VerticalSliceArchitecture.Features.Teams.Endpoints;
 
@@ -9,7 +8,7 @@ public record GetAllTeamsResponse(List<GetAllTeamsResponse.TeamDto> Teams)
 }
 
 public class GetAllTeamsFastEndpoint(ApplicationDbContext dbContext) 
-    : EndpointBase<GetAllTeamsResponse>
+    : EndpointWithoutRequest<GetAllTeamsResponse>
 {
     public override void Configure()
     {
@@ -19,7 +18,7 @@ public class GetAllTeamsFastEndpoint(ApplicationDbContext dbContext)
             .WithName("GetAllTeamsFast"));
     }
 
-    public override async Task HandleAsync(EmptyRequest req, CancellationToken ct)
+    public override async Task HandleAsync(CancellationToken ct)
     {
         var teams = await dbContext.Teams
             .Select(t => new GetAllTeamsResponse.TeamDto(t.Id.Value, t.Name))
