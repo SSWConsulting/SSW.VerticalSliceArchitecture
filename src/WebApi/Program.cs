@@ -18,21 +18,7 @@ builder.AddInfrastructure();
 
 builder.Services.ConfigureFeatures(builder.Configuration, appAssembly);
 builder.Services.AddFastEndpoints();
-builder.Services.SwaggerDocument(o =>
-{
-    o.DocumentSettings = s =>
-    {
-        s.DocumentName = "v1";
-        s.Title = "SSW Vertical Slice Architecture API";
-        s.Version = "v1";
-    };
-    
-    // Configure to use application/json as default content type
-    o.SerializerSettings = s =>
-    {
-        s.PropertyNamingPolicy = null; // Use PascalCase
-    };
-});
+builder.Services.SwaggerDocument();
 
 var app = builder.Build();
 
@@ -69,13 +55,13 @@ app.UseFastEndpoints(config =>
     config.Errors.UseProblemDetails();
 });
 
-// app.UseSwaggerGen(uiConfig: c =>
-// {
+app.UseSwaggerGen(uiConfig: c =>
+{
 //     c.DefaultModelsExpandDepth = 1;
 //     c.DefaultModelExpandDepth = 1;
 //     // Set application/json as the default content type
 //     c.AdditionalSettings["contentType"] = "application/json";
-// });
+});
 
 app.RegisterEndpoints(appAssembly);
 // app.MapFastEndpoints();
