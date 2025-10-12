@@ -5,15 +5,23 @@ namespace SSW.VerticalSliceArchitecture.Common.FastEndpoints;
 
 public class LoggingPreProcessor : IGlobalPreProcessor
 {
+    private readonly ILogger _logger;
+    // private readonly ICurrentUserService _currentUserService;
+
+    public LoggingPreProcessor(ILogger<LoggingPreProcessor> logger/*, ICurrentUserService currentUserService*/)
+    {
+        _logger = logger;
+        // _currentUserService = currentUserService;
+    }
+
     public async Task PreProcessAsync(IPreProcessorContext context, CancellationToken ct)
     {
-        var logger = context.HttpContext.RequestServices.GetRequiredService(typeof(ILogger<>).MakeGenericType(context.Request.GetType())) as ILogger;
-        var currentUserService = context.HttpContext.Resolve<ICurrentUserService>();
-        
-        var requestName = context.Request.GetType().Name;
+        var currentUserService = context.HttpContext.RequestServices.GetRequiredService<ICurrentUserService>();
+
+        var requestName = context.Request?.GetType().Name;
         var userId = currentUserService.UserId ?? string.Empty;
 
-        logger?.LogInformation("WebApi Request: {Name} {@UserId} {@Request}",
+        _logger.LogInformation("WebApi Request: {Name} {@UserId} {@Request}",
             requestName, userId, context.Request);
 
         await Task.CompletedTask;
