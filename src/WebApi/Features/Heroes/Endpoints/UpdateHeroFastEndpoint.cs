@@ -45,7 +45,8 @@ public class UpdateHeroFastEndpoint(ApplicationDbContext dbContext, IFastEndpoin
         hero.UpdatePowers(powers);
 
         await dbContext.SaveChangesAsync(ct);
-        
+
+        // DM: Get events publishing via EF Interceptor
         // Queue domain events for eventual consistency processing
         // These will be processed by EventualConsistencyMiddleware after response is sent
         var domainEvents = hero.PopDomainEvents();

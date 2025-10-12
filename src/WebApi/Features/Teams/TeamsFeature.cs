@@ -8,7 +8,6 @@ public sealed class TeamsFeature : IFeature
 
     public static void ConfigureServices(IServiceCollection services, IConfiguration config)
     {
-
     }
 }
 

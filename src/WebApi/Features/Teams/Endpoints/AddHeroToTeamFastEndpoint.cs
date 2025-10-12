@@ -3,6 +3,7 @@ using FastEndpoints;
 using SSW.VerticalSliceArchitecture.Common.Domain.Heroes;
 using SSW.VerticalSliceArchitecture.Common.Domain.Teams;
 
+
 namespace SSW.VerticalSliceArchitecture.Features.Teams.Endpoints;
 
 public record AddHeroToTeamRequest(Guid TeamId, Guid HeroId);

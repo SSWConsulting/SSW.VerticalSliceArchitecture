@@ -1,6 +1,7 @@
 using Ardalis.Specification.EntityFrameworkCore;
 using FastEndpoints;
 using SSW.VerticalSliceArchitecture.Common.Domain.Teams;
+using IEndpoint = FastEndpoints.IEndpoint;
 
 namespace SSW.VerticalSliceArchitecture.Features.Teams.Endpoints;
 
@@ -34,7 +35,7 @@ public class CompleteMissionFastEndpoint(ApplicationDbContext dbContext)
         var result = team.CompleteCurrentMission();
         if (result.IsError)
         {
-            // DM: Figure out how to send errors
+            result.Errors.ForEach(e => AddError(e.Description, e.Code));
             await Send.ErrorsAsync(cancellation: ct);
             return;
         }
@@ -53,3 +54,17 @@ public class CompleteMissionRequestValidator : Validator<CompleteMissionRequest>
             .NotEmpty();
     }
 }
+
+// public static class FastEndpointsExtensions
+// {
+//     public static async Task SendResultAsync<TRequest>(this Endpoint<TRequest> endpoint, ErrorOr<Success> result, CancellationToken ct = default)
+//     {
+//         if (result.IsError)
+//         {
+//             var error = result.Errors.First();
+//             endpoint.AddError(error.Description, error.Code);
+//             await endpoint.Send.ErrorsAsync(cancellation: ct);
+//             return;
+//         }
+//     }
+// }
