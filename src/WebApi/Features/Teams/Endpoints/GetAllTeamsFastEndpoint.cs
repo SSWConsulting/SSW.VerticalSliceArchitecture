@@ -8,15 +8,9 @@ public record GetAllTeamsResponse(List<GetAllTeamsResponse.TeamDto> Teams)
     public record TeamDto(Guid Id, string Name);
 }
 
-public class GetAllTeamsFastEndpoint : EndpointBase<GetAllTeamsResponse>
+public class GetAllTeamsFastEndpoint(ApplicationDbContext dbContext) 
+    : EndpointBase<GetAllTeamsResponse>
 {
-    private readonly ApplicationDbContext _dbContext;
-
-    public GetAllTeamsFastEndpoint(ApplicationDbContext dbContext)
-    {
-        _dbContext = dbContext;
-    }
-
     public override void Configure()
     {
         Get("/");
@@ -27,7 +21,7 @@ public class GetAllTeamsFastEndpoint : EndpointBase<GetAllTeamsResponse>
 
     public override async Task HandleAsync(EmptyRequest req, CancellationToken ct)
     {
-        var teams = await _dbContext.Teams
+        var teams = await dbContext.Teams
             .Select(t => new GetAllTeamsResponse.TeamDto(t.Id.Value, t.Name))
             .ToListAsync(ct);
 

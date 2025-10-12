@@ -5,15 +5,9 @@ namespace SSW.VerticalSliceArchitecture.Features.Teams.Endpoints;
 
 public record CreateTeamRequest(string Name);
 
-public class CreateTeamFastEndpoint : Endpoint<CreateTeamRequest>
+public class CreateTeamFastEndpoint(ApplicationDbContext dbContext) 
+    : Endpoint<CreateTeamRequest>
 {
-    private readonly ApplicationDbContext _dbContext;
-
-    public CreateTeamFastEndpoint(ApplicationDbContext dbContext)
-    {
-        _dbContext = dbContext;
-    }
-
     public override void Configure()
     {
         Post("/");
@@ -26,8 +20,8 @@ public class CreateTeamFastEndpoint : Endpoint<CreateTeamRequest>
     {
         var team = Team.Create(req.Name);
 
-        await _dbContext.Teams.AddAsync(team, ct);
-        await _dbContext.SaveChangesAsync(ct);
+        await dbContext.Teams.AddAsync(team, ct);
+        await dbContext.SaveChangesAsync(ct);
 
         await Send.NoContentAsync(ct);
     }

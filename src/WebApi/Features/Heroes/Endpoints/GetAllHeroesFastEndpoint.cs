@@ -15,15 +15,9 @@ public record GetAllHeroesResponse(List<GetAllHeroesResponse.HeroDto> Heroes)
     public record HeroPowerDto(string Name, int PowerLevel);
 }
 
-public class GetAllHeroesFastEndpoint : EndpointBase<GetAllHeroesResponse>
+public class GetAllHeroesFastEndpoint(ApplicationDbContext dbContext) 
+    : EndpointBase<GetAllHeroesResponse>
 {
-    private readonly ApplicationDbContext _dbContext;
-
-    public GetAllHeroesFastEndpoint(ApplicationDbContext dbContext)
-    {
-        _dbContext = dbContext;
-    }
-
     public override void Configure()
     {
         Get("/");
@@ -35,7 +29,7 @@ public class GetAllHeroesFastEndpoint : EndpointBase<GetAllHeroesResponse>
 
     public override async Task HandleAsync(EmptyRequest req, CancellationToken ct)
     {
-        var heroes = await _dbContext.Heroes
+        var heroes = await dbContext.Heroes
             .Select(h => new GetAllHeroesResponse.HeroDto(
                 h.Id.Value,
                 h.Name,

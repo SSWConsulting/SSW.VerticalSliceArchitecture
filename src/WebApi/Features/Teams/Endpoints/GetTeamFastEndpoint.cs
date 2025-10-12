@@ -12,15 +12,9 @@ public record GetTeamResponse(Guid Id, string Name, IEnumerable<GetTeamResponse.
 
 public record GetTeamRequest(Guid TeamId);
 
-public class GetTeamFastEndpoint : Endpoint<GetTeamRequest, GetTeamResponse>
+public class GetTeamFastEndpoint(ApplicationDbContext dbContext) 
+    : Endpoint<GetTeamRequest, GetTeamResponse>
 {
-    private readonly ApplicationDbContext _dbContext;
-
-    public GetTeamFastEndpoint(ApplicationDbContext dbContext)
-    {
-        _dbContext = dbContext;
-    }
-
     public override void Configure()
     {
         Get("/{teamId}");
@@ -35,7 +29,7 @@ public class GetTeamFastEndpoint : Endpoint<GetTeamRequest, GetTeamResponse>
     {
         var teamId = TeamId.From(req.TeamId);
 
-        var team = await _dbContext.Teams
+        var team = await dbContext.Teams
             .Where(t => t.Id == teamId)
             .Select(t => new GetTeamResponse(
                 t.Id.Value,

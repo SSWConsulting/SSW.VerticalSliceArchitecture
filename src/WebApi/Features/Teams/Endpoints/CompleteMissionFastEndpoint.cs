@@ -6,15 +6,9 @@ namespace SSW.VerticalSliceArchitecture.Features.Teams.Endpoints;
 
 public record CompleteMissionRequest(Guid TeamId);
 
-public class CompleteMissionFastEndpoint : Endpoint<CompleteMissionRequest>
+public class CompleteMissionFastEndpoint(ApplicationDbContext dbContext) 
+    : Endpoint<CompleteMissionRequest>
 {
-    private readonly ApplicationDbContext _dbContext;
-
-    public CompleteMissionFastEndpoint(ApplicationDbContext dbContext)
-    {
-        _dbContext = dbContext;
-    }
-
     public override void Configure()
     {
         Post("/{teamId}/complete-mission");
@@ -27,7 +21,7 @@ public class CompleteMissionFastEndpoint : Endpoint<CompleteMissionRequest>
     public override async Task HandleAsync(CompleteMissionRequest req, CancellationToken ct)
     {
         var teamId = TeamId.From(req.TeamId);
-        var team = _dbContext.Teams
+        var team = dbContext.Teams
             .WithSpecification(new TeamByIdSpec(teamId))
             .FirstOrDefault();
 
@@ -45,7 +39,7 @@ public class CompleteMissionFastEndpoint : Endpoint<CompleteMissionRequest>
             return;
         }
 
-        await _dbContext.SaveChangesAsync(ct);
+        await dbContext.SaveChangesAsync(ct);
 
         await Send.NoContentAsync(ct);
     }

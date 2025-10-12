@@ -14,17 +14,9 @@ public record CreateHeroRequest(
 
 public record CreateHeroResponse(Guid Id);
 
-public class CreateHeroFastEndpoint : EndpointBase<CreateHeroRequest, CreateHeroResponse>
+public class CreateHeroFastEndpoint(ApplicationDbContext dbContext, IFastEndpointEventPublisher eventPublisher) 
+    : EndpointBase<CreateHeroRequest, CreateHeroResponse>
 {
-    private readonly ApplicationDbContext _dbContext;
-    private readonly IFastEndpointEventPublisher _eventPublisher;
-
-    public CreateHeroFastEndpoint(ApplicationDbContext dbContext, IFastEndpointEventPublisher eventPublisher)
-    {
-        _dbContext = dbContext;
-        _eventPublisher = eventPublisher;
-    }
-
     public override void Configure()
     {
         Post("/");
@@ -40,8 +32,8 @@ public class CreateHeroFastEndpoint : EndpointBase<CreateHeroRequest, CreateHero
         var powers = req.Powers.Select(p => new Power(p.Name, p.PowerLevel));
         hero.UpdatePowers(powers);
 
-        await _dbContext.Heroes.AddAsync(hero, ct);
-        await _dbContext.SaveChangesAsync(ct);
+        await dbContext.Heroes.AddAsync(hero, ct);
+        await dbContext.SaveChangesAsync(ct);
 
         // DM: Get events publishing via EF Interceptor
         
@@ -50,7 +42,7 @@ public class CreateHeroFastEndpoint : EndpointBase<CreateHeroRequest, CreateHero
         var domainEvents = hero.PopDomainEvents();
         foreach (var domainEvent in domainEvents)
         {
-            _eventPublisher.QueueDomainEvent(domainEvent);
+            eventPublisher.QueueDomainEvent(domainEvent);
         }
 
         // DM: Look at sending a CreatedAt response

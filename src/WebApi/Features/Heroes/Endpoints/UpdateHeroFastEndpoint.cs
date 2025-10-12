@@ -14,17 +14,9 @@ public record UpdateHeroRequest(
     public record HeroPowerDto(string Name, int PowerLevel);
 }
 
-public class UpdateHeroFastEndpoint : Endpoint<UpdateHeroRequest>
+public class UpdateHeroFastEndpoint(ApplicationDbContext dbContext, IFastEndpointEventPublisher eventPublisher) 
+    : Endpoint<UpdateHeroRequest>
 {
-    private readonly ApplicationDbContext _dbContext;
-    private readonly IFastEndpointEventPublisher _eventPublisher;
-
-    public UpdateHeroFastEndpoint(ApplicationDbContext dbContext, IFastEndpointEventPublisher eventPublisher)
-    {
-        _dbContext = dbContext;
-        _eventPublisher = eventPublisher;
-    }
-
     public override void Configure()
     {
         Put("/{heroId}");
@@ -37,7 +29,7 @@ public class UpdateHeroFastEndpoint : Endpoint<UpdateHeroRequest>
     public override async Task HandleAsync(UpdateHeroRequest req, CancellationToken ct)
     {
         var heroId = HeroId.From(req.HeroId);
-        var hero = await _dbContext.Heroes
+        var hero = await dbContext.Heroes
             .Include(h => h.Powers)
             .FirstOrDefaultAsync(h => h.Id == heroId, ct);
 
@@ -52,14 +44,14 @@ public class UpdateHeroFastEndpoint : Endpoint<UpdateHeroRequest>
         var powers = req.Powers.Select(p => new Power(p.Name, p.PowerLevel));
         hero.UpdatePowers(powers);
 
-        await _dbContext.SaveChangesAsync(ct);
+        await dbContext.SaveChangesAsync(ct);
         
         // Queue domain events for eventual consistency processing
         // These will be processed by EventualConsistencyMiddleware after response is sent
         var domainEvents = hero.PopDomainEvents();
         foreach (var domainEvent in domainEvents)
         {
-            _eventPublisher.QueueDomainEvent(domainEvent);
+            eventPublisher.QueueDomainEvent(domainEvent);
         }
 
         // await Send.NoContentAsync(ct);

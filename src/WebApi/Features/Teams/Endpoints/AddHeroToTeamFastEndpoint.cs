@@ -7,15 +7,9 @@ namespace SSW.VerticalSliceArchitecture.Features.Teams.Endpoints;
 
 public record AddHeroToTeamRequest(Guid TeamId, Guid HeroId);
 
-public class AddHeroToTeamFastEndpoint : Endpoint<AddHeroToTeamRequest>
+public class AddHeroToTeamFastEndpoint(ApplicationDbContext dbContext) 
+    : Endpoint<AddHeroToTeamRequest>
 {
-    private readonly ApplicationDbContext _dbContext;
-
-    public AddHeroToTeamFastEndpoint(ApplicationDbContext dbContext)
-    {
-        _dbContext = dbContext;
-    }
-
     public override void Configure()
     {
         Post("/{teamId}/heroes/{heroId}");
@@ -30,7 +24,7 @@ public class AddHeroToTeamFastEndpoint : Endpoint<AddHeroToTeamRequest>
         var teamId = TeamId.From(req.TeamId);
         var heroId = HeroId.From(req.HeroId);
 
-        var team = _dbContext.Teams
+        var team = dbContext.Teams
             .WithSpecification(new TeamByIdSpec(teamId))
             .FirstOrDefault();
 
@@ -40,7 +34,7 @@ public class AddHeroToTeamFastEndpoint : Endpoint<AddHeroToTeamRequest>
             return;
         }
 
-        var hero = _dbContext.Heroes
+        var hero = dbContext.Heroes
             .WithSpecification(new HeroByIdSpec(heroId))
             .FirstOrDefault();
 
@@ -51,7 +45,7 @@ public class AddHeroToTeamFastEndpoint : Endpoint<AddHeroToTeamRequest>
         }
 
         team.AddHero(hero);
-        await _dbContext.SaveChangesAsync(ct);
+        await dbContext.SaveChangesAsync(ct);
 
         await Send.NoContentAsync(ct);
     }
