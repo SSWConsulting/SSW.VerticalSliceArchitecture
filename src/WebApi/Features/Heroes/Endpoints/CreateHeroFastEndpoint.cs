@@ -61,3 +61,30 @@ public class CreateHeroRequestValidator : Validator<CreateHeroRequest>
             .NotEmpty();
     }
 }
+
+public class CreateHeroSummary : Summary<CreateHeroFastEndpoint>
+{
+    public CreateHeroSummary()
+    {
+        Summary = "Create a new hero";
+        Description = "Creates a new hero with the specified name, alias, and powers. Returns the ID of the created hero.";
+        
+        // Request example
+        ExampleRequest = new CreateHeroRequest(
+            Name: "Peter Parker",
+            Alias: "Spider-Man",
+            Powers:
+            [
+                new CreateHeroRequest.HeroPowerDto("Web Slinging", 85),
+                new CreateHeroRequest.HeroPowerDto("Spider Sense", 90),
+                new CreateHeroRequest.HeroPowerDto("Wall Crawling", 95)
+            ]);
+        
+        // Response examples
+        Response<CreateHeroResponse>(201, "Hero created successfully", 
+            example: new CreateHeroResponse(Guid.Parse("3fa85f64-5717-4562-b3fc-2c963f66afa6")));
+        
+        Response(400, "Invalid request - validation failed");
+        Response(500, "Internal server error");
+    }
+}

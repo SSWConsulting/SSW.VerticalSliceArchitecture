@@ -74,3 +74,30 @@ public class UpdateHeroRequestValidator : Validator<UpdateHeroRequest>
             .NotEmpty();
     }
 }
+
+public class UpdateHeroSummary : Summary<UpdateHeroFastEndpoint>
+{
+    public UpdateHeroSummary()
+    {
+        Summary = "Update an existing hero";
+        Description = "Updates a hero's name, alias, and powers. The hero must exist.";
+        
+        // Request example
+        ExampleRequest = new UpdateHeroRequest(
+            Name: "Peter Benjamin Parker",
+            Alias: "The Amazing Spider-Man",
+            HeroId: Guid.Parse("3fa85f64-5717-4562-b3fc-2c963f66afa6"),
+            Powers:
+            [
+                new UpdateHeroRequest.HeroPowerDto("Web Slinging", 90),
+                new UpdateHeroRequest.HeroPowerDto("Spider Sense", 95),
+                new UpdateHeroRequest.HeroPowerDto("Wall Crawling", 98),
+                new UpdateHeroRequest.HeroPowerDto("Super Strength", 75)
+            ]);
+        
+        Response(200, "Hero updated successfully");
+        Response(404, "Hero not found");
+        Response(400, "Invalid request - validation failed");
+        Response(500, "Internal server error");
+    }
+}

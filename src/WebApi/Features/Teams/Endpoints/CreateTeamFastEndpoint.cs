@@ -35,3 +35,18 @@ public class CreateTeamRequestValidator : Validator<CreateTeamRequest>
             .NotEmpty();
     }
 }
+
+public class CreateTeamSummary : Summary<CreateTeamFastEndpoint>
+{
+    public CreateTeamSummary()
+    {
+        Summary = "Create a new team";
+        Description = "Creates a new superhero team with the specified name. Heroes can be added to the team later.";
+        
+        ExampleRequest = new CreateTeamRequest("Avengers");
+        
+        Response(204, "Team created successfully");
+        Response(400, "Invalid request - validation failed");
+        Response(500, "Internal server error");
+    }
+}
