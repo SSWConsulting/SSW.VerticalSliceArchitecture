@@ -1,6 +1,4 @@
-﻿using FastEndpoints;
-
-namespace SSW.VerticalSliceArchitecture.Features.Teams;
+﻿namespace SSW.VerticalSliceArchitecture.Features.Teams;
 
 public sealed class TeamsFeature : IFeature
 {
@@ -24,5 +22,10 @@ public class TeamsGroup : Group
             );
             ep.AllowAnonymous();
         });
+    }
+
+    protected override void Configure(string routePrefix, Action<EndpointDefinition> ep)
+    {
+        base.Configure(routePrefix, ep);
     }
 }

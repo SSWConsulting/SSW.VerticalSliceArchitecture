@@ -1,18 +1,17 @@
-﻿using MediatR;
-using Microsoft.EntityFrameworkCore.Diagnostics;
+﻿using Microsoft.EntityFrameworkCore.Diagnostics;
 using SSW.VerticalSliceArchitecture.Common.Domain.Base.Interfaces;
-using SSW.VerticalSliceArchitecture.Common.Middleware;
+using SSW.VerticalSliceArchitecture.Common.FastEndpoints;
 
 namespace SSW.VerticalSliceArchitecture.Common.Interceptors;
 
 public class DispatchDomainEventsInterceptor : SaveChangesInterceptor
 {
-    private readonly IPublisher _publisher;
+    // private readonly IPublisher _publisher;
     private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public DispatchDomainEventsInterceptor(IPublisher publisher, IHttpContextAccessor httpContextAccessor)
+    public DispatchDomainEventsInterceptor(/*IPublisher publisher,*/ IHttpContextAccessor httpContextAccessor)
     {
-        _publisher = publisher;
+        // _publisher = publisher;
         _httpContextAccessor = httpContextAccessor;
     }
 
@@ -68,23 +67,23 @@ public class DispatchDomainEventsInterceptor : SaveChangesInterceptor
 
     private bool IsUserWaitingOnline() => _httpContextAccessor.HttpContext is not null;
 
-    private async Task PublishDomainEvents(IEnumerable<IDomainEvent> domainEvents)
+    private async Task PublishDomainEvents(IEnumerable<IEvent> domainEvents)
     {
         foreach (var domainEvent in domainEvents)
-            await _publisher.Publish(domainEvent);
+            await domainEvent.PublishAsync();
     }
 
-    private void AddDomainEventsToOfflineProcessingQueue(IEnumerable<IDomainEvent> domainEvents)
+    private void AddDomainEventsToOfflineProcessingQueue(IEnumerable<IEvent> domainEvents)
     {
-        var domainEventsQueue = _httpContextAccessor.HttpContext!.Items.TryGetValue(EventualConsistencyMiddleware.DomainEventsKey, out var value) &&
-                                value is Queue<IDomainEvent> existingDomainEvents
+        var domainEventsQueue = _httpContextAccessor.HttpContext!.Items.TryGetValue(EventualConsistencyPostProcessor.DomainEventsKey, out var value) &&
+                                value is Queue<IEvent> existingDomainEvents
             ? existingDomainEvents
-            : new Queue<IDomainEvent>();
+            : new Queue<IEvent>();
 
         // Queue is processed by EventualConsistencyMiddleware
         foreach (var domainEvent in domainEvents)
             domainEventsQueue.Enqueue(domainEvent);
 
-        _httpContextAccessor.HttpContext.Items[EventualConsistencyMiddleware.DomainEventsKey] = domainEventsQueue;
+        _httpContextAccessor.HttpContext.Items[EventualConsistencyPostProcessor.DomainEventsKey] = domainEventsQueue;
     }
 }

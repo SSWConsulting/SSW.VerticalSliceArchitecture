@@ -1,5 +1,3 @@
-using FastEndpoints;
-
 namespace SSW.VerticalSliceArchitecture.Features.Teams.Endpoints;
 
 public record GetAllTeamsResponse(List<GetAllTeamsResponse.TeamDto> Teams)

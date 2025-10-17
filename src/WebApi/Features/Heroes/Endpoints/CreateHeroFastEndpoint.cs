@@ -1,6 +1,4 @@
-using FastEndpoints;
 using SSW.VerticalSliceArchitecture.Common.Domain.Heroes;
-using SSW.VerticalSliceArchitecture.Common.FastEndpoints;
 
 namespace SSW.VerticalSliceArchitecture.Features.Heroes.Endpoints;
 
@@ -14,7 +12,7 @@ public record CreateHeroRequest(
 
 public record CreateHeroResponse(Guid Id);
 
-public class CreateHeroFastEndpoint(ApplicationDbContext dbContext, IFastEndpointEventPublisher eventPublisher) 
+public class CreateHeroFastEndpoint(ApplicationDbContext dbContext)
     : Endpoint<CreateHeroRequest, CreateHeroResponse>
 {
     public override void Configure()
@@ -22,8 +20,8 @@ public class CreateHeroFastEndpoint(ApplicationDbContext dbContext, IFastEndpoin
         Post("/");
         Group<HeroesGroup>();
         Description(x => x
-                .WithName("CreateHeroFast")
-                .WithDescription("Creates a new hero"));
+            .WithName("CreateHeroFast")
+            .WithDescription("Creates a new hero"));
     }
 
     public override async Task HandleAsync(CreateHeroRequest req, CancellationToken ct)
@@ -35,17 +33,9 @@ public class CreateHeroFastEndpoint(ApplicationDbContext dbContext, IFastEndpoin
         await dbContext.Heroes.AddAsync(hero, ct);
         await dbContext.SaveChangesAsync(ct);
 
-        // DM: Get events publishing via EF Interceptor
-        
-        // Queue domain events for eventual consistency processing
-        // These will be processed by EventualConsistencyMiddleware after response is sent
-        var domainEvents = hero.PopDomainEvents();
-        foreach (var domainEvent in domainEvents)
-        {
-            eventPublisher.QueueDomainEvent(domainEvent);
-        }
+        // var evt = new AnotherEvent();
+        // await evt.PublishAsync(cancellation:ct);
 
-        // DM: Look at sending a CreatedAt response
         await Send.OkAsync(new CreateHeroResponse(hero.Id.Value), ct);
     }
 }
@@ -59,6 +49,13 @@ public class CreateHeroRequestValidator : Validator<CreateHeroRequest>
 
         RuleFor(v => v.Alias)
             .NotEmpty();
+
+        RuleForEach(v => v.Powers)
+            .ChildRules(power =>
+            {
+                power.RuleFor(p => p.PowerLevel)
+                    .InclusiveBetween(1, 10);
+            });
     }
 }
 
@@ -67,23 +64,24 @@ public class CreateHeroSummary : Summary<CreateHeroFastEndpoint>
     public CreateHeroSummary()
     {
         Summary = "Create a new hero";
-        Description = "Creates a new hero with the specified name, alias, and powers. Returns the ID of the created hero.";
-        
+        Description =
+            "Creates a new hero with the specified name, alias, and powers. Returns the ID of the created hero.";
+
         // Request example
         ExampleRequest = new CreateHeroRequest(
             Name: "Peter Parker",
             Alias: "Spider-Man",
             Powers:
             [
-                new CreateHeroRequest.HeroPowerDto("Web Slinging", 85),
-                new CreateHeroRequest.HeroPowerDto("Spider Sense", 90),
-                new CreateHeroRequest.HeroPowerDto("Wall Crawling", 95)
+                new CreateHeroRequest.HeroPowerDto("Web Slinging", 1),
+                new CreateHeroRequest.HeroPowerDto("Spider Sense", 7),
+                new CreateHeroRequest.HeroPowerDto("Wall Crawling", 10)
             ]);
-        
+
         // Response examples
-        Response<CreateHeroResponse>(201, "Hero created successfully", 
+        Response<CreateHeroResponse>(201, "Hero created successfully",
             example: new CreateHeroResponse(Guid.Parse("3fa85f64-5717-4562-b3fc-2c963f66afa6")));
-        
+
         Response(400, "Invalid request - validation failed");
         Response(500, "Internal server error");
     }

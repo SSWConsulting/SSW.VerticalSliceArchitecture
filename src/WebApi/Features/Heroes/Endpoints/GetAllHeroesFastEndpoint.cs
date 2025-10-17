@@ -1,5 +1,3 @@
-using FastEndpoints;
-
 namespace SSW.VerticalSliceArchitecture.Features.Heroes.Endpoints;
 
 public record GetAllHeroesResponse(List<GetAllHeroesResponse.HeroDto> Heroes)

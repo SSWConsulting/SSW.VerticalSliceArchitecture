@@ -1,4 +1,3 @@
-using FastEndpoints;
 using SSW.VerticalSliceArchitecture.Common.Interfaces;
 
 namespace SSW.VerticalSliceArchitecture.Common.FastEndpoints;

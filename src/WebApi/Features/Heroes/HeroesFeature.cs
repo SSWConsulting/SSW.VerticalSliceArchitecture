@@ -1,6 +1,4 @@
-﻿using FastEndpoints;
-
-namespace SSW.VerticalSliceArchitecture.Features.Heroes;
+﻿namespace SSW.VerticalSliceArchitecture.Features.Heroes;
 
 public sealed class HeroesFeature : IFeature
 {

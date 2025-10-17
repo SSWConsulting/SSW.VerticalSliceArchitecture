@@ -1,4 +1,3 @@
-using FastEndpoints;
 using SSW.VerticalSliceArchitecture.Common.Domain.Teams;
 
 namespace SSW.VerticalSliceArchitecture.Features.Teams.Endpoints;

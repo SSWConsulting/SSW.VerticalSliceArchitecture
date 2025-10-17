@@ -12,11 +12,11 @@ namespace SSW.VerticalSliceArchitecture.Common.Domain.Base;
 /// </summary>
 public abstract class AggregateRoot<TId> : Entity<TId>, IAggregateRoot
 {
-    private readonly List<IDomainEvent> _domainEvents = [];
+    private readonly List<IEvent> _domainEvents = [];
 
-    public void AddDomainEvent(IDomainEvent domainEvent) => _domainEvents.Add(domainEvent);
+    public void AddDomainEvent(IEvent domainEvent) => _domainEvents.Add(domainEvent);
 
-    public IReadOnlyList<IDomainEvent> PopDomainEvents()
+    public IReadOnlyList<IEvent> PopDomainEvents()
     {
         var copy = _domainEvents.ToList().AsReadOnly();
         _domainEvents.Clear();

@@ -1,4 +1,3 @@
-using FastEndpoints;
 using System.Diagnostics;
 
 namespace SSW.VerticalSliceArchitecture.Common.FastEndpoints;

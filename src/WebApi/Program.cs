@@ -1,5 +1,4 @@
 using System.Reflection;
-using FastEndpoints;
 using FastEndpoints.Swagger;
 using SSW.VerticalSliceArchitecture.Common.FastEndpoints;
 using SSW.VerticalSliceArchitecture.Host.Extensions;
@@ -17,8 +16,6 @@ builder.AddApplication();
 builder.AddInfrastructure();
 
 builder.Services.ConfigureFeatures(builder.Configuration, appAssembly);
-builder.Services.AddFastEndpoints();
-builder.Services.SwaggerDocument();
 
 var app = builder.Build();
 
@@ -51,6 +48,7 @@ app.UseFastEndpoints(config =>
         
         // Add global post-processors
         ep.PostProcessor<PerformancePostProcessor>(Order.After);
+        ep.PostProcessor<EventualConsistencyPostProcessor>(Order.After);
     };
     config.Errors.UseProblemDetails();
 });
@@ -63,9 +61,9 @@ app.UseSwaggerGen(uiConfig: c =>
 //     c.AdditionalSettings["contentType"] = "application/json";
 });
 
-app.RegisterEndpoints(appAssembly);
+// app.RegisterEndpoints(appAssembly);
 // app.MapFastEndpoints();
-app.UseEventualConsistencyMiddleware();
+// app.UseEventualConsistencyMiddleware();
 
 app.MapDefaultEndpoints();
 app.UseExceptionHandler();

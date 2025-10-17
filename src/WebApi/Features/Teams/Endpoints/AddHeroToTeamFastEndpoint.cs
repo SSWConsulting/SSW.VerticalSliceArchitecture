@@ -1,5 +1,4 @@
 using Ardalis.Specification.EntityFrameworkCore;
-using FastEndpoints;
 using SSW.VerticalSliceArchitecture.Common.Domain.Heroes;
 using SSW.VerticalSliceArchitecture.Common.Domain.Teams;
 

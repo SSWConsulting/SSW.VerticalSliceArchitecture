@@ -2,7 +2,7 @@
 
 public interface IAggregateRoot
 {
-    void AddDomainEvent(IDomainEvent domainEvent);
+    void AddDomainEvent(IEvent domainEvent);
 
-    IReadOnlyList<IDomainEvent> PopDomainEvents();
+    IReadOnlyList<IEvent> PopDomainEvents();
 }

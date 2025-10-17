@@ -1,4 +1,3 @@
-using FastEndpoints;
 using SSW.VerticalSliceArchitecture.Common.Domain.Heroes;
 using SSW.VerticalSliceArchitecture.Common.FastEndpoints;
 
@@ -14,7 +13,7 @@ public record UpdateHeroRequest(
     public record HeroPowerDto(string Name, int PowerLevel);
 }
 
-public class UpdateHeroFastEndpoint(ApplicationDbContext dbContext, IFastEndpointEventPublisher eventPublisher) 
+public class UpdateHeroFastEndpoint(ApplicationDbContext dbContext)
     : Endpoint<UpdateHeroRequest>
 {
     public override void Configure()
@@ -46,17 +45,7 @@ public class UpdateHeroFastEndpoint(ApplicationDbContext dbContext, IFastEndpoin
 
         await dbContext.SaveChangesAsync(ct);
 
-        // DM: Get events publishing via EF Interceptor
-        // Queue domain events for eventual consistency processing
-        // These will be processed by EventualConsistencyMiddleware after response is sent
-        var domainEvents = hero.PopDomainEvents();
-        foreach (var domainEvent in domainEvents)
-        {
-            eventPublisher.QueueDomainEvent(domainEvent);
-        }
-
-        // await Send.NoContentAsync(ct);
-        await Send.OkAsync(null);
+        await Send.NoContentAsync(ct);
     }
 }
 

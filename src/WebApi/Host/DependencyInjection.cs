@@ -1,5 +1,4 @@
-﻿using FastEndpoints;
-using SSW.VerticalSliceArchitecture.Common.FastEndpoints;
+﻿using FastEndpoints.Swagger;
 using SSW.VerticalSliceArchitecture.Common.Interfaces;
 using SSW.VerticalSliceArchitecture.Common.Services;
 
@@ -16,15 +15,11 @@ public static class DependencyInjection
         services.AddScoped<ICurrentUserService, CurrentUserService>();
         
         services.AddOpenApi();
-        
+
         // Add FastEndpoints
-        services.AddFastEndpoints(options =>
-        {
-            options.Assemblies = [typeof(DependencyInjection).Assembly];
-        });
-        
-        // Register FastEndpoints event publisher for queuing domain events
-        services.AddScoped<IFastEndpointEventPublisher, FastEndpointEventPublisher>();
+        services.AddFastEndpoints();
+
+        builder.Services.SwaggerDocument();
     }
     
     public static void AddApplication(this IHostApplicationBuilder builder)
@@ -34,9 +29,9 @@ public static class DependencyInjection
         
         services.AddValidatorsFromAssembly(applicationAssembly, includeInternalTypes: true);
 
-        services.AddMediatR(config =>
-        {
-            config.RegisterServicesFromAssembly(applicationAssembly);
+        // services.AddMediatR(config =>
+        // {
+            // config.RegisterServicesFromAssembly(applicationAssembly);
             
             // config.AddOpenBehavior(typeof(UnhandledExceptionBehaviour<,>));
 
@@ -45,6 +40,6 @@ public static class DependencyInjection
             // config.AddOpenBehavior(typeof(ValidationErrorOrResultBehavior<,>));
 
             // config.AddOpenBehavior(typeof(PerformanceBehaviour<,>));
-        });
+        // });
     }
 }
