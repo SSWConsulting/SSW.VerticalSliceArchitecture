@@ -1,4 +1,5 @@
 using Ardalis.Specification.EntityFrameworkCore;
+using Microsoft.AspNetCore.Http.HttpResults;
 using SSW.VerticalSliceArchitecture.Common.Domain.Heroes;
 using SSW.VerticalSliceArchitecture.Common.Domain.Teams;
 
@@ -14,7 +15,9 @@ public class AddHeroToTeamFastEndpoint(ApplicationDbContext dbContext)
     {
         Post("/{teamId}/heroes/{heroId}");
         Group<TeamsGroup>();
-        Description(x => x.WithName("AddHeroToTeamFast"));
+        Description(x => x
+            .WithName("AddHeroToTeamFast")
+            .Produces(StatusCodes.Status404NotFound));
     }
 
     public override async Task HandleAsync(AddHeroToTeamRequest req, CancellationToken ct)

@@ -18,7 +18,9 @@ public class UpdateHeroFastEndpoint(ApplicationDbContext dbContext)
     {
         Put("/{heroId}");
         Group<HeroesGroup>();
-        Description(x => x.WithName("UpdateHeroFast"));
+        Description(x => x
+            .WithName("UpdateHeroFast")
+            .Produces(StatusCodes.Status404NotFound));
     }
 
     public override async Task HandleAsync(UpdateHeroRequest req, CancellationToken ct)

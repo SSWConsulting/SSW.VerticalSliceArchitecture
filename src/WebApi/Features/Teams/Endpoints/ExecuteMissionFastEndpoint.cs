@@ -12,7 +12,9 @@ public class ExecuteMissionFastEndpoint(ApplicationDbContext dbContext)
     {
         Post("/{teamId}/execute-mission");
         Group<TeamsGroup>();
-        Description(x => x.WithName("ExecuteMissionFast"));
+        Description(x => x
+            .WithName("ExecuteMissionFast")
+            .Produces(StatusCodes.Status404NotFound));
     }
 
     public override async Task HandleAsync(ExecuteMissionRequest req, CancellationToken ct)
