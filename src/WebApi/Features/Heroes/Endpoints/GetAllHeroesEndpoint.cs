@@ -12,14 +12,14 @@ public record GetAllHeroesResponse(List<GetAllHeroesResponse.HeroDto> Heroes)
     public record HeroPowerDto(string Name, int PowerLevel);
 }
 
-public class GetAllHeroesFastEndpoint(ApplicationDbContext dbContext) 
+public class GetAllHeroesEndpoint(ApplicationDbContext dbContext) 
     : EndpointWithoutRequest<GetAllHeroesResponse>
 {
     public override void Configure()
     {
         Get("/");
         Group<HeroesGroup>();
-        Description(x => x.WithName("GetAllHeroesFast"));
+        Description(x => x.WithName("GetAllHeroes"));
     }
 
     public async override Task HandleAsync(CancellationToken ct)
@@ -37,7 +37,7 @@ public class GetAllHeroesFastEndpoint(ApplicationDbContext dbContext)
     }
 }
 
-public class GetAllHeroesSummary : Summary<GetAllHeroesFastEndpoint>
+public class GetAllHeroesSummary : Summary<GetAllHeroesEndpoint>
 {
     public GetAllHeroesSummary()
     {

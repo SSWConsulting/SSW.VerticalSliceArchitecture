@@ -12,7 +12,7 @@ public record CreateHeroRequest(
 
 public record CreateHeroResponse(Guid Id);
 
-public class CreateHeroFastEndpoint(ApplicationDbContext dbContext)
+public class CreateHeroEndpoint(ApplicationDbContext dbContext)
     : Endpoint<CreateHeroRequest, CreateHeroResponse>
 {
     public override void Configure()
@@ -54,7 +54,7 @@ public class CreateHeroRequestValidator : Validator<CreateHeroRequest>
     }
 }
 
-public class CreateHeroSummary : Summary<CreateHeroFastEndpoint>
+public class CreateHeroSummary : Summary<CreateHeroEndpoint>
 {
     public CreateHeroSummary()
     {

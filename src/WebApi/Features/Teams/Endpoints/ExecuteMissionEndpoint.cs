@@ -5,7 +5,7 @@ namespace SSW.VerticalSliceArchitecture.Features.Teams.Endpoints;
 
 public record ExecuteMissionRequest(Guid TeamId, string Description);
 
-public class ExecuteMissionFastEndpoint(ApplicationDbContext dbContext) 
+public class ExecuteMissionEndpoint(ApplicationDbContext dbContext) 
     : Endpoint<ExecuteMissionRequest>
 {
     public override void Configure()
@@ -13,7 +13,7 @@ public class ExecuteMissionFastEndpoint(ApplicationDbContext dbContext)
         Post("/{teamId}/execute-mission");
         Group<TeamsGroup>();
         Description(x => x
-            .WithName("ExecuteMissionFast")
+            .WithName("ExecuteMission")
             .Produces(StatusCodes.Status404NotFound));
     }
 
@@ -56,7 +56,7 @@ public class ExecuteMissionRequestValidator : Validator<ExecuteMissionRequest>
     }
 }
 
-public class ExecuteMissionSummary : Summary<ExecuteMissionFastEndpoint>
+public class ExecuteMissionSummary : Summary<ExecuteMissionEndpoint>
 {
     public ExecuteMissionSummary()
     {

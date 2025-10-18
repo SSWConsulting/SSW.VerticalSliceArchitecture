@@ -11,7 +11,7 @@ public record UpdateHeroRequest(
     public record HeroPowerDto(string Name, int PowerLevel);
 }
 
-public class UpdateHeroFastEndpoint(ApplicationDbContext dbContext)
+public class UpdateHeroEndpoint(ApplicationDbContext dbContext)
     : Endpoint<UpdateHeroRequest>
 {
     public override void Configure()
@@ -19,7 +19,7 @@ public class UpdateHeroFastEndpoint(ApplicationDbContext dbContext)
         Put("/{heroId}");
         Group<HeroesGroup>();
         Description(x => x
-            .WithName("UpdateHeroFast")
+            .WithName("UpdateHero")
             .Produces(StatusCodes.Status404NotFound));
     }
 
@@ -62,7 +62,7 @@ public class UpdateHeroRequestValidator : Validator<UpdateHeroRequest>
     }
 }
 
-public class UpdateHeroSummary : Summary<UpdateHeroFastEndpoint>
+public class UpdateHeroSummary : Summary<UpdateHeroEndpoint>
 {
     public UpdateHeroSummary()
     {

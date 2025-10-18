@@ -6,7 +6,7 @@ namespace SSW.VerticalSliceArchitecture.Features.Teams.Endpoints;
 
 public record CompleteMissionRequest(Guid TeamId);
 
-public class CompleteMissionFastEndpoint(ApplicationDbContext dbContext) 
+public class CompleteMissionEndpoint(ApplicationDbContext dbContext) 
     : Endpoint<CompleteMissionRequest>
 {
     public override void Configure()
@@ -14,7 +14,7 @@ public class CompleteMissionFastEndpoint(ApplicationDbContext dbContext)
         Post("/{teamId}/complete-mission");
         Group<TeamsGroup>();
         Description(x => x
-            .WithName("CompleteMissionFast")
+            .WithName("CompleteMission")
             .Produces(StatusCodes.Status404NotFound));
     }
 
@@ -54,7 +54,7 @@ public class CompleteMissionRequestValidator : Validator<CompleteMissionRequest>
     }
 }
 
-public class CompleteMissionSummary : Summary<CompleteMissionFastEndpoint>
+public class CompleteMissionSummary : Summary<CompleteMissionEndpoint>
 {
     public CompleteMissionSummary()
     {

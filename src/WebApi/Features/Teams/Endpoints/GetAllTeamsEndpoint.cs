@@ -5,14 +5,14 @@ public record GetAllTeamsResponse(List<GetAllTeamsResponse.TeamDto> Teams)
     public record TeamDto(Guid Id, string Name);
 }
 
-public class GetAllTeamsFastEndpoint(ApplicationDbContext dbContext) 
+public class GetAllTeamsEndpoint(ApplicationDbContext dbContext) 
     : EndpointWithoutRequest<GetAllTeamsResponse>
 {
     public override void Configure()
     {
         Get("/");
         Group<TeamsGroup>();
-        Description(x => x.WithName("GetAllTeamsFast"));
+        Description(x => x.WithName("GetAllTeams"));
     }
 
     public override async Task HandleAsync(CancellationToken ct)
@@ -25,7 +25,7 @@ public class GetAllTeamsFastEndpoint(ApplicationDbContext dbContext)
     }
 }
 
-public class GetAllTeamsSummary : Summary<GetAllTeamsFastEndpoint>
+public class GetAllTeamsSummary : Summary<GetAllTeamsEndpoint>
 {
     public GetAllTeamsSummary()
     {

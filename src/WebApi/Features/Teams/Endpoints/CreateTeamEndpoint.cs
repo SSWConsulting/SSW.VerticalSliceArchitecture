@@ -4,14 +4,14 @@ namespace SSW.VerticalSliceArchitecture.Features.Teams.Endpoints;
 
 public record CreateTeamRequest(string Name);
 
-public class CreateTeamFastEndpoint(ApplicationDbContext dbContext) 
+public class CreateTeamEndpoint(ApplicationDbContext dbContext) 
     : Endpoint<CreateTeamRequest>
 {
     public override void Configure()
     {
         Post("/");
         Group<TeamsGroup>();
-        Description(x => x.WithName("CreateTeamFast"));
+        Description(x => x.WithName("CreateTeam"));
     }
 
     public override async Task HandleAsync(CreateTeamRequest req, CancellationToken ct)
@@ -34,7 +34,7 @@ public class CreateTeamRequestValidator : Validator<CreateTeamRequest>
     }
 }
 
-public class CreateTeamSummary : Summary<CreateTeamFastEndpoint>
+public class CreateTeamSummary : Summary<CreateTeamEndpoint>
 {
     public CreateTeamSummary()
     {

@@ -8,7 +8,7 @@ namespace SSW.VerticalSliceArchitecture.Features.Teams.Endpoints;
 
 public record AddHeroToTeamRequest(Guid TeamId, Guid HeroId);
 
-public class AddHeroToTeamFastEndpoint(ApplicationDbContext dbContext) 
+public class AddHeroToTeamEndpoint(ApplicationDbContext dbContext) 
     : Endpoint<AddHeroToTeamRequest>
 {
     public override void Configure()
@@ -16,7 +16,7 @@ public class AddHeroToTeamFastEndpoint(ApplicationDbContext dbContext)
         Post("/{teamId}/heroes/{heroId}");
         Group<TeamsGroup>();
         Description(x => x
-            .WithName("AddHeroToTeamFast")
+            .WithName("AddHeroToTeam")
             .Produces(StatusCodes.Status404NotFound));
     }
 
@@ -64,7 +64,7 @@ public class AddHeroToTeamRequestValidator : Validator<AddHeroToTeamRequest>
     }
 }
 
-public class AddHeroToTeamSummary : Summary<AddHeroToTeamFastEndpoint>
+public class AddHeroToTeamSummary : Summary<AddHeroToTeamEndpoint>
 {
     public AddHeroToTeamSummary()
     {

@@ -11,7 +11,7 @@ public record GetTeamResponse(Guid Id, string Name, IEnumerable<GetTeamResponse.
 
 public record GetTeamRequest(Guid TeamId);
 
-public class GetTeamFastEndpoint(ApplicationDbContext dbContext) 
+public class GetTeamEndpoint(ApplicationDbContext dbContext) 
     : Endpoint<GetTeamRequest, GetTeamResponse>
 {
     public override void Configure()
@@ -19,7 +19,7 @@ public class GetTeamFastEndpoint(ApplicationDbContext dbContext)
         Get("/{teamId}");
         Group<TeamsGroup>();
         Description(x => x
-            .WithName("GetTeamFast")
+            .WithName("GetTeam")
             .Produces(StatusCodes.Status404NotFound));
     }
 
@@ -62,7 +62,7 @@ public class GetTeamRequestValidator : Validator<GetTeamRequest>
     }
 }
 
-public class GetTeamSummary : Summary<GetTeamFastEndpoint>
+public class GetTeamSummary : Summary<GetTeamEndpoint>
 {
     public GetTeamSummary()
     {
