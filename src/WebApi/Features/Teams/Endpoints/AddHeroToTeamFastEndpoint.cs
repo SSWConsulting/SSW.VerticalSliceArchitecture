@@ -60,3 +60,12 @@ public class AddHeroToTeamRequestValidator : Validator<AddHeroToTeamRequest>
             .NotEmpty();
     }
 }
+
+public class AddHeroToTeamSummary : Summary<AddHeroToTeamFastEndpoint>
+{
+    public AddHeroToTeamSummary()
+    {
+        Summary = "Add a hero to a team";
+        Description = "Adds an existing hero to an existing team. Both the team and hero must exist.";
+    }
+}

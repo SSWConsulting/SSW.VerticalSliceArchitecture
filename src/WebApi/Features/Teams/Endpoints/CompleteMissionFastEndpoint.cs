@@ -51,3 +51,12 @@ public class CompleteMissionRequestValidator : Validator<CompleteMissionRequest>
             .NotEmpty();
     }
 }
+
+public class CompleteMissionSummary : Summary<CompleteMissionFastEndpoint>
+{
+    public CompleteMissionSummary()
+    {
+        Summary = "Complete the current mission";
+        Description = "Marks the team's current mission as completed. The team must have an active mission.";
+    }
+}
