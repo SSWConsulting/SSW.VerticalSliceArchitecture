@@ -1,5 +1,4 @@
 using SSW.VerticalSliceArchitecture.Common.Domain.Base.EventualConsistency;
-using SSW.VerticalSliceArchitecture.Common.Domain.Base.Interfaces;
 
 namespace SSW.VerticalSliceArchitecture.Common.Middleware;
 

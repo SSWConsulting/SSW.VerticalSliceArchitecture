@@ -33,9 +33,6 @@ public class CreateHeroFastEndpoint(ApplicationDbContext dbContext)
         await dbContext.Heroes.AddAsync(hero, ct);
         await dbContext.SaveChangesAsync(ct);
 
-        // var evt = new AnotherEvent();
-        // await evt.PublishAsync(cancellation:ct);
-
         await Send.OkAsync(new CreateHeroResponse(hero.Id.Value), ct);
     }
 }

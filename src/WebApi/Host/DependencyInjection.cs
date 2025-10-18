@@ -16,7 +16,6 @@ public static class DependencyInjection
         
         services.AddOpenApi();
 
-        // Add FastEndpoints
         services.AddFastEndpoints();
 
         builder.Services.SwaggerDocument();
@@ -28,18 +27,5 @@ public static class DependencyInjection
         var services = builder.Services;
         
         services.AddValidatorsFromAssembly(applicationAssembly, includeInternalTypes: true);
-
-        // services.AddMediatR(config =>
-        // {
-            // config.RegisterServicesFromAssembly(applicationAssembly);
-            
-            // config.AddOpenBehavior(typeof(UnhandledExceptionBehaviour<,>));
-
-            // NOTE: Switch to ValidationExceptionBehavior if you want to use exceptions over the result pattern for flow control
-            // config.AddOpenBehavior(typeof(ValidationExceptionBehaviour<,>));
-            // config.AddOpenBehavior(typeof(ValidationErrorOrResultBehavior<,>));
-
-            // config.AddOpenBehavior(typeof(PerformanceBehaviour<,>));
-        // });
     }
 }

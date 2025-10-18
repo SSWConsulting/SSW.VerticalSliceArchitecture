@@ -35,12 +35,3 @@ public class PowerLevelUpdatedEventHandler(
         await dbContext.SaveChangesAsync(ct);
     }
 }
-//
-// public class AnotherEventHandler : IEventHandler<AnotherEvent>
-// {
-//     public async Task HandleAsync(AnotherEvent eventModel, CancellationToken ct)
-//     {
-//         var foo = 1;
-//         await Task.CompletedTask;
-//     }
-// }

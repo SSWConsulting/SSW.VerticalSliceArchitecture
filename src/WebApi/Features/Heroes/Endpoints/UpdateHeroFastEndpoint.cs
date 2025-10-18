@@ -1,8 +1,6 @@
 using SSW.VerticalSliceArchitecture.Common.Domain.Heroes;
-using SSW.VerticalSliceArchitecture.Common.FastEndpoints;
 
 namespace SSW.VerticalSliceArchitecture.Features.Heroes.Endpoints;
-
 
 public record UpdateHeroRequest(
     string Name,

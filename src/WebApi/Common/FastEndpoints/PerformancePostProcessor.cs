@@ -8,12 +8,10 @@ public class PerformancePostProcessor : IGlobalPostProcessor
     private const string ActivityKey = "PerformanceStopwatch";
 
     private readonly ILogger _logger;
-    // private readonly ICurrentUserService _currentUserService;
 
-    public PerformancePostProcessor(ILogger<PerformancePostProcessor> logger/*, ICurrentUserService currentUserService*/)
+    public PerformancePostProcessor(ILogger<PerformancePostProcessor> logger)
     {
         _logger = logger;
-        // _currentUserService = currentUserService;
     }
 
     public async Task PostProcessAsync(IPostProcessorContext context, CancellationToken ct)

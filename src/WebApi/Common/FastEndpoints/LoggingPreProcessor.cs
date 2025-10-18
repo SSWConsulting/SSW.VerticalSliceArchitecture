@@ -5,12 +5,10 @@ namespace SSW.VerticalSliceArchitecture.Common.FastEndpoints;
 public class LoggingPreProcessor : IGlobalPreProcessor
 {
     private readonly ILogger _logger;
-    // private readonly ICurrentUserService _currentUserService;
 
-    public LoggingPreProcessor(ILogger<LoggingPreProcessor> logger/*, ICurrentUserService currentUserService*/)
+    public LoggingPreProcessor(ILogger<LoggingPreProcessor> logger)
     {
         _logger = logger;
-        // _currentUserService = currentUserService;
     }
 
     public async Task PreProcessAsync(IPreProcessorContext context, CancellationToken ct)
