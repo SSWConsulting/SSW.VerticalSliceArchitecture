@@ -1,10 +1,10 @@
+using FastEndpoints;
 using Microsoft.EntityFrameworkCore;
 using SSW.VerticalSliceArchitecture.Common.Domain.Heroes;
-using SSW.VerticalSliceArchitecture.Features.Heroes.Commands;
+using SSW.VerticalSliceArchitecture.Features.Heroes.Endpoints;
 using SSW.VerticalSliceArchitecture.IntegrationTests.Common;
 using SSW.VerticalSliceArchitecture.IntegrationTests.Common.Factories;
 using System.Net;
-using System.Net.Http.Json;
 
 namespace SSW.VerticalSliceArchitecture.IntegrationTests.Endpoints.Heroes.Commands;
 
@@ -24,20 +24,20 @@ public class UpdateHeroCommandTests(TestingDatabaseFixture fixture) : Integratio
             ("Super-strength", 10),
             ("Flight", 8),
         ];
-        var cmd = new UpdateHeroCommand.Request(
+        var cmd = new UpdateHeroRequest(
             heroName,
             heroAlias,
-            powers.Select(p => new UpdateHeroCommand.UpdateHeroPowerDto(p.Name, p.PowerLevel)));
-        cmd.HeroId = hero.Id.Value;
+            hero.Id.Value,
+            powers.Select(p => new UpdateHeroRequest.HeroPowerDto(p.Name, p.PowerLevel)));
         var client = GetAnonymousClient();
         var createdTimeStamp = DateTime.Now;
 
         // Act
-        var result = await client.PutAsJsonAsync($"/api/heroes/{cmd.HeroId}", cmd, CancellationToken);
+        var result = await client.PUTAsync<UpdateHeroEndpoint, UpdateHeroRequest>(cmd);
 
         // Assert
         result.StatusCode.Should().Be(HttpStatusCode.NoContent);
-        Hero item = await GetQueryable<Hero>().FirstAsync(dbHero => dbHero.Id == hero.Id, CancellationToken);
+        var item = await GetQueryable<Hero>().FirstAsync(dbHero => dbHero.Id == hero.Id, CancellationToken);
 
         item.Should().NotBeNull();
         item.Name.Should().Be(cmd.Name);
@@ -53,19 +53,19 @@ public class UpdateHeroCommandTests(TestingDatabaseFixture fixture) : Integratio
     {
         // Arrange
         var heroId = HeroId.From(Guid.NewGuid());
-        var cmd = new UpdateHeroCommand.Request(
+        var cmd = new UpdateHeroRequest(
             "foo",
             "bar",
-            [new UpdateHeroCommand.UpdateHeroPowerDto("Heat vision", 7)]);
-        cmd.HeroId = heroId.Value;
+            heroId.Value,
+            [new UpdateHeroRequest.HeroPowerDto("Heat vision", 7)]);
         var client = GetAnonymousClient();
 
         // Act
-        var result = await client.PutAsJsonAsync("/heroes", cmd, CancellationToken);
+        var result = await client.PUTAsync<UpdateHeroEndpoint, UpdateHeroRequest>(cmd);
 
         // Assert
         result.StatusCode.Should().Be(HttpStatusCode.NotFound);
-        Hero? item = await GetQueryable<Hero>().FirstOrDefaultAsync(dbHero => dbHero.Id == heroId, CancellationToken);
+        var item = await GetQueryable<Hero>().FirstOrDefaultAsync(dbHero => dbHero.Id == heroId, CancellationToken);
 
         item.Should().BeNull();
     }

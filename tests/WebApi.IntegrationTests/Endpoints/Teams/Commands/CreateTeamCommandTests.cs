@@ -1,9 +1,9 @@
+using FastEndpoints;
 using Microsoft.EntityFrameworkCore;
 using SSW.VerticalSliceArchitecture.Common.Domain.Teams;
-using SSW.VerticalSliceArchitecture.Features.Teams.Commands;
+using SSW.VerticalSliceArchitecture.Features.Teams.Endpoints;
 using SSW.VerticalSliceArchitecture.IntegrationTests.Common;
 using System.Net;
-using System.Net.Http.Json;
 
 namespace SSW.VerticalSliceArchitecture.IntegrationTests.Endpoints.Teams.Commands;
 
@@ -13,14 +13,14 @@ public class CreateTeamCommandTests(TestingDatabaseFixture fixture) : Integratio
     public async Task Command_ShouldCreateTeam()
     {
         // Arrange
-        var cmd = new CreateTeamCommand.Request("Clark Kent");
+        var cmd = new CreateTeamRequest("Clark Kent");
         var client = GetAnonymousClient();
 
         // Act
-        var result = await client.PostAsJsonAsync("/api/teams", cmd, CancellationToken);
+        var result = await client.POSTAsync<CreateTeamEndpoint, CreateTeamRequest>(cmd);
 
         // Assert
-        result.StatusCode.Should().Be(HttpStatusCode.Created);
+        result.StatusCode.Should().Be(HttpStatusCode.NoContent);
         var item = await GetQueryable<Team>().FirstAsync(CancellationToken);
 
         item.Should().NotBeNull();

@@ -6,7 +6,7 @@ using SSW.VerticalSliceArchitecture.Common.Domain.Teams;
 namespace SSW.VerticalSliceArchitecture.Features.Teams.Events;
 
 public class PowerLevelUpdatedEventHandler(
-    ApplicationDbContext dbContext,
+    IServiceScopeFactory scopeFactory,
     ILogger<PowerLevelUpdatedEventHandler> logger)
     : IEventHandler<PowerLevelUpdatedEvent>
 {
@@ -14,6 +14,10 @@ public class PowerLevelUpdatedEventHandler(
     {
         logger.LogInformation("PowerLevelUpdatedEventHandler: {HeroName} power updated to {PowerLevel}",
         eventModel.Hero.Name, eventModel.Hero.PowerLevel);
+
+        using var scope = scopeFactory.CreateScope();
+        var dbContext = scope.Resolve<ApplicationDbContext>();
+
 
         var hero = await dbContext.Heroes.FirstAsync(h => h.Id == eventModel.Hero.Id,
             cancellationToken: ct);

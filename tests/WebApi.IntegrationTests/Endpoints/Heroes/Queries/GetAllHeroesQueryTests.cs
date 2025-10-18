@@ -1,7 +1,7 @@
-using SSW.VerticalSliceArchitecture.Features.Heroes.Queries;
+using FastEndpoints;
+using SSW.VerticalSliceArchitecture.Features.Heroes.Endpoints;
 using SSW.VerticalSliceArchitecture.IntegrationTests.Common;
 using SSW.VerticalSliceArchitecture.IntegrationTests.Common.Factories;
-using System.Net.Http.Json;
 
 namespace SSW.VerticalSliceArchitecture.IntegrationTests.Endpoints.Heroes.Queries;
 
@@ -17,10 +17,11 @@ public class GetAllHeroesQueryTests(TestingDatabaseFixture fixture) : Integratio
         var client = GetAnonymousClient();
 
         // Act
-        var result = await client.GetFromJsonAsync<GetAllHeroesQuery.HeroDto[]>("/api/heroes", CancellationToken);
+        var result = await client.GETAsync<GetAllHeroesEndpoint, GetAllHeroesResponse>();
 
         // Assert
-        result.Should().NotBeNull();
-        result!.Length.Should().Be(entityCount);
+        result.Response.IsSuccessStatusCode.Should().BeTrue();
+        result.Result.Should().NotBeNull();
+        result.Result!.Heroes.Should().HaveCount(entityCount);
     }
 }

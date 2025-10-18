@@ -1,13 +1,13 @@
 using Ardalis.Specification.EntityFrameworkCore;
+using FastEndpoints;
 using Microsoft.EntityFrameworkCore;
 using SSW.VerticalSliceArchitecture.Common.Domain.Heroes;
 using SSW.VerticalSliceArchitecture.Common.Domain.Teams;
-using SSW.VerticalSliceArchitecture.Features.Heroes.Commands;
+using SSW.VerticalSliceArchitecture.Features.Heroes.Endpoints;
 using SSW.VerticalSliceArchitecture.IntegrationTests.Common;
 using SSW.VerticalSliceArchitecture.IntegrationTests.Common.Factories;
 using SSW.VerticalSliceArchitecture.IntegrationTests.Common.Utilities;
 using System.Net;
-using System.Net.Http.Json;
 
 namespace SSW.VerticalSliceArchitecture.IntegrationTests.Endpoints.Teams.Events;
 
@@ -24,13 +24,12 @@ public class UpdatePowerLevelEventTests(TestingDatabaseFixture fixture) : Integr
         team.AddHero(hero);
         await AddAsync(team);
         powers.Add(new Power("Speed", 5));
-        var powerDtos = powers.Select(p => new UpdateHeroCommand.UpdateHeroPowerDto(p.Name, p.PowerLevel));
-        var cmd = new UpdateHeroCommand.Request(hero.Name, hero.Alias, powerDtos);
-        cmd.HeroId = hero.Id.Value;
+        var powerDtos = powers.Select(p => new UpdateHeroRequest.HeroPowerDto(p.Name, p.PowerLevel));
+        var cmd = new UpdateHeroRequest(hero.Name, hero.Alias, hero.Id.Value, powerDtos);
         var client = GetAnonymousClient();
 
         // Act
-        var result = await client.PutAsJsonAsync($"/api/heroes/{cmd.HeroId}", cmd, CancellationToken);
+        var result = await client.PUTAsync<UpdateHeroEndpoint, UpdateHeroRequest>(cmd);
 
         // Assert
         await Wait.ForEventualConsistency();
