@@ -1,12 +1,12 @@
-﻿namespace SSW.VerticalSliceArchitecture.Features.Heroes;
+﻿using SSW.VerticalSliceArchitecture.Common.Interfaces;
+
+namespace SSW.VerticalSliceArchitecture.Features.Heroes;
 
 public sealed class HeroesFeature : IFeature
 {
-    public static string FeatureName => "Heroes";
-
     public static void ConfigureServices(IServiceCollection services, IConfiguration config)
     {
-
+        // TODO: Add feature-specific services here
     }
 }
 
@@ -14,14 +14,7 @@ public class HeroesGroup : Group
 {
     public HeroesGroup()
     {
-        base.Configure("heroes", ep =>
-        {
-            ep.Description(x => x
-                // .WithGroupName("Heroes")
-                // .WithTags("Heroes")
-                .ProducesProblemDetails(500)
-            );
-            ep.AllowAnonymous();
-        });
+        // NOTE: The prefix is used as the tag and group name
+        base.Configure("heroes", ep => ep.Description(x => x.ProducesProblemDetails(500)));
     }
 }

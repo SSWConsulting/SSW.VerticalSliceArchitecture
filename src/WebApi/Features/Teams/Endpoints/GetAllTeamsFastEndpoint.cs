@@ -12,8 +12,7 @@ public class GetAllTeamsFastEndpoint(ApplicationDbContext dbContext)
     {
         Get("/");
         Group<TeamsGroup>();
-        Description(x => x
-            .WithName("GetAllTeamsFast"));
+        Description(x => x.WithName("GetAllTeamsFast"));
     }
 
     public override async Task HandleAsync(CancellationToken ct)

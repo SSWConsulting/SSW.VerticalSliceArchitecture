@@ -18,9 +18,7 @@ public class GetTeamFastEndpoint(ApplicationDbContext dbContext)
     {
         Get("/{teamId}");
         Group<TeamsGroup>();
-        Description(x => x
-            .WithName("GetTeamFast")
-            .Produces(404));
+        Description(x => x.WithName("GetTeamFast"));
     }
 
     public override async Task HandleAsync(GetTeamRequest req, CancellationToken ct)

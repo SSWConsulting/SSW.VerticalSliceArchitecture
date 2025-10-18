@@ -14,9 +14,7 @@ public class AddHeroToTeamFastEndpoint(ApplicationDbContext dbContext)
     {
         Post("/{teamId}/heroes/{heroId}");
         Group<TeamsGroup>();
-        Description(x => x
-            .WithName("AddHeroToTeamFast")
-            .Produces(404));
+        Description(x => x.WithName("AddHeroToTeamFast"));
     }
 
     public override async Task HandleAsync(AddHeroToTeamRequest req, CancellationToken ct)

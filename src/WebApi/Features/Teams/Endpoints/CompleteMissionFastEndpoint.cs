@@ -13,9 +13,7 @@ public class CompleteMissionFastEndpoint(ApplicationDbContext dbContext)
     {
         Post("/{teamId}/complete-mission");
         Group<TeamsGroup>();
-        Description(x => x
-            .WithName("CompleteMissionFast")
-            .Produces(404));
+        Description(x => x.WithName("CompleteMissionFast"));
     }
 
     public override async Task HandleAsync(CompleteMissionRequest req, CancellationToken ct)

@@ -18,9 +18,7 @@ public class UpdateHeroFastEndpoint(ApplicationDbContext dbContext)
     {
         Put("/{heroId}");
         Group<HeroesGroup>();
-        Description(x => x
-            .WithName("UpdateHeroFast")
-            .WithDescription("Updates a hero"));
+        Description(x => x.WithName("UpdateHeroFast"));
     }
 
     public override async Task HandleAsync(UpdateHeroRequest req, CancellationToken ct)
@@ -82,9 +80,6 @@ public class UpdateHeroSummary : Summary<UpdateHeroFastEndpoint>
                 new UpdateHeroRequest.HeroPowerDto("Super Strength", 75)
             ]);
         
-        Response(200, "Hero updated successfully");
-        Response(404, "Hero not found");
-        Response(400, "Invalid request - validation failed");
-        Response(500, "Internal server error");
+        // Also, add response examples if needed
     }
 }

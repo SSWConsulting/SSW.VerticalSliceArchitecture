@@ -11,8 +11,7 @@ public class CreateTeamFastEndpoint(ApplicationDbContext dbContext)
     {
         Post("/");
         Group<TeamsGroup>();
-        Description(x => x
-            .WithName("CreateTeamFast"));
+        Description(x => x.WithName("CreateTeamFast"));
     }
 
     public override async Task HandleAsync(CreateTeamRequest req, CancellationToken ct)
@@ -44,8 +43,6 @@ public class CreateTeamSummary : Summary<CreateTeamFastEndpoint>
         
         ExampleRequest = new CreateTeamRequest("Avengers");
         
-        Response(204, "Team created successfully");
-        Response(400, "Invalid request - validation failed");
-        Response(500, "Internal server error");
+        // Also, add response examples if needed
     }
 }
