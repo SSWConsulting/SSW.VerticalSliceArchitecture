@@ -48,7 +48,7 @@ app.UseFastEndpoints(config =>
         
         // Add global post-processors
         ep.PostProcessor<PerformancePostProcessor>(Order.After);
-        ep.PostProcessor<EventualConsistencyPostProcessor>(Order.After);
+        // ep.PostProcessor<EventualConsistencyPostProcessor>(Order.After);
     };
     config.Errors.UseProblemDetails();
 });
@@ -63,7 +63,7 @@ app.UseSwaggerGen(uiConfig: c =>
 
 // app.RegisterEndpoints(appAssembly);
 // app.MapFastEndpoints();
-// app.UseEventualConsistencyMiddleware();
+app.UseEventualConsistencyMiddleware();
 
 app.MapDefaultEndpoints();
 app.UseExceptionHandler();

@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore.Diagnostics;
 using SSW.VerticalSliceArchitecture.Common.Domain.Base.Interfaces;
 using SSW.VerticalSliceArchitecture.Common.FastEndpoints;
+using SSW.VerticalSliceArchitecture.Common.Middleware;
 
 namespace SSW.VerticalSliceArchitecture.Common.Interceptors;
 
@@ -75,7 +76,7 @@ public class DispatchDomainEventsInterceptor : SaveChangesInterceptor
 
     private void AddDomainEventsToOfflineProcessingQueue(IEnumerable<IEvent> domainEvents)
     {
-        var domainEventsQueue = _httpContextAccessor.HttpContext!.Items.TryGetValue(EventualConsistencyPostProcessor.DomainEventsKey, out var value) &&
+        var domainEventsQueue = _httpContextAccessor.HttpContext!.Items.TryGetValue(EventualConsistencyMiddleware.DomainEventsKey, out var value) &&
                                 value is Queue<IEvent> existingDomainEvents
             ? existingDomainEvents
             : new Queue<IEvent>();
@@ -84,6 +85,6 @@ public class DispatchDomainEventsInterceptor : SaveChangesInterceptor
         foreach (var domainEvent in domainEvents)
             domainEventsQueue.Enqueue(domainEvent);
 
-        _httpContextAccessor.HttpContext.Items[EventualConsistencyPostProcessor.DomainEventsKey] = domainEventsQueue;
+        _httpContextAccessor.HttpContext.Items[EventualConsistencyMiddleware.DomainEventsKey] = domainEventsQueue;
     }
 }
