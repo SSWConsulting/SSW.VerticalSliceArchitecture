@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using FastEndpoints;
+using System.Reflection;
 using SSW.VerticalSliceArchitecture.ArchitectureTests.Common;
 using SSW.VerticalSliceArchitecture.Common.Domain.Base;
 using SSW.VerticalSliceArchitecture.Common.Domain.Base.Interfaces;
@@ -9,7 +10,7 @@ public class DomainTests : TestBase
 {
     private static readonly Type AggregateRoot = typeof(AggregateRoot<>);
     private static readonly Type Entity = typeof(Entity<>);
-    private static readonly Type DomainEvent = typeof(IDomainEvent);
+    private static readonly Type DomainEvent = typeof(IEvent);
     private static readonly Type ValueObject = typeof(IValueObject);
 
     private readonly ITestOutputHelper _output;
