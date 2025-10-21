@@ -1,4 +1,6 @@
-﻿namespace SSW.VerticalSliceArchitecture.Features.Entities;
+﻿using SSW.VerticalSliceArchitecture.Common.Interfaces;
+
+namespace SSW.VerticalSliceArchitecture.Features.Entities;
 
 public sealed class EntitiesFeature : IFeature
 {
