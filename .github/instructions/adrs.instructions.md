@@ -224,11 +224,11 @@ Chosen option: "[Selected option]", because [primary reasoning].
 
 ### Common Decision Areas
 
-- **Feature Organization**: Vertical slice structure with Commands, Queries, Endpoints, and Handlers
+- **Feature Organization**: Vertical slice structure with FastEndpoints organized by feature
 - **Database Patterns**: Entity Framework Core, SQL Server, strongly-typed IDs with Vogen, specifications with Ardalis.Specification
-- **API Design**: Minimal APIs with `IEndpoint` pattern, auto-discovery via reflection, `ErrorOr<T>` result pattern
+- **API Design**: FastEndpoints with strongly-typed requests/responses, automatic validation, and OpenAPI documentation via Summary classes
 - **Domain Modeling**: Aggregate roots, domain events, value objects, strongly-typed IDs with `Guid.CreateVersion7()`
-- **Validation**: FluentValidation with `ValidationErrorOrResultBehavior` MediatR pipeline
+- **Validation**: FluentValidation integrated with FastEndpoints - validators run automatically before endpoint handlers
 - **Testing Strategy**: Unit tests for domain logic, integration tests with TestContainers and Respawn, architecture tests with NetArchTest
 - **Orchestration**: .NET Aspire with AppHost, ServiceDefaults, and MigrationService
 
@@ -237,10 +237,10 @@ Chosen option: "[Selected option]", because [primary reasoning].
 When creating ADRs, reference existing architectural decisions and patterns:
 
 - Link to feature templates in `/templates/` (e.g., `dotnet new ssw-vsa-slice`)
-- Reference the slice structure: `{FeatureName}Feature.cs`, Commands, Queries, Endpoints
+- Reference the slice structure: `{FeatureName}Feature.cs`, FastEndpoints in `/Endpoints/` directory
 - Connect to domain layer patterns: strongly-typed IDs, specifications, domain events
 - Reference testing approaches in `/tests/` (unit, integration, architecture tests)
-- Align with the vertical slice architecture principles and eventual consistency patterns
+- Align with the vertical slice architecture principles and FastEndpoints patterns
 
 ## Usage Instructions for Copilot
 

@@ -44,6 +44,9 @@ Read more on [SSW Rules to Better Vertical Slice Architecture](https://www.ssw.c
     - ValueObject
     - DomainEvent
 - ⚡ FastEndpoints - developer friendly alternative to Minimal APIs. 
+    - Strongly-typed requests and responses
+    - Automatic validation with FluentValidation
+    - Support for commands and events
 - 📝 OpenAPI/Swagger - easily document your API
     - as per [ssw.com.au/rules/do-you-document-your-webapi/](https://ssw.com.au/rules/do-you-document-your-webapi/)
 - 🔑 Global Exception Handling - it's important to handle exceptions in a consistent way & protect sensitive information
