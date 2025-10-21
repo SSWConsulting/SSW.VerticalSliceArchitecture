@@ -16,7 +16,7 @@ public class UpdateEntityNameEndpoint(ApplicationDbContext dbContext)
             .Produces(StatusCodes.Status404NotFound));
     }
 
-    public override async Task HandleAsync(UpdateHeroRequest req, CancellationToken ct)
+    public override async Task HandleAsync(UpdateEntityNameRequest req, CancellationToken ct)
     {
         var entityNameId = EntityNameId.From(request.EntityNameId);
         var entityName = await dbContext.Entities
@@ -33,9 +33,9 @@ public class UpdateEntityNameEndpoint(ApplicationDbContext dbContext)
     }
 }
 
-public class UpdateHeroRequestValidator : Validator<UpdateEntityNameRequest>
+public class UpdateEntityNameRequestValidator : Validator<UpdateEntityNameRequest>
 {
-    public UpdateHeroRequestValidator()
+    public UpdateEntityNameRequestValidator()
     {
         RuleFor(v => v.EntityNameId)
             .NotEmpty();
