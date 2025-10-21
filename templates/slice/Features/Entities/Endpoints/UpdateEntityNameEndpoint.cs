@@ -2,7 +2,7 @@ using SSW.VerticalSliceArchitecture.Common.Domain.Entities;
 
 namespace SSW.VerticalSliceArchitecture.Features.Entities.Endpoints;
 
-public record UpdateEntityNameRequest(string Name);
+public record UpdateEntityNameRequest(Guid EntityNameId, string Name);
 
 public class UpdateEntityNameEndpoint(ApplicationDbContext dbContext)
     : Endpoint<UpdateEntityNameRequest>
@@ -18,16 +18,19 @@ public class UpdateEntityNameEndpoint(ApplicationDbContext dbContext)
 
     public override async Task HandleAsync(UpdateEntityNameRequest req, CancellationToken ct)
     {
-        var entityNameId = EntityNameId.From(request.EntityNameId);
+        var entityNameId = EntityNameId.From(req.EntityNameId);
         var entityName = await dbContext.Entities
-            .FirstOrDefaultAsync(h => h.Id == entityNameId, cancellationToken);
+            .FirstOrDefaultAsync(h => h.Id == entityNameId, ct);
 
         if (entityName is null)
-            return EntityNameErrors.NotFound;
+        {
+            await Send.NotFoundAsync(ct);
+            return;
+        }
 
-        entityName.Name = request.Name;
+        entityName.Name = req.Name;
 
-        await dbContext.SaveChangesAsync(cancellationToken);
+        await dbContext.SaveChangesAsync(ct);
 
         await Send.NoContentAsync(ct);
     }

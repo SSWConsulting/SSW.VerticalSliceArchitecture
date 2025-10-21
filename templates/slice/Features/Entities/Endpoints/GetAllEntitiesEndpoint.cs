@@ -17,9 +17,9 @@ public class GetAllEntitiesEndpoint(ApplicationDbContext dbContext)
 
     public async override Task HandleAsync(CancellationToken ct)
     {
-        var entities = await _dbContext.Entities
-            .Select(h => new EntityNameDto(h.Id.Value, h.Name))
-            .ToListAsync(cancellationToken);
+        var entities = await dbContext.Entities
+            .Select(h => new GetAllEntitiesResponse.EntityNameDto(h.Id.Value, h.Name))
+            .ToListAsync(ct);
 
         await Send.OkAsync(new GetAllEntitiesResponse(entities), ct);
     }
