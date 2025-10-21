@@ -43,9 +43,8 @@ Read more on [SSW Rules to Better Vertical Slice Architecture](https://www.ssw.c
     - Entity
     - ValueObject
     - DomainEvent
-- 🌐 Minimal Endpoints - because it's fast & simple. ⚡
-    - Extension methods to ensure consistent HTTP Verbs & Status Codes
-- 📝 OpenAPI/Scalar - easily document your API
+- ⚡ FastEndpoints - developer friendly alternative to Minimal APIs. 
+- 📝 OpenAPI/Swagger - easily document your API
     - as per [ssw.com.au/rules/do-you-document-your-webapi/](https://ssw.com.au/rules/do-you-document-your-webapi/)
 - 🔑 Global Exception Handling - it's important to handle exceptions in a consistent way & protect sensitive information
     - Transforms exceptions into a consistent format following the [RFC7231 memo](https://datatracker.ietf.org/doc/html/rfc7231#section-6.1)
@@ -53,9 +52,7 @@ Read more on [SSW Rules to Better Vertical Slice Architecture](https://www.ssw.c
     - Comes with Migrations & Data Seeding
     - as per [ssw.com.au/rules/rules-to-better-entity-framework/](https://ssw.com.au/rules/rules-to-better-entity-framework/)
 - 🧩 Specification Pattern - abstract EF Core away from your business logic
-- 🔀 CQRS - for separation of concerns
-    - as per [ssw.com.au/rules/keep-business-logic-out-of-the-presentation-layer/](https://ssw.com.au/rules/keep-business-logic-out-of-the-presentation-layer/)
-- 📦 MediatR - for decoupling your application
+- 🔀 REPR (Request-Endpoint-Response) Pattern - for structured endpoints
 - 📦 ErrorOr - fluent result pattern (instead of exceptions)
 - 📦 FluentValidation - for validating requests
     - as per [ssw.com.au/rules/use-fluent-validation/](https://ssw.com.au/rules/use-fluent-validation/)
