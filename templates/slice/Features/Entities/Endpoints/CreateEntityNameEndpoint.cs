@@ -2,12 +2,12 @@ using SSW.VerticalSliceArchitecture.Common.Domain.Entities;
 
 namespace SSW.VerticalSliceArchitecture.Features.Entities.Endpoints;
 
-public record CreatEntityNameRequest(string Name);
+public record CreateEntityNameRequest(string Name);
 
 public record CreateEntityNameResponse(Guid Id);
 
 public class CreateEntityNameEndpoint(ApplicationDbContext dbContext)
-    : Endpoint<CreatEntityNameRequest, CreateEntityNameResponse>
+    : Endpoint<CreateEntityNameRequest, CreateEntityNameResponse>
 {
     public override void Configure()
     {
@@ -16,7 +16,7 @@ public class CreateEntityNameEndpoint(ApplicationDbContext dbContext)
         Description(x => x.WithName("CreateEntityName"));
     }
 
-    public override async Task HandleAsync(CreatEntityNameRequest req, CancellationToken ct)
+    public override async Task HandleAsync(CreateEntityNameRequest req, CancellationToken ct)
     {
         var entityName = EntityName.Create(req.Name);
 
