@@ -1,8 +1,8 @@
 # API - Use FastEndpoints instead of Minimal APIs
 
 - Status: accepted
-- Deciders: Daniel Mackay
-- Date: 2025-10-18
+- Deciders: Daniel Mackay, Gordon Beeming, Luke Cook, Anton Polkanov
+- Date: 2025-10-21
 - Tags: dotnet, api, architecture, vsa, fastendpoints, minimal-apis
 
 ## Context and Problem Statement
