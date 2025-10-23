@@ -170,9 +170,52 @@ To speed up development there is a `dotnet new` template to create a full Vertic
    dotnet run
    ```
 
-> **NOTE:** The first time you run the solution, it may take a while to download the docker images, create the DB, and seed the data.
+> [!NOTE] The first time you run the solution, it may take a while to download the docker images, create the DB, and seed the data.
 
-4. Open https://localhost:7255/scalar/v1 in your browser to see it running ️🏃‍♂️
+4. Open https://localhost:7255/swagger in your browser to see it running ️🏃‍♂️
+
+## Deploying to Azure
+
+The template can be deployed to Azure via
+the [Azure Developer CLI (AZD)](https://learn.microsoft.com/en-us/azure/developer/azure-developer-cli/install-azd?tabs=winget-windows,brew-mac,script-linux&pivots=os-mac).
+This will setup the following:
+
+- Azure App Services: API + MigrationService
+- Azure SQL Server + Database: Data storage
+- Application Insights + Log Analytics: For monitoring and logging
+- Managed Identities: For secure access to Azure resources
+- Azure Container Registry: For storing Docker images
+
+### Steps to Deploy
+
+1. Authenticate with Azure
+
+    ```bash
+    azd auth login
+    ```
+
+2. Initialize AZD for the project
+
+    ```bash
+    azd init
+    ```
+
+3. Update environment variables
+
+    ```bash
+    azd env set ASPNETCORE_ENVIRONMENT Development
+    ```
+
+4. Deploy to Azure
+
+    ```bash
+    azd up
+    ```
+
+> [!NOTE]
+> `azd up` combines `azd provision` and `azd deploy` commands to create the resources and deploy the application. If running this from a CI/CD
+> pipeline, you can use `azd provision` and `azd deploy` separately in the appropriate places.
+
 
 ## 🎓 Learn More
 
@@ -208,7 +251,7 @@ Template will be published to NuGet.org when changes are made to `VerticalSliceA
 3. `package` GitHub Action will run and publish the new version to NuGet.org
 4. Create a GitHub release to document the changes
 
-> **NOTE:** We are now using CalVer for versioning. The version number should be in the format `YYYY.M.D` (e.g. `2024.2.12`).
+> [!NOTE] We are now using CalVer for versioning. The version number should be in the format `YYYY.M.D` (e.g. `2024.2.12`).
 
 ## 🤝 Contributing
 

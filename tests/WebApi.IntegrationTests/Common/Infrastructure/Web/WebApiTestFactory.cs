@@ -28,6 +28,6 @@ public class WebApiTestFactory : WebApplicationFactory<IWebApiMarker>
             // x.Services.AddSingleton<ILoggerProvider>(new XUnitLoggerProvider(Output));
         });
 
-        builder.UseSetting("ConnectionStrings:app-db", _dbConnection.ConnectionString);
+        builder.UseSetting("ConnectionStrings:AppDb", _dbConnection.ConnectionString);
     }
 }
