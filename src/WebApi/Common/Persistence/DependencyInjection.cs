@@ -13,7 +13,7 @@ public static class DependencyInjection
         services.AddScoped<DispatchDomainEventsInterceptor>();
         services.AddSingleton(TimeProvider.System);
         
-        builder.AddSqlServerDbContext<ApplicationDbContext>("app-db",
+        builder.AddSqlServerDbContext<ApplicationDbContext>("AppDb",
             null,
             options =>
             {
