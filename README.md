@@ -102,7 +102,7 @@ Read more on [SSW Rules to Better Vertical Slice Architecture](https://www.ssw.c
    dotnet new install SSW.VerticalSliceArchitecture.Template
    ```
 
-> NOTE: The template only needs to be installed once. Running this command again will update your version of the template.
+> [!NOTE] The template only needs to be installed once. Running this command again will update your version of the template.
 
 2. Create a new directory
    ```bash
@@ -115,7 +115,7 @@ Read more on [SSW Rules to Better Vertical Slice Architecture](https://www.ssw.c
    dotnet new ssw-vsa
    ```
 
-> NOTE: `name` is optional; if you don't specify it, the directory name will be used as the solution name and project namespaces.
+> [!NOTE] `name` is optional; if you don't specify it, the directory name will be used as the solution name and project namespaces.
 
 Alternatively, you can specify the `name` and `output` directory as follows:
 
@@ -125,7 +125,7 @@ dotnet new ssw-vsa --name {{SolutionName}}
 
 ### Running the Solution
 
-1. Change directory
+1. Change directory<br />
    Windows:
    ```ps
    cd tools\AppHost\
