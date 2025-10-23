@@ -5,7 +5,8 @@ var builder = DistributedApplication.CreateBuilder(args);
 
 var sqlServer = builder
     .AddSqlServer("sql")
-    .WithLifetime(ContainerLifetime.Persistent);
+    .WithLifetime(ContainerLifetime.Persistent)
+    .WithImage("mssql/server:2022-latest");
 
 var db = sqlServer
     .AddDatabase("app-db")
