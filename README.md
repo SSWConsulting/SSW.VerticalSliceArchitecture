@@ -102,7 +102,7 @@ Read more on [SSW Rules to Better Vertical Slice Architecture](https://www.ssw.c
    dotnet new install SSW.VerticalSliceArchitecture.Template
    ```
 
-> NOTE: The template only needs to be installed once. Running this command again will update your version of the template.
+> [!NOTE] The template only needs to be installed once. Running this command again will update your version of the template.
 
 2. Create a new directory
    ```bash
@@ -115,13 +115,36 @@ Read more on [SSW Rules to Better Vertical Slice Architecture](https://www.ssw.c
    dotnet new ssw-vsa
    ```
 
-> NOTE: `name` is optional; if you don't specify it, the directory name will be used as the solution name and project namespaces.
+> [!NOTE] `name` is optional; if you don't specify it, the directory name will be used as the solution name and project namespaces.
 
 Alternatively, you can specify the `name` and `output` directory as follows:
 
 ```bash
 dotnet new ssw-vsa --name {{SolutionName}}
 ```
+
+### Running the Solution
+
+1. Change directory<br />
+   Windows:
+   ```ps
+   cd tools\AppHost\
+   ```
+   Mac/Linux:
+   ```bash
+   cd tools/AppHost/
+   ```
+
+2. Run the solution
+   ```bash
+   dotnet run
+   ```
+
+> [!NOTE] The first time you run the solution, it may take a while to download the docker images, create the DB, and seed the data.
+
+4. Open https://localhost:7255/swagger in your browser to see it running ️🏃‍♂️
+
+## Adding Features
 
 ### Adding a Feature Slice
 
@@ -153,26 +176,41 @@ To speed up development there is a `dotnet new` template to create a full Vertic
    dotnet ef migrations add --project src/WebApi/WebApi.csproj --startup-project src/WebApi/WebApi.csproj --output-dir Common/Database/Migrations PersonTable 
    ```
 
-### Running the Solution
+### EF Migrations
+Due to .NET Aspire orchestrating the application startup and migration runner, EF migrations need to be handled a little differently to normal.
 
-1. Change directory
-   Windows:
-   ```ps
-   cd tools\AppHost\
-   ```
-   Mac/Linux:
-   ```bash
-   cd tools/AppHost/
-   ```
+#### Adding a Migration
+Adding new migrations is still the same old command you would expect, but with a couple of specific parameters to account for the separation of concerns. This can be performed via native dotnet tooling or through the Aspire CLI:
 
-2. Run the solution
-   ```bash
-   dotnet run
-   ```
+1. Run either of following commands from the root of the solution.
 
-> [!NOTE] The first time you run the solution, it may take a while to download the docker images, create the DB, and seed the data.
+```bash
+dotnet ef migrations add YourMigrationName --project ./src/Infrastructure/Infrastructure.csproj --startup-project ./src/WebApi/WebApi.csproj --output-dir ./Persistence/Migrations
+```
 
-4. Open https://localhost:7255/swagger in your browser to see it running ️🏃‍♂️
+```bash
+aspire exec --resource api -- dotnet ef migrations add YourMigrationName --project ../Infrastructure/Infrastructure.csproj --output-dir ./Persistence/Migrations
+```
+
+#### Applying a Migration
+.NET Aspire handles this for you - just start the project!
+
+#### Removing a Migration
+This is where things need to be done a little differently and requires the Aspire CLI.
+
+1. Enable the `exec` function:
+
+```bash
+aspire config set features.execCommandEnabled true
+```
+
+2. Pass the EF migration shell command through Aspire from the root of the solution:
+
+```bash
+aspire exec --resource api -- dotnet ef migrations remove --project ..\Infrastructure --force
+```
+> [!NOTE]
+> The `--force` flag is needed because .NET Aspire will start the application when this command is run, which triggers the migrations to run. This will apply your migrations to the database, and make EF Core unhappy when it tries to delete the latest migration. This should therefore be used with caution - a safer approach is to "roll forward" and create new migrations that safely undo the undesired change(s).
 
 ## Deploying to Azure
 
