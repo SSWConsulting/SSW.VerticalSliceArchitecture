@@ -6,10 +6,10 @@ This is an enterprise-ready Vertical Slice Architecture template for .NET 9 with
 ## Architecture Patterns
 
 ### Vertical Slice Organization
-- **Features**: `src/WebApi/Features/{FeatureName}/` contains Commands, Queries, and a `{FeatureName}Feature.cs` implementing `IFeature`
-- **Commands/Queries**: Each is a static class containing nested `Request`, `Handler`, `Validator`, and `Endpoint` classes
-- **Handlers**: Always named `Handler` (enforced by architecture tests in `tests/WebApi.ArchitectureTests/`)
-- **Endpoints**: Implement `IEndpoint` with `MapEndpoint(IEndpointRouteBuilder)` - auto-discovered via reflection in `Host/EndpointDiscovery.cs`
+- **Features**: `src/WebApi/Features/{FeatureName}/` contains Endpoints and a `{FeatureName}Feature.cs` implementing `IFeature`
+- **Endpoints**: Located in `Features/{FeatureName}/Endpoints/` - each endpoint is a separate file inheriting from `Endpoint<TRequest, TResponse>` or `EndpointWithoutRequest<TResponse>`
+- **Endpoint Discovery**: FastEndpoints automatically discovers and registers all endpoints at startup
+- **Groups**: Each feature defines a `Group` class to configure routing prefix and shared settings (e.g., `HeroesGroup` for `/api/heroes`) 
 
 ### Domain Layer (`Common/Domain/`)
 - **Entities**: Inherit from `Entity<TId>` or `AggregateRoot<TId>` for domain events
@@ -24,16 +24,119 @@ This is an enterprise-ready Vertical Slice Architecture template for .NET 9 with
   - Apply with `.WithSpecification(new YourSpec())` on DbSet queries
   - Example: `dbContext.Heroes.WithSpecification(new HeroByIdSpec(heroId)).FirstOrDefault()`
 
-### Request/Response Flow
-1. **Endpoint** receives HTTP request → sends `Request` via MediatR `ISender`
-2. **ValidationErrorOrResultBehavior** validates using FluentValidation → returns `ErrorOr<T>` on failure
-3. **Handler** executes business logic → returns `ErrorOr<TResponse>`
-4. **Endpoint** maps result: `.Match(TypedResults.Ok, CustomResult.Problem)` for queries, `.Match(_ => TypedResults.Created(), CustomResult.Problem)` for commands
-5. Use endpoint extension methods: `ProducesGet<T>()`, `ProducesPost()`, `ProducesPut()`, `ProducesDelete()`
+### FastEndpoints
+
+This project uses **FastEndpoints** for defining HTTP endpoints with a clean, strongly-typed API structure.
+
+#### Endpoint Structure
+Each feature slice in `Features/{FeatureName}/Endpoints/` contains:
+- **Endpoint classes**: Inherit from `Endpoint<TRequest, TResponse>` or `EndpointWithoutRequest<TResponse>`
+- **Request records**: Define the input contract (e.g., `CreateHeroRequest`)
+- **Response records**: Define the output contract (e.g., `CreateHeroResponse`)
+- **Validator classes**: Inherit from `Validator<TRequest>` for request validation
+- **Summary classes**: Inherit from `Summary<TEndpoint>` for OpenAPI documentation with examples
+
+#### Creating Endpoints
+
+**With Request and Response:**
+```csharp
+public record CreateHeroRequest(string Name, string Alias, IEnumerable<PowerDto> Powers);
+public record CreateHeroResponse(Guid Id);
+
+public class CreateHeroEndpoint(ApplicationDbContext dbContext)
+    : Endpoint<CreateHeroRequest, CreateHeroResponse>
+{
+    public override void Configure()
+    {
+        Post("/");
+        Group<HeroesGroup>();
+        Description(x => x.WithName("CreateHero"));
+    }
+
+    public override async Task HandleAsync(CreateHeroRequest req, CancellationToken ct)
+    {
+        // Business logic here
+        await dbContext.SaveChangesAsync(ct);
+        await Send.OkAsync(new CreateHeroResponse(id), ct);
+    }
+}
+```
+
+**Without Request (GET all):**
+```csharp
+public class GetAllHeroesEndpoint(ApplicationDbContext dbContext) 
+    : EndpointWithoutRequest<GetAllHeroesResponse>
+{
+    public override void Configure()
+    {
+        Get("/");
+        Group<HeroesGroup>();
+        Description(x => x.WithName("GetAllHeroes"));
+    }
+
+    public async override Task HandleAsync(CancellationToken ct)
+    {
+        // Query logic here
+        await Send.OkAsync(new GetAllHeroesResponse(heroes), ct);
+    }
+}
+```
+
+#### Endpoint Groups
+Define a `Group` class per feature to configure common settings and routing:
+```csharp
+public class HeroesGroup : Group
+{
+    public HeroesGroup()
+    {
+        Configure("heroes", ep => ep.Description(x => x.ProducesProblemDetails(500)));
+    }
+}
+```
+- The prefix (e.g., "heroes") becomes `/api/heroes` and is used as the OpenAPI tag
+- All endpoints using `Group<HeroesGroup>()` inherit this configuration
+
+#### Validation
+Create validators using FluentValidation patterns:
+```csharp
+public class CreateHeroRequestValidator : Validator<CreateHeroRequest>
+{
+    public CreateHeroRequestValidator()
+    {
+        RuleFor(v => v.Name).NotEmpty();
+        RuleFor(v => v.Alias).NotEmpty();
+    }
+}
+```
+- Validation runs automatically before `HandleAsync()`
+- Failed validation returns 400 Bad Request with error details
+
+#### OpenAPI Documentation
+Use `Summary<TEndpoint>` classes for rich API documentation:
+```csharp
+public class CreateHeroSummary : Summary<CreateHeroEndpoint>
+{
+    public CreateHeroSummary()
+    {
+        Summary = "Create a new hero";
+        Description = "Creates a new hero with the specified name, alias, and powers.";
+        ExampleRequest = new CreateHeroRequest(...);
+        Response(200, "Hero created successfully", example: new CreateHeroResponse(...));
+    }
+}
+```
+
+#### Response Handling
+FastEndpoints provides `Send` helper for responses:
+- `await Send.OkAsync(response, ct)` - 200 OK
+- `await Send.CreatedAsync(url, response, ct)` - 201 Created
+- `await Send.NoContentAsync(ct)` - 204 No Content
+- `await Send.NotFoundAsync(ct)` - 404 Not Found
 
 ### Error Handling
-- Use `ErrorOr<T>` result pattern (not exceptions for flow control)
-- Return `Error.Validation()`, `Error.NotFound()`, `Error.Conflict()`, etc.
+- FastEndpoints provides built-in response helpers: `Send.NotFoundAsync()`, `Send.ForbiddenAsync()`, etc.
+- Use `ThrowError()` in endpoints to return validation errors with custom messages
+- Global exception handling catches unhandled exceptions and returns appropriate HTTP responses
 - For eventual consistency failures in domain event handlers, throw `EventualConsistencyException` (handled by middleware)
 
 ## Adding New Features
@@ -102,8 +205,10 @@ dotnet test tests/WebApi.IntegrationTests/
 ## Key Conventions
 
 ### Endpoint Routing
-- Use `endpoints.MapApiGroup(FeatureName)` to create `/api/{featurename}` routes with OpenAPI tags
-- Example: `HeroesFeature.FeatureName` → `/api/heroes`
+- FastEndpoints automatically discovers and registers all endpoints at startup
+- Use `Group<TGroup>()` in endpoint `Configure()` to assign to a route group
+- Define a `Group` class per feature to set the route prefix (e.g., `HeroesGroup` configures `"heroes"` → `/api/heroes`)
+- Example: `Group<HeroesGroup>()` in an endpoint routes to `/api/heroes/{endpoint-route}`
 
 ### Global Usings (`GlobalUsings.cs`)
 - `EntityFrameworkCore`, `FluentValidation`, `ErrorOr`, `Vogen`, `Ardalis.Specification` pre-imported
@@ -114,10 +219,10 @@ dotnet test tests/WebApi.IntegrationTests/
 - `Directory.Packages.props`: Central package management - update versions here
 - Release builds enforce `TreatWarningsAsErrors` and `EnforceCodeStyleInBuild`
 
-### MediatR Behaviors (Order Matters)
-1. `UnhandledExceptionBehaviour` - catches unhandled exceptions
-2. `ValidationErrorOrResultBehavior` - validates requests, returns `ErrorOr` errors
-3. `PerformanceBehaviour` - logs slow requests
+### FastEndpoints Pipeline
+- **Validation**: Automatically runs FluentValidation validators before `HandleAsync()` - returns 400 Bad Request on failure
+- **Exception Handling**: Global exception handler catches unhandled exceptions and returns appropriate error responses
+- **Performance Logging**: Built-in logging for slow requests
 
 ### Domain Events & Eventual Consistency
 - Events dispatched by `DispatchDomainEventsInterceptor` after `SaveChangesAsync()`
@@ -148,10 +253,11 @@ dotnet test tests/WebApi.IntegrationTests/
 
 ## Common Pitfalls
 1. Forgetting to register strongly typed IDs in `VogenEfCoreConverters` → runtime EF Core errors
-2. Not using `ProducesGet/Post/Put/Delete()` extensions → inconsistent OpenAPI documentation
-3. Throwing exceptions in handlers instead of returning `ErrorOr<T>` → breaks error handling pipeline
-4. Not inheriting handlers from nested `Handler` class → architecture test failures
-5. Loading aggregates without specifications → missing related entities or inconsistent query patterns
+2. Not creating `Summary<TEndpoint>` classes → missing OpenAPI documentation and examples
+3. Forgetting to call `Group<TGroup>()` in endpoint `Configure()` → endpoint not properly grouped/routed
+4. Not using `await Send.OkAsync()` or similar response methods → no HTTP response sent
+5. Forgetting to add `return` after `await Send.OkAsync()` (or similar)
+6. Loading aggregates without specifications → missing related entities or inconsistent query patterns
 
 ## What's NOT Included
 - **Authentication/Authorization**: This is a template - implement auth as needed for your use case

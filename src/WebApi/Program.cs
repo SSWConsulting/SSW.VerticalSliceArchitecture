@@ -1,4 +1,5 @@
 using System.Reflection;
+using FastEndpoints.Swagger;
 using SSW.VerticalSliceArchitecture.Host.Extensions;
 using SSW.VerticalSliceArchitecture.Host;
 
@@ -27,12 +28,11 @@ else
     app.UseHsts();
 }
 
-app.MapOpenApi();
-app.MapCustomScalarApiReference();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
-app.RegisterEndpoints(appAssembly);
+app.UseCustomFastEndpoints();
+app.UseSwaggerGen();
 app.UseEventualConsistencyMiddleware();
 
 app.MapDefaultEndpoints();

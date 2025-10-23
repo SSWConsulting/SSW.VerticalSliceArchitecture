@@ -1,7 +1,6 @@
-﻿namespace SSW.VerticalSliceArchitecture.Common.Features;
+﻿namespace SSW.VerticalSliceArchitecture.Common.Interfaces;
 
 public interface IFeature
 {
-    abstract static string FeatureName { get; }
     static abstract void ConfigureServices(IServiceCollection services, IConfiguration config);
 }

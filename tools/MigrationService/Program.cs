@@ -2,9 +2,9 @@
 using Microsoft.Extensions.Hosting;
 using MigrationService;
 using MigrationService.Initializers;
-using SSW.VerticalSliceArchitecture.Common.Interceptors;
 using SSW.VerticalSliceArchitecture.Common.Interfaces;
 using SSW.VerticalSliceArchitecture.Common.Persistence;
+using SSW.VerticalSliceArchitecture.Common.Persistence.Interceptors;
 
 var builder = Host.CreateApplicationBuilder(args);
 

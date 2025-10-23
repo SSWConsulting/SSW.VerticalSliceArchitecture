@@ -1,9 +1,9 @@
+using FastEndpoints;
 using Microsoft.EntityFrameworkCore;
 using SSW.VerticalSliceArchitecture.Common.Domain.Heroes;
-using SSW.VerticalSliceArchitecture.Features.Heroes.Commands;
+using SSW.VerticalSliceArchitecture.Features.Heroes.Endpoints;
 using SSW.VerticalSliceArchitecture.IntegrationTests.Common;
 using System.Net;
-using System.Net.Http.Json;
 
 namespace SSW.VerticalSliceArchitecture.IntegrationTests.Endpoints.Heroes.Commands;
 
@@ -19,17 +19,17 @@ public class CreateHeroCommandTests(TestingDatabaseFixture fixture) : Integratio
             ("Super-strength", 10),
             ("Flight", 8),
         ];
-        var cmd = new CreateHeroCommand.Request(
+        var cmd = new CreateHeroRequest(
             "Clark Kent",
             "Superman",
-            powers.Select(p => new CreateHeroCommand.CreateHeroPowerDto(p.Name, p.PowerLevel)));
+            powers.Select(p => new CreateHeroRequest.HeroPowerDto(p.Name, p.PowerLevel)));
         var client = GetAnonymousClient();
 
         // Act
-        var result = await client.PostAsJsonAsync("/api/heroes", cmd, CancellationToken);
+        var result = await client.POSTAsync<CreateHeroEndpoint, CreateHeroRequest, CreateHeroResponse>(cmd);
 
         // Assert
-        result.StatusCode.Should().Be(HttpStatusCode.Created);
+        result.Response.StatusCode.Should().Be(HttpStatusCode.OK);
         var item = await GetQueryable<Hero>().FirstAsync(CancellationToken);
 
         item.Should().NotBeNull();

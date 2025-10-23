@@ -1,7 +1,7 @@
-using SSW.VerticalSliceArchitecture.Features.Teams.Queries;
+using FastEndpoints;
+using SSW.VerticalSliceArchitecture.Features.Teams.Endpoints;
 using SSW.VerticalSliceArchitecture.IntegrationTests.Common;
 using SSW.VerticalSliceArchitecture.IntegrationTests.Common.Factories;
-using System.Net.Http.Json;
 
 namespace SSW.VerticalSliceArchitecture.IntegrationTests.Endpoints.Teams.Queries;
 
@@ -17,13 +17,14 @@ public class GetAllTeamsQueryTests(TestingDatabaseFixture fixture) : Integration
         var client = GetAnonymousClient();
 
         // Act
-        var result = await client.GetFromJsonAsync<GetAllTeamsQuery.TeamDto[]>("/api/teams", CancellationToken);
+        var result = await client.GETAsync<GetAllTeamsEndpoint, GetAllTeamsResponse>();
 
         // Assert
-        result.Should().NotBeNull();
-        result!.Length.Should().Be(entityCount);
+        result.Response.IsSuccessStatusCode.Should().BeTrue();
+        result.Result.Should().NotBeNull();
+        result.Result!.Teams.Should().HaveCount(entityCount);
 
-        var firstTeam = result.First();
+        var firstTeam = result.Result.Teams.First();
         firstTeam.Id.Should().NotBeEmpty();
         firstTeam.Name.Should().NotBeEmpty();
     }

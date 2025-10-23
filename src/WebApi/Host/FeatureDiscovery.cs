@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using SSW.VerticalSliceArchitecture.Common.Interfaces;
+using System.Reflection;
 
 namespace SSW.VerticalSliceArchitecture.Host;
 

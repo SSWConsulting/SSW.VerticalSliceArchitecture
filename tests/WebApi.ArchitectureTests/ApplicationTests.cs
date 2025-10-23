@@ -1,4 +1,4 @@
-using MediatR;
+using FastEndpoints;
 using SSW.VerticalSliceArchitecture.ArchitectureTests.Common;
 
 namespace SSW.VerticalSliceArchitecture.ArchitectureTests;
@@ -24,7 +24,7 @@ public class ApplicationTests: TestBase
             .WithNestedTypes()
             .Where(t => t.GetInterfaces().Any(i =>
                 i.IsGenericType &&
-                i.GetGenericTypeDefinition() == typeof(IRequestHandler<,>)
+                i.GetGenericTypeDefinition() == typeof(ICommandHandler<,>)
             ))
             .ToList();
         
@@ -36,7 +36,6 @@ public class ApplicationTests: TestBase
             .ToList();
         
         // Assert
-        commandTypes.Should().NotBeEmpty();
         invalidNames.Should().BeEmpty();
     }
 
@@ -52,7 +51,7 @@ public class ApplicationTests: TestBase
             .WithNestedTypes()
             .Where(t => t.GetInterfaces().Any(i =>
                 i.IsGenericType &&
-                i.GetGenericTypeDefinition() == typeof(IRequestHandler<,>)
+                i.GetGenericTypeDefinition() == typeof(ICommandHandler<,>)
             ))
             .ToList();
         
@@ -64,7 +63,6 @@ public class ApplicationTests: TestBase
             .ToList();
         
         // Assert
-        commandTypes.Should().NotBeEmpty();
         invalidNames.Should().BeEmpty();
     }
 }

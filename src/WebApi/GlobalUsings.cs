@@ -5,6 +5,7 @@ global using static System.ArgumentOutOfRangeException;
 global using Ardalis.Specification;
 global using FluentValidation;
 global using ErrorOr;
+global using FastEndpoints;
 global using Vogen;
 global using SSW.VerticalSliceArchitecture.Common.Features;
 global using SSW.VerticalSliceArchitecture.Common.Persistence;

@@ -1,9 +1,8 @@
 ﻿using SSW.VerticalSliceArchitecture.Common.Domain.Base.EventualConsistency;
-using SSW.VerticalSliceArchitecture.Common.Domain.Base.Interfaces;
 
 namespace SSW.VerticalSliceArchitecture.Common.Domain.Heroes;
 
-public record PowerLevelUpdatedEvent(Hero Hero) : IDomainEvent
+public record PowerLevelUpdatedEvent(Hero Hero) : IEvent
 {
     public static readonly Error TeamNotFound = EventualConsistencyError.From(
         code: "PowerLeveUpdated.TeamNotFound",
