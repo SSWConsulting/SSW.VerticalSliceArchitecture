@@ -1,18 +1,15 @@
 ﻿using Microsoft.EntityFrameworkCore.Diagnostics;
 using SSW.VerticalSliceArchitecture.Common.Domain.Base.Interfaces;
-using SSW.VerticalSliceArchitecture.Common.FastEndpoints;
 using SSW.VerticalSliceArchitecture.Common.Middleware;
 
-namespace SSW.VerticalSliceArchitecture.Common.Interceptors;
+namespace SSW.VerticalSliceArchitecture.Common.Persistence.Interceptors;
 
 public class DispatchDomainEventsInterceptor : SaveChangesInterceptor
 {
-    // private readonly IPublisher _publisher;
     private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public DispatchDomainEventsInterceptor(/*IPublisher publisher,*/ IHttpContextAccessor httpContextAccessor)
+    public DispatchDomainEventsInterceptor(IHttpContextAccessor httpContextAccessor)
     {
-        // _publisher = publisher;
         _httpContextAccessor = httpContextAccessor;
     }
 

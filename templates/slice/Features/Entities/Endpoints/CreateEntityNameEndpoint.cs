@@ -20,7 +20,7 @@ public class CreateEntityNameEndpoint(ApplicationDbContext dbContext)
     {
         var entityName = EntityName.Create(req.Name);
 
-        await dbContext.Entities.AddAsync(entityName, ct);
+        dbContext.Entities.Add(entityName);
         await dbContext.SaveChangesAsync(ct);
 
         await Send.OkAsync(new CreateEntityNameResponse(entityName.Id.Value), ct);

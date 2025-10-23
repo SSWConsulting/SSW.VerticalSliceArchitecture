@@ -28,7 +28,7 @@ public class CreateHeroEndpoint(ApplicationDbContext dbContext)
         var powers = req.Powers.Select(p => new Power(p.Name, p.PowerLevel));
         hero.UpdatePowers(powers);
 
-        await dbContext.Heroes.AddAsync(hero, ct);
+        dbContext.Heroes.Add(hero);
         await dbContext.SaveChangesAsync(ct);
 
         await Send.OkAsync(new CreateHeroResponse(hero.Id.Value), ct);

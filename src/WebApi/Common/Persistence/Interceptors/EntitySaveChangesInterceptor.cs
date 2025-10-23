@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 using SSW.VerticalSliceArchitecture.Common.Domain.Base.Interfaces;
 using SSW.VerticalSliceArchitecture.Common.Interfaces;
 
-namespace SSW.VerticalSliceArchitecture.Common.Interceptors;
+namespace SSW.VerticalSliceArchitecture.Common.Persistence.Interceptors;
 
 public class EntitySaveChangesInterceptor(ICurrentUserService currentUserService, TimeProvider timeProvider)
     : SaveChangesInterceptor

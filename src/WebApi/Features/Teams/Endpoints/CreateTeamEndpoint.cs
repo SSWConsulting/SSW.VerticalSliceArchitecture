@@ -18,7 +18,7 @@ public class CreateTeamEndpoint(ApplicationDbContext dbContext)
     {
         var team = Team.Create(req.Name);
 
-        await dbContext.Teams.AddAsync(team, ct);
+        dbContext.Teams.Add(team);
         await dbContext.SaveChangesAsync(ct);
 
         await Send.NoContentAsync(ct);

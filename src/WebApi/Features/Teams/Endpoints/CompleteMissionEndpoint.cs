@@ -1,6 +1,5 @@
 using Ardalis.Specification.EntityFrameworkCore;
 using SSW.VerticalSliceArchitecture.Common.Domain.Teams;
-using IEndpoint = FastEndpoints.IEndpoint;
 
 namespace SSW.VerticalSliceArchitecture.Features.Teams.Endpoints;
 
