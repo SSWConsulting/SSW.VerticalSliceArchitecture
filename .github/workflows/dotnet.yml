@@ -39,7 +39,7 @@ jobs:
       run: dotnet test --no-build --no-restore --configuration Release --logger "trx;LogFileName=TestResults.trx"
 
     - name: Test Report
-      uses: dorny/test-reporter@v1
+      uses: dorny/test-reporter@v2
       if: github.actor != 'dependabot[bot]' && (success() || failure())    # run this step even if previous step failed
       with:
         name: Tests             # Name of the check run which will be created
