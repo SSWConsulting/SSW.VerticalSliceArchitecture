@@ -3,7 +3,7 @@
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
   </PropertyGroup>
   <ItemGroup>
-    <PackageVersion Include="Aspire.Hosting.Azure.ApplicationInsights" Version="9.5.1" />
+    <PackageVersion Include="Aspire.Hosting.Azure.ApplicationInsights" Version="9.5.2" />
     <PackageVersion Include="Aspire.Hosting.Azure.AppService" Version="9.5.1-preview.1.25502.11" />
     <PackageVersion Include="Aspire.Hosting.Azure.Sql" Version="9.5.1" />
     <PackageVersion Include="FastEndpoints.Swagger" Version="7.0.1" />
