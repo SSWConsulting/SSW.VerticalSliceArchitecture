@@ -1,4 +1,4 @@
-﻿using EntityFramework.Exceptions.SqlServer;
+using EntityFramework.Exceptions.SqlServer;
 using SSW.VerticalSliceArchitecture.Common.Persistence.Interceptors;
 
 namespace SSW.VerticalSliceArchitecture.Common.Persistence;
