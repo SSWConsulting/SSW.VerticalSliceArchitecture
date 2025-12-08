@@ -6,30 +6,27 @@ public record Power : IValueObject
 {
     public const int NameMaxLength = 50;
 
-    private string _name = null!;
-    private int _powerLevel;
-
     // Private setters needed for EF
     public string Name
     {
-        get => _name;
+        get;
         private set
         {
             ThrowIfNullOrWhiteSpace(value, nameof(Name));
             ThrowIfGreaterThan(value.Length, NameMaxLength, nameof(Name));
-            _name = value;
+            field = value;
         }
-    }
+    } = null!;
 
     // Private setters needed for EF
     public int PowerLevel
     {
-        get => _powerLevel;
+        get;
         private set
         {
             ThrowIfLessThan(value, 1, nameof(PowerLevel));
             ThrowIfGreaterThan(value, 10, nameof(PowerLevel));
-            _powerLevel = value;
+            field = value;
         }
     }
 

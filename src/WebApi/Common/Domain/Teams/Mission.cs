@@ -9,19 +9,18 @@ public readonly partial struct MissionId;
 
 public class Mission : Entity<MissionId>
 {
-    private string _description = null!;
     public const int DescriptionMaxLength = 500;
 
     public string Description
     {
-        get => _description;
+        get;
         private set
         {
             ThrowIfNullOrWhiteSpace(value, nameof(Description));
             ThrowIfGreaterThan(value.Length, DescriptionMaxLength, nameof(Description));
-            _description = value;
+            field = value;
         }
-    }
+    } = null!;
 
     public MissionStatus Status { get; private set; }
 

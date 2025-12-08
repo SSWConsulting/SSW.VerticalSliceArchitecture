@@ -11,32 +11,30 @@ public abstract class Auditable : IAuditable
     public const int UpdatedByMaxLength = 128;
 
     private const string SystemUser = "System";
-    private string _createdBy = null!;
-    private string? _updatedBy;
 
     public DateTimeOffset CreatedAt { get; private set; }
 
     public string CreatedBy
     {
-        get => _createdBy;
+        get;
         private set
         {
             ThrowIfNullOrWhiteSpace(value, nameof(CreatedBy));
             ThrowIfGreaterThan(value.Length, CreatedByMaxLength, nameof(CreatedBy));
-            _createdBy = value;
+            field = value;
         }
-    }
+    } = null!;
 
     public DateTimeOffset? UpdatedAt { get; private set; }
 
     public string? UpdatedBy
     {
-        get => _updatedBy;
+        get;
         private set
         {
             ThrowIfNullOrWhiteSpace(value, nameof(UpdatedBy));
             ThrowIfGreaterThan(value.Length, UpdatedByMaxLength, nameof(UpdatedBy));
-            _updatedBy = value;
+            field = value;
         }
     }
 
