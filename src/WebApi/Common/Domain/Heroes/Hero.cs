@@ -1,4 +1,4 @@
-﻿using SSW.VerticalSliceArchitecture.Common.Domain.Base;
+using SSW.VerticalSliceArchitecture.Common.Domain.Base;
 using SSW.VerticalSliceArchitecture.Common.Domain.Teams;
 
 namespace SSW.VerticalSliceArchitecture.Common.Domain.Heroes;
@@ -15,30 +15,27 @@ public class Hero : AggregateRoot<HeroId>
 
     private readonly List<Power> _powers = [];
 
-    private string _name = null!;
-    private string _alias = null!;
-
     public string Name
     {
-        get => _name;
+        get;
         set
         {
             ThrowIfNullOrWhiteSpace(value, nameof(Name));
             ThrowIfGreaterThan(value.Length, NameMaxLength, nameof(Name));
-            _name = value;
+            field = value;
         }
-    }
+    } = null!;
 
     public string Alias
     {
-        get => _alias;
+        get;
         set
         {
             ThrowIfNullOrWhiteSpace(value, nameof(Alias));
             ThrowIfGreaterThan(value.Length, AliasMaxLength, nameof(Alias));
-            _alias = value;
+            field = value;
         }
-    }
+    } = null!;
 
     public int PowerLevel { get; private set; }
     public TeamId? TeamId { get; private set; }

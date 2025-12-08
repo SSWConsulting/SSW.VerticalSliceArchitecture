@@ -12,21 +12,20 @@ public class Team : AggregateRoot<TeamId>
 {
     public const int NameMaxLength = 100;
 
-    private string _name = null!;
     private readonly List<Hero> _heroes = [];
     private readonly List<Mission> _missions = [];
     private Mission? CurrentMission => _missions.FirstOrDefault(m => m.Status == MissionStatus.InProgress);
 
     public string Name
     {
-        get => _name;
+        get;
         private set
         {
             ThrowIfNullOrWhiteSpace(value, nameof(Name));
             ThrowIfGreaterThan(value.Length, NameMaxLength, nameof(Name));
-            _name = value;
+            field = value;
         }
-    }
+    } = null!;
 
     public int TotalPowerLevel { get; private set; }
     public TeamStatus Status { get; private set; }
