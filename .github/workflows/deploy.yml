@@ -36,7 +36,7 @@ jobs:
       run: log4brains build --basePath /${GITHUB_REPOSITORY#*/}
 
     - name: Upload artifact
-      uses: actions/upload-pages-artifact@v3
+      uses: actions/upload-pages-artifact@v4
       with:
         # Upload entire repository
         path: './_site'
