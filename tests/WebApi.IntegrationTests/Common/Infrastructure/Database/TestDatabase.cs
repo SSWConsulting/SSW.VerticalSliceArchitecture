@@ -36,7 +36,9 @@ public class TestDatabase : IAsyncDisposable
         using var dbContext = new ApplicationDbContext(options);
         await dbContext.Database.MigrateAsync();
 
-        _checkpoint = await Respawner.CreateAsync(_connectionString,
+        await using var connection = new SqlConnection(_connectionString);
+        await connection.OpenAsync();
+        _checkpoint = await Respawner.CreateAsync(connection,
             new RespawnerOptions { TablesToIgnore = ["__EFMigrationsHistory"] });
     }
 
@@ -44,7 +46,9 @@ public class TestDatabase : IAsyncDisposable
 
     public async Task ResetAsync()
     {
-        await _checkpoint.ResetAsync(_connectionString);
+        await using var connection = new SqlConnection(_connectionString);
+        await connection.OpenAsync();
+        await _checkpoint.ResetAsync(connection);
     }
 
     public async ValueTask DisposeAsync()
