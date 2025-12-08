@@ -1,7 +1,5 @@
-<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Aspire.AppHost.Sdk/13.0.2">
 
-  <Sdk Name="Aspire.AppHost.Sdk" Version="9.5.1"/>
-  
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <IsAspireHost>true</IsAspireHost>
