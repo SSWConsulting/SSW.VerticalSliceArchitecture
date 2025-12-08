@@ -6,6 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="EntityFrameworkCore.Exceptions.SqlServer" />
     <PackageReference Include="FastEndpoints.Swagger" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
@@ -14,8 +15,6 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" />
-    <!-- TODO: Add back once EntityFrameworkCore.Exceptions.SqlServer supports .NET 10 -->
-    <!-- <PackageReference Include="EntityFrameworkCore.Exceptions.SqlServer" /> -->
     <PackageReference Include="ErrorOr" />
     <PackageReference Include="Vogen" />
     <PackageReference Include="Ardalis.Specification.EntityFrameworkCore" />

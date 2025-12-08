@@ -1,5 +1,4 @@
-// TODO: Add back once EntityFrameworkCore.Exceptions.SqlServer supports .NET 10
-// using EntityFramework.Exceptions.SqlServer;
+using EntityFramework.Exceptions.SqlServer;
 using SSW.VerticalSliceArchitecture.Common.Persistence.Interceptors;
 
 namespace SSW.VerticalSliceArchitecture.Common.Persistence;
@@ -24,9 +23,8 @@ public static class DependencyInjection
                     serviceProvider.GetRequiredService<EntitySaveChangesInterceptor>(),
                     serviceProvider.GetRequiredService<DispatchDomainEventsInterceptor>());
 
-                // TODO: Add back once EntityFrameworkCore.Exceptions.SqlServer supports .NET 10
                 // Return strongly typed useful exceptions
-                // options.UseExceptionProcessor();
+                options.UseExceptionProcessor();
             });
     }
 }
