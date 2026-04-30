@@ -4,6 +4,8 @@ namespace SSW.VerticalSliceArchitecture.UnitTests.Features.Heroes;
 
 public class HeroTests
 {
+    private static readonly string ValidName = new('a', Hero.NameMinLength);
+
     [Theory]
     [InlineData("c8ad9974-ca93-44a5-9215-2f4d9e866c7a", "cc3431a8-4a31-4f76-af64-e8198279d7a4", false)]
     [InlineData("c8ad9974-ca93-44a5-9215-2f4d9e866c7a", "c8ad9974-ca93-44a5-9215-2f4d9e866c7a", true)]
@@ -28,7 +30,7 @@ public class HeroTests
     public void Create_WithValidNameAndAlias_ShouldSucceed()
     {
         // Arrange
-        var name = "name";
+        var name = new string('a', Hero.NameMinLength);
         var alias = "alias";
 
         // Act
@@ -40,20 +42,59 @@ public class HeroTests
         hero.Alias.Should().Be(alias);
     }
 
+    [Theory]
+    [InlineData(Hero.NameMinLength - 1)] // 30 chars — too short
+    public void Create_WithNameTooShort_ShouldThrow(int length)
+    {
+        // Arrange
+        var name = new string('a', length);
+
+        // Act
+        Action act = () => Hero.Create(name, "alias");
+
+        // Assert
+        act.Should().Throw<ArgumentOutOfRangeException>();
+    }
+
+    [Theory]
+    [InlineData(Hero.NameMinLength)]     // 31 chars — minimum valid
+    [InlineData(Hero.NameMaxLength)]     // 100 chars — maximum valid
+    public void Create_WithNameAtBoundary_ShouldSucceed(int length)
+    {
+        // Arrange
+        var name = new string('a', length);
+
+        // Act
+        var hero = Hero.Create(name, "alias");
+
+        // Assert
+        hero.Name.Should().Be(name);
+    }
+
+    [Theory]
+    [InlineData(Hero.NameMaxLength + 1)] // 101 chars — too long
+    public void Create_WithNameTooLong_ShouldThrow(int length)
+    {
+        // Arrange
+        var name = new string('a', length);
+
+        // Act
+        Action act = () => Hero.Create(name, "alias");
+
+        // Assert
+        act.Should().Throw<ArgumentOutOfRangeException>();
+    }
+
     [Fact]
     public void Create_WithSameNameAndAlias_ShouldSucceed()
     {
-        // Arrange
-        var name = "name";
-        var alias = "name";
-
         // Act
-        Hero.Create(name, alias);
+        Hero.Create(ValidName, ValidName);
     }
 
     [Theory]
     [InlineData(null, "alias")]
-    [InlineData("name", null)]
+    [InlineData("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", null)] // 31 chars — valid length, null alias
     [InlineData(null, null)]
     public void Create_WithNullTitleOrAlias_ShouldThrow(string? name, string? alias)
     {
@@ -70,7 +111,7 @@ public class HeroTests
     public void AddPower_ShouldUpdateHeroPowerLevel()
     {
         // Act
-        var hero = Hero.Create("name", "alias");
+        var hero = Hero.Create(ValidName, "alias");
         var powers = new List<Power> { new("Super-strength", 10), new("Super-speed", 5) };
         hero.UpdatePowers(powers);
 
@@ -83,7 +124,7 @@ public class HeroTests
     public void RemovePower_ShouldUpdateHeroPowerLevel()
     {
         // Act
-        var hero = Hero.Create("name", "alias");
+        var hero = Hero.Create(ValidName, "alias");
         var powers = new List<Power> { new("Super-strength", 10), new("Super-speed", 5) };
         hero.UpdatePowers(powers);
 
@@ -99,7 +140,7 @@ public class HeroTests
     public void AddPower_ShouldRaisePowerLevelUpdatedEvent()
     {
         // Act
-        var hero = Hero.Create("name", "alias");
+        var hero = Hero.Create(ValidName, "alias");
         hero.Id = HeroId.From(Guid.NewGuid());
         hero.UpdatePowers([new Power("Super-strength", 10)]);
 
@@ -121,7 +162,7 @@ public class HeroTests
     public void RemovePower_ShouldRaisePowerLevelUpdatedEvent()
     {
         // Act
-        var hero = Hero.Create("name", "alias");
+        var hero = Hero.Create(ValidName, "alias");
         var power = new Power("Super-strength", 10);
         hero.UpdatePowers([power]);
 

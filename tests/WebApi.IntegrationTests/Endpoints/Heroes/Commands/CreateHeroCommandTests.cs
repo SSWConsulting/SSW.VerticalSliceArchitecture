@@ -20,7 +20,7 @@ public class CreateHeroCommandTests(TestingDatabaseFixture fixture) : Integratio
             ("Flight", 8),
         ];
         var cmd = new CreateHeroRequest(
-            "Clark Kent",
+            "Clark Joseph Kent of Smallville Kansas",
             "Superman",
             powers.Select(p => new CreateHeroRequest.HeroPowerDto(p.Name, p.PowerLevel)));
         var client = GetAnonymousClient();
@@ -38,5 +38,22 @@ public class CreateHeroCommandTests(TestingDatabaseFixture fixture) : Integratio
         item.PowerLevel.Should().Be(25);
         item.Powers.Should().HaveCount(3);
         item.CreatedAt.Should().BeCloseTo(DateTime.Now, TimeSpan.FromSeconds(10));
+    }
+
+    [Fact]
+    public async Task Command_WithNameTooShort_ShouldReturn400()
+    {
+        // Arrange
+        var cmd = new CreateHeroRequest(
+            new string('a', Hero.NameMinLength - 1), // 30 chars — one below minimum
+            "Superman",
+            [new CreateHeroRequest.HeroPowerDto("Flight", 8)]);
+        var client = GetAnonymousClient();
+
+        // Act
+        var response = await client.POSTAsync<CreateHeroEndpoint, CreateHeroRequest, CreateHeroResponse>(cmd);
+
+        // Assert
+        response.Response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
 }

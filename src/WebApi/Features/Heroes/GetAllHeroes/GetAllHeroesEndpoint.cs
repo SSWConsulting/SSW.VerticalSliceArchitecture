@@ -50,7 +50,7 @@ public class GetAllHeroesSummary : Summary<GetAllHeroesEndpoint>
             [
                 new GetAllHeroesResponse.HeroDto(
                     Id: Guid.Parse("3fa85f64-5717-4562-b3fc-2c963f66afa6"),
-                    Name: "Peter Parker",
+                    Name: "Peter Benjamin Parker the Friendly Spider",
                     Alias: "Spider-Man",
                     PowerLevel: 15,
                     Powers:
@@ -61,7 +61,7 @@ public class GetAllHeroesSummary : Summary<GetAllHeroesEndpoint>
                     ]),
                 new GetAllHeroesResponse.HeroDto(
                     Id: Guid.Parse("5fb85f64-5717-4562-b3fc-2c963f66afa7"),
-                    Name: "Tony Stark",
+                    Name: "Anthony Edward Stark the Invincible Iron Man",
                     Alias: "Iron Man",
                     PowerLevel: 18,
                     Powers:

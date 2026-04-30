@@ -10,6 +10,7 @@ public readonly partial struct HeroId;
 
 public class Hero : AggregateRoot<HeroId>
 {
+    public const int NameMinLength = 31;
     public const int NameMaxLength = 100;
     public const int AliasMaxLength = 100;
 
@@ -21,6 +22,7 @@ public class Hero : AggregateRoot<HeroId>
         set
         {
             ThrowIfNullOrWhiteSpace(value, nameof(Name));
+            ThrowIfLessThan(value.Length, NameMinLength, nameof(Name));
             ThrowIfGreaterThan(value.Length, NameMaxLength, nameof(Name));
             field = value;
         }

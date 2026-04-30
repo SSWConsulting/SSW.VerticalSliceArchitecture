@@ -14,7 +14,7 @@ public class UpdateHeroCommandTests(TestingDatabaseFixture fixture) : Integratio
     public async Task Command_ShouldUpdateHero()
     {
         // Arrange
-        var heroName = "2021-01-01T00:00:00Z";
+        var heroName = "Clark Joseph Kent of Smallville Kansas";
         var heroAlias = "2021-01-01T00:00:00Z-alias";
         var hero = HeroFactory.Generate();
         await AddAsync(hero);

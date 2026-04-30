@@ -71,7 +71,7 @@ public class UpdateHeroSummary : Summary<UpdateHeroEndpoint>
         
         // Request example
         ExampleRequest = new UpdateHeroRequest(
-            Name: "Peter Benjamin Parker",
+            Name: "Peter Benjamin Parker the Friendly Spider",
             Alias: "The Amazing Spider-Man",
             HeroId: Guid.Parse("3fa85f64-5717-4562-b3fc-2c963f66afa6"),
             Powers:

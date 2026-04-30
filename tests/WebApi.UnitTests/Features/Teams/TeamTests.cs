@@ -5,6 +5,8 @@ namespace SSW.VerticalSliceArchitecture.UnitTests.Features.Teams;
 
 public class TeamTests
 {
+    private static readonly string ValidHeroName = new('a', Hero.NameMinLength);
+
     [Theory]
     [InlineData("c8ad9974-ca93-44a5-9215-2f4d9e866c7a", "cc3431a8-4a31-4f76-af64-e8198279d7a4", false)]
     [InlineData("c8ad9974-ca93-44a5-9215-2f4d9e866c7a", "c8ad9974-ca93-44a5-9215-2f4d9e866c7a", true)]
@@ -56,8 +58,8 @@ public class TeamTests
     public void AddHero_ShouldUpdateTeamPowerLevel()
     {
         // Arrange
-        var hero1 = Hero.Create("hero1", "alias1");
-        var hero2 = Hero.Create("hero2", "alias2");
+        var hero1 = Hero.Create(ValidHeroName, "alias1");
+        var hero2 = Hero.Create(ValidHeroName, "alias2");
         var power1 = new Power("Foo", 10);
         var power2 = new Power("Bar", 4);
         hero1.UpdatePowers([power1]);
@@ -76,8 +78,8 @@ public class TeamTests
     public void RemoveHero_ShouldUpdateTeamPowerLevel()
     {
         // Arrange
-        var hero1 = Hero.Create("hero1", "alias1");
-        var hero2 = Hero.Create("hero2", "alias2");
+        var hero1 = Hero.Create(ValidHeroName, "alias1");
+        var hero2 = Hero.Create(ValidHeroName, "alias2");
         var power1 = new Power("Foo", 10);
         var power2 = new Power("Bar", 4);
         hero1.UpdatePowers([power1]);
@@ -98,7 +100,7 @@ public class TeamTests
     {
         // Arrange
         var team = Team.Create("name");
-        team.AddHero(Hero.Create("hero1", "alias1"));
+        team.AddHero(Hero.Create(ValidHeroName, "alias1"));
 
         // Act
         team.ExecuteMission("Mission");
@@ -114,7 +116,7 @@ public class TeamTests
     {
         // Arrange
         var team = Team.Create("name");
-        team.AddHero(Hero.Create("hero1", "alias1"));
+        team.AddHero(Hero.Create(ValidHeroName, "alias1"));
         team.ExecuteMission("Mission1");
 
         // Act
@@ -188,7 +190,7 @@ public class TeamTests
     {
         // Arrange
         var team = Team.Create("name");
-        var hero = Hero.Create("hero1", "alias1");
+        var hero = Hero.Create(ValidHeroName, "alias1");
         var power1 = new Power("Foo", 10);
         hero.UpdatePowers([power1]);
         team.AddHero(hero);

@@ -40,7 +40,8 @@ public class CreateHeroRequestValidator : Validator<CreateHeroRequest>
     public CreateHeroRequestValidator()
     {
         RuleFor(v => v.Name)
-            .NotEmpty();
+            .NotEmpty()
+            .MinimumLength(Hero.NameMinLength);
 
         RuleFor(v => v.Alias)
             .NotEmpty();
@@ -63,7 +64,7 @@ public class CreateHeroSummary : Summary<CreateHeroEndpoint>
 
         // Request example
         ExampleRequest = new CreateHeroRequest(
-            Name: "Peter Parker",
+            Name: "Peter Benjamin Parker the Friendly Spider",
             Alias: "Spider-Man",
             Powers:
             [

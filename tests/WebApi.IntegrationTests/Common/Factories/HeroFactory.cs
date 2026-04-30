@@ -9,8 +9,13 @@ public static class HeroFactory
 
     private static readonly Faker<Hero> HeroFaker = new Faker<Hero>().CustomInstantiator(f =>
     {
+        var fullName = f.Person.FullName;
+        // Pad with city to guarantee >= Hero.NameMinLength (31) chars
+        var name = fullName.Length >= Hero.NameMinLength
+            ? fullName
+            : $"{fullName} of {f.Address.City()}".PadRight(Hero.NameMinLength);
         var hero = Hero.Create(
-            f.Person.FullName,
+            name,
             f.Person.FirstName
         );
 
