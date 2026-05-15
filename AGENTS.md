@@ -141,19 +141,31 @@ FastEndpoints provides `Send` helper for responses:
 
 ## Adding New Features
 
-### Quick Template Command
-```bash
-cd src/WebApi/
-dotnet new ssw-vsa-slice --feature Person --feature-plural People
-```
+### Creating a Feature Slice
 
-### Manual Steps After Template Generation
-1. **Register Strongly Typed ID**: Add `[EfCoreConverter<PersonId>]` to `VogenEfCoreConverters` class
-2. **Create Migration**: 
+A slice for an entity is a set of files spread across three layers. The examples below use `Hero`
+(plural `Heroes`). Substitute your own entity name. The existing `Heroes` feature is the reference
+to copy from.
+
+**Domain** (`Common/Domain/Heroes/`)
+- `Hero.cs` — entity inheriting `Entity<HeroId>` or `AggregateRoot<HeroId>` (use `AggregateRoot` when it raises domain events), plus the `[ValueObject<Guid>]` strongly typed ID `HeroId`
+- `HeroByIdSpec.cs` — Ardalis specification for loading the aggregate
+- `HeroErrors.cs` — domain error definitions
+
+**Persistence** (`Common/Persistence/Heroes/`)
+- `HeroConfiguration.cs` — `IEntityTypeConfiguration<Hero>`
+- `ApplicationDbContext.Heroes.cs` — `partial ApplicationDbContext` exposing the `DbSet<Hero>`
+
+**Feature** (`Features/Heroes/`)
+- `HeroesFeature.cs` — implements `IFeature` and defines the route `Group` (prefix, shared settings)
+- `Endpoints/CreateHeroEndpoint.cs`, `UpdateHeroEndpoint.cs`, `GetAllHeroesEndpoint.cs` — one file per endpoint
+
+### Wiring Up the Slice
+1. **Register the strongly typed ID**: add `[EfCoreConverter<HeroId>]` to `VogenEfCoreConverters` in `Common/Persistence/`. The app fails at startup if a strongly typed ID is missing from this class.
+2. **Create the migration**:
    ```bash
-   dotnet ef migrations add PersonTable --project src/WebApi/WebApi.csproj --startup-project src/WebApi/WebApi.csproj --output-dir Common/Database/Migrations
+   dotnet ef migrations add HeroTable --project src/WebApi/WebApi.csproj --startup-project src/WebApi/WebApi.csproj --output-dir Common/Database/Migrations
    ```
-3. **Entity Configuration**: Create `{Entity}Configuration.cs` in `Common/Persistence/` implementing `IEntityTypeConfiguration<T>`
 
 ## Testing Strategy
 

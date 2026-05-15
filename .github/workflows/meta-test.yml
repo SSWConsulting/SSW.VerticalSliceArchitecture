@@ -47,18 +47,6 @@ jobs:
         cd ./temp/MyTestApp
         dotnet build --configuration Debug 
 
-    # Tests that a slice can be generated
-    - name: Create new slice
-      run: |
-        cd ./temp/MyTestApp/src/WebApi/Features
-        dotnet new ssw-vsa-slice -f Student -fp Students
-      
-    # Tests that a fresh slice leaves the project in a buildable state
-    - name: Build after a new slice
-      run: |
-        cd ./temp/MyTestApp
-        dotnet build --configuration Release
-
     - name: Delete original feature
       run: |
         rm -rf ./temp/MyTestApp/src/MyTestApp/Features/Todos
