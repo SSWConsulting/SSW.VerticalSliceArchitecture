@@ -1,14 +1,10 @@
 using Ardalis.Specification.EntityFrameworkCore;
-using Microsoft.AspNetCore.Http.HttpResults;
 using SSW.VerticalSliceArchitecture.Common.Domain.Heroes;
 using SSW.VerticalSliceArchitecture.Common.Domain.Teams;
 
+namespace SSW.VerticalSliceArchitecture.Features.Teams.AddHeroToTeam;
 
-namespace SSW.VerticalSliceArchitecture.Features.Teams.Endpoints;
-
-public record AddHeroToTeamRequest(Guid TeamId, Guid HeroId);
-
-public class AddHeroToTeamEndpoint(ApplicationDbContext dbContext) 
+public class AddHeroToTeamEndpoint(ApplicationDbContext dbContext)
     : Endpoint<AddHeroToTeamRequest>
 {
     public override void Configure()
@@ -49,26 +45,5 @@ public class AddHeroToTeamEndpoint(ApplicationDbContext dbContext)
         await dbContext.SaveChangesAsync(ct);
 
         await Send.NoContentAsync(ct);
-    }
-}
-
-public class AddHeroToTeamRequestValidator : Validator<AddHeroToTeamRequest>
-{
-    public AddHeroToTeamRequestValidator()
-    {
-        RuleFor(v => v.TeamId)
-            .NotEmpty();
-
-        RuleFor(v => v.HeroId)
-            .NotEmpty();
-    }
-}
-
-public class AddHeroToTeamSummary : Summary<AddHeroToTeamEndpoint>
-{
-    public AddHeroToTeamSummary()
-    {
-        Summary = "Add a hero to a team";
-        Description = "Adds an existing hero to an existing team. Both the team and hero must exist.";
     }
 }

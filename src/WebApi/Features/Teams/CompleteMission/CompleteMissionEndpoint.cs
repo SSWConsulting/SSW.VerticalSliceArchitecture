@@ -1,11 +1,9 @@
 using Ardalis.Specification.EntityFrameworkCore;
 using SSW.VerticalSliceArchitecture.Common.Domain.Teams;
 
-namespace SSW.VerticalSliceArchitecture.Features.Teams.Endpoints;
+namespace SSW.VerticalSliceArchitecture.Features.Teams.CompleteMission;
 
-public record CompleteMissionRequest(Guid TeamId);
-
-public class CompleteMissionEndpoint(ApplicationDbContext dbContext) 
+public class CompleteMissionEndpoint(ApplicationDbContext dbContext)
     : Endpoint<CompleteMissionRequest>
 {
     public override void Configure()
@@ -41,23 +39,5 @@ public class CompleteMissionEndpoint(ApplicationDbContext dbContext)
         await dbContext.SaveChangesAsync(ct);
 
         await Send.NoContentAsync(ct);
-    }
-}
-
-public class CompleteMissionRequestValidator : Validator<CompleteMissionRequest>
-{
-    public CompleteMissionRequestValidator()
-    {
-        RuleFor(v => v.TeamId)
-            .NotEmpty();
-    }
-}
-
-public class CompleteMissionSummary : Summary<CompleteMissionEndpoint>
-{
-    public CompleteMissionSummary()
-    {
-        Summary = "Complete the current mission";
-        Description = "Marks the team's current mission as completed. The team must have an active mission.";
     }
 }

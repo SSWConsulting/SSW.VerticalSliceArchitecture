@@ -1,11 +1,9 @@
 using Ardalis.Specification.EntityFrameworkCore;
 using SSW.VerticalSliceArchitecture.Common.Domain.Teams;
 
-namespace SSW.VerticalSliceArchitecture.Features.Teams.Endpoints;
+namespace SSW.VerticalSliceArchitecture.Features.Teams.ExecuteMission;
 
-public record ExecuteMissionRequest(Guid TeamId, string Description);
-
-public class ExecuteMissionEndpoint(ApplicationDbContext dbContext) 
+public class ExecuteMissionEndpoint(ApplicationDbContext dbContext)
     : Endpoint<ExecuteMissionRequest>
 {
     public override void Configure()
@@ -41,30 +39,5 @@ public class ExecuteMissionEndpoint(ApplicationDbContext dbContext)
         await dbContext.SaveChangesAsync(ct);
 
         await Send.NoContentAsync(ct);
-    }
-}
-
-public class ExecuteMissionRequestValidator : Validator<ExecuteMissionRequest>
-{
-    public ExecuteMissionRequestValidator()
-    {
-        RuleFor(v => v.TeamId)
-            .NotEmpty();
-
-        RuleFor(v => v.Description)
-            .NotEmpty();
-    }
-}
-
-public class ExecuteMissionSummary : Summary<ExecuteMissionEndpoint>
-{
-    public ExecuteMissionSummary()
-    {
-        Summary = "Execute a new mission";
-        Description = "Assigns a new mission to the team. The team must not have an active mission.";
-        
-        ExampleRequest = new ExecuteMissionRequest(
-            TeamId: Guid.Parse("3fa85f64-5717-4562-b3fc-2c963f66afa6"),
-            Description: "Stop the alien invasion in New York City");
     }
 }
