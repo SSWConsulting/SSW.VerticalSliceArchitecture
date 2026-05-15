@@ -1,41 +1,4 @@
-namespace SSW.VerticalSliceArchitecture.Features.Heroes.Endpoints;
-
-public record GetAllHeroesResponse(List<GetAllHeroesResponse.HeroDto> Heroes)
-{
-    public record HeroDto(
-        Guid Id,
-        string Name,
-        string Alias,
-        int PowerLevel,
-        IReadOnlyList<HeroPowerDto> Powers);
-
-    public record HeroPowerDto(string Name, int PowerLevel);
-}
-
-public class GetAllHeroesEndpoint(ApplicationDbContext dbContext) 
-    : EndpointWithoutRequest<GetAllHeroesResponse>
-{
-    public override void Configure()
-    {
-        Get("/");
-        Group<HeroesGroup>();
-        Description(x => x.WithName("GetAllHeroes"));
-    }
-
-    public async override Task HandleAsync(CancellationToken ct)
-    {
-        var heroes = await dbContext.Heroes
-            .Select(h => new GetAllHeroesResponse.HeroDto(
-                h.Id.Value,
-                h.Name,
-                h.Alias,
-                h.PowerLevel,
-                h.Powers.Select(p => new GetAllHeroesResponse.HeroPowerDto(p.Name, p.PowerLevel)).ToList()))
-            .ToListAsync(ct);
-
-        await Send.OkAsync(new GetAllHeroesResponse(heroes), ct);
-    }
-}
+namespace SSW.VerticalSliceArchitecture.Features.Heroes.GetAllHeroes;
 
 public class GetAllHeroesSummary : Summary<GetAllHeroesEndpoint>
 {
@@ -43,7 +6,7 @@ public class GetAllHeroesSummary : Summary<GetAllHeroesEndpoint>
     {
         Summary = "Get all heroes";
         Description = "Retrieves a list of all heroes with their powers and power levels.";
-        
+
         // Response example
         Response(200, "Heroes retrieved successfully",
             example: new GetAllHeroesResponse(
