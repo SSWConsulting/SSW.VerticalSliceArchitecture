@@ -477,3 +477,5 @@ $RECYCLE.BIN/
 *.lnk
 
 .idea/
+.claude/plans/
+*.lscache
