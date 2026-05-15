@@ -1,7 +1,7 @@
 # Vertical Slices - Use a folder per slice
 
 - Status: accepted
-- Deciders: Daniel Mackay
+- Deciders: Daniel Mackay, Anton Polkanov
 - Date: 2026-05-15
 - Tags: dotnet, architecture, vsa, project-structure, fastendpoints
 
