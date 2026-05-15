@@ -1,5 +1,5 @@
 using FastEndpoints;
-using SSW.VerticalSliceArchitecture.Features.Teams.Endpoints;
+using SSW.VerticalSliceArchitecture.Features.Teams.GetAllTeams;
 using SSW.VerticalSliceArchitecture.IntegrationTests.Common;
 using SSW.VerticalSliceArchitecture.IntegrationTests.Common.Factories;
 

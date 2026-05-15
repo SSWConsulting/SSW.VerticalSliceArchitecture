@@ -1,7 +1,7 @@
 using FastEndpoints;
 using Microsoft.EntityFrameworkCore;
 using SSW.VerticalSliceArchitecture.Common.Domain.Teams;
-using SSW.VerticalSliceArchitecture.Features.Teams.Endpoints;
+using SSW.VerticalSliceArchitecture.Features.Teams.CreateTeam;
 using SSW.VerticalSliceArchitecture.IntegrationTests.Common;
 using System.Net;
 
