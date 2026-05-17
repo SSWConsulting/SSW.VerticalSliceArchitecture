@@ -1,4 +1,4 @@
-# Remove the Vertical Slice item template
+# Project - Remove the Vertical Slice item template
 
 - Status: accepted
 - Deciders: Daniel Mackay, Anton Polkanov

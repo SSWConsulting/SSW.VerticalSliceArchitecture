@@ -147,21 +147,21 @@ A slice for an entity is a set of files spread across three layers. The examples
 (plural `Heroes`). Substitute your own entity name. The existing `Heroes` feature is the reference
 to copy from.
 
-**Domain** (`Common/Domain/Heroes/`)
+**Domain** (`src/WebApi/Common/Domain/Heroes/`)
 - `Hero.cs` — entity inheriting `Entity<HeroId>` or `AggregateRoot<HeroId>` (use `AggregateRoot` when it raises domain events), plus the `[ValueObject<Guid>]` strongly typed ID `HeroId`
 - `HeroByIdSpec.cs` — Ardalis specification for loading the aggregate
 - `HeroErrors.cs` — domain error definitions
 
-**Persistence** (`Common/Persistence/Heroes/`)
+**Persistence** (`src/WebApi/Common/Persistence/Heroes/`)
 - `HeroConfiguration.cs` — `IEntityTypeConfiguration<Hero>`
 - `ApplicationDbContext.Heroes.cs` — `partial ApplicationDbContext` exposing the `DbSet<Hero>`
 
-**Feature** (`Features/Heroes/`)
+**Feature** (`src/WebApi/Features/Heroes/`)
 - `HeroesFeature.cs` — implements `IFeature` and defines the route `Group` (prefix, shared settings)
 - `Endpoints/CreateHeroEndpoint.cs`, `UpdateHeroEndpoint.cs`, `GetAllHeroesEndpoint.cs` — one file per endpoint
 
 ### Wiring Up the Slice
-1. **Register the strongly typed ID**: add `[EfCoreConverter<HeroId>]` to `VogenEfCoreConverters` in `Common/Persistence/`. The app fails at startup if a strongly typed ID is missing from this class.
+1. **Register the strongly typed ID**: add `[EfCoreConverter<HeroId>]` to `VogenEfCoreConverters` in `src/WebApi/Common/Persistence/`. The app fails at startup if a strongly typed ID is missing from this class.
 2. **Create the migration**:
    ```bash
    dotnet ef migrations add HeroTable --project src/WebApi/WebApi.csproj --startup-project src/WebApi/WebApi.csproj --output-dir Common/Database/Migrations

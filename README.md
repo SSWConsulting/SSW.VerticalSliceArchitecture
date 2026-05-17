@@ -150,9 +150,9 @@ dotnet new ssw-vsa --name {{SolutionName}}
 
 A full Vertical Slice is a set of files across the domain, persistence, and feature layers:
 
-- A domain object in `Common/Domain/*`
-- Domain configuration in `Common/Persistence/*`
-- Command & Query API endpoints in `Features/*`
+- A domain object in `src/WebApi/Common/Domain/*`
+- Domain configuration in `src/WebApi/Common/Persistence/*`
+- Command & Query API endpoints in `src/WebApi/Features/*`
 
 AI coding agents working in this repo know how to scaffold one. The structure is documented in [`AGENTS.md`](AGENTS.md), so ask your agent to add a feature and it will create these files for you.
 
