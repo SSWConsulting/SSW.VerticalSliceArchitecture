@@ -1,9 +1,9 @@
-﻿using Ardalis.Specification.EntityFrameworkCore;
+using Ardalis.Specification.EntityFrameworkCore;
 using SSW.VerticalSliceArchitecture.Common.Domain.Base.EventualConsistency;
 using SSW.VerticalSliceArchitecture.Common.Domain.Heroes;
 using SSW.VerticalSliceArchitecture.Common.Domain.Teams;
 
-namespace SSW.VerticalSliceArchitecture.Features.Teams.Events;
+namespace SSW.VerticalSliceArchitecture.Features.Teams.PowerLevelUpdated;
 
 public class PowerLevelUpdatedEventHandler(
     IServiceScopeFactory scopeFactory,

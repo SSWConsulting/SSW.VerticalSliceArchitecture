@@ -6,10 +6,10 @@ This is an enterprise-ready Vertical Slice Architecture template for .NET 9 with
 ## Architecture Patterns
 
 ### Vertical Slice Organization
-- **Features**: `src/WebApi/Features/{FeatureName}/` contains Endpoints and a `{FeatureName}Feature.cs` implementing `IFeature`
-- **Endpoints**: Located in `Features/{FeatureName}/Endpoints/` - each endpoint is a separate file inheriting from `Endpoint<TRequest, TResponse>` or `EndpointWithoutRequest<TResponse>`
+- **Features**: `src/WebApi/Features/{FeatureName}/` contains one folder per slice, plus `{FeatureName}Feature.cs` (implementing `IFeature`) and `{FeatureName}Group.cs`
+- **Slices**: Each use case is a folder under `Features/{FeatureName}/` (e.g. `CreateHero/`). The endpoint inherits from `Endpoint<TRequest, TResponse>` or `EndpointWithoutRequest<TResponse>`, and the namespace matches the folder, e.g. `Features.Heroes.CreateHero`
 - **Endpoint Discovery**: FastEndpoints automatically discovers and registers all endpoints at startup
-- **Groups**: Each feature defines a `Group` class to configure routing prefix and shared settings (e.g., `HeroesGroup` for `/api/heroes`) 
+- **Groups**: Each feature defines a `Group` class in `{FeatureName}Group.cs` to configure routing prefix and shared settings (e.g., `HeroesGroup` for `/api/heroes`)
 
 ### Domain Layer (`Common/Domain/`)
 - **Entities**: Inherit from `Entity<TId>` or `AggregateRoot<TId>` for domain events
@@ -29,7 +29,7 @@ This is an enterprise-ready Vertical Slice Architecture template for .NET 9 with
 This project uses **FastEndpoints** for defining HTTP endpoints with a clean, strongly-typed API structure.
 
 #### Endpoint Structure
-Each feature slice in `Features/{FeatureName}/Endpoints/` contains:
+Each slice folder under `Features/{FeatureName}/` contains the types below. The request and response can sit in the endpoint file or in their own files; validators and summaries always get their own file.
 - **Endpoint classes**: Inherit from `Endpoint<TRequest, TResponse>` or `EndpointWithoutRequest<TResponse>`
 - **Request records**: Define the input contract (e.g., `CreateHeroRequest`)
 - **Response records**: Define the output contract (e.g., `CreateHeroResponse`)
