@@ -6,10 +6,10 @@ This is an enterprise-ready Vertical Slice Architecture template for .NET 9 with
 ## Architecture Patterns
 
 ### Vertical Slice Organization
-- **Features**: `src/WebApi/Features/{FeatureName}/` contains Endpoints and a `{FeatureName}Feature.cs` implementing `IFeature`
-- **Endpoints**: Located in `Features/{FeatureName}/Endpoints/` - each endpoint is a separate file inheriting from `Endpoint<TRequest, TResponse>` or `EndpointWithoutRequest<TResponse>`
+- **Features**: `src/WebApi/Features/{FeatureName}/` contains one folder per slice, plus `{FeatureName}Feature.cs` (implementing `IFeature`) and `{FeatureName}Group.cs`
+- **Slices**: Each use case is a folder under `Features/{FeatureName}/` (e.g. `CreateHero/`). The endpoint inherits from `Endpoint<TRequest, TResponse>` or `EndpointWithoutRequest<TResponse>`, and the namespace matches the folder, e.g. `Features.Heroes.CreateHero`
 - **Endpoint Discovery**: FastEndpoints automatically discovers and registers all endpoints at startup
-- **Groups**: Each feature defines a `Group` class to configure routing prefix and shared settings (e.g., `HeroesGroup` for `/api/heroes`) 
+- **Groups**: Each feature defines a `Group` class in `{FeatureName}Group.cs` to configure routing prefix and shared settings (e.g., `HeroesGroup` for `/api/heroes`)
 
 ### Domain Layer (`Common/Domain/`)
 - **Entities**: Inherit from `Entity<TId>` or `AggregateRoot<TId>` for domain events
@@ -29,7 +29,7 @@ This is an enterprise-ready Vertical Slice Architecture template for .NET 9 with
 This project uses **FastEndpoints** for defining HTTP endpoints with a clean, strongly-typed API structure.
 
 #### Endpoint Structure
-Each feature slice in `Features/{FeatureName}/Endpoints/` contains:
+Each slice folder under `Features/{FeatureName}/` contains the types below. The request and response can sit in the endpoint file or in their own files; validators and summaries always get their own file.
 - **Endpoint classes**: Inherit from `Endpoint<TRequest, TResponse>` or `EndpointWithoutRequest<TResponse>`
 - **Request records**: Define the input contract (e.g., `CreateHeroRequest`)
 - **Response records**: Define the output contract (e.g., `CreateHeroResponse`)
@@ -141,19 +141,31 @@ FastEndpoints provides `Send` helper for responses:
 
 ## Adding New Features
 
-### Quick Template Command
-```bash
-cd src/WebApi/
-dotnet new ssw-vsa-slice --feature Person --feature-plural People
-```
+### Creating a Feature Slice
 
-### Manual Steps After Template Generation
-1. **Register Strongly Typed ID**: Add `[EfCoreConverter<PersonId>]` to `VogenEfCoreConverters` class
-2. **Create Migration**: 
+A slice for an entity is a set of files spread across three layers. The examples below use `Hero`
+(plural `Heroes`). Substitute your own entity name. The existing `Heroes` feature is the reference
+to copy from.
+
+**Domain** (`src/WebApi/Common/Domain/Heroes/`)
+- `Hero.cs` — entity inheriting `Entity<HeroId>` or `AggregateRoot<HeroId>` (use `AggregateRoot` when it raises domain events), plus the `[ValueObject<Guid>]` strongly typed ID `HeroId`
+- `HeroByIdSpec.cs` — Ardalis specification for loading the aggregate
+- `HeroErrors.cs` — domain error definitions
+
+**Persistence** (`src/WebApi/Common/Persistence/Heroes/`)
+- `HeroConfiguration.cs` — `IEntityTypeConfiguration<Hero>`
+- `ApplicationDbContext.Heroes.cs` — `partial ApplicationDbContext` exposing the `DbSet<Hero>`
+
+**Feature** (`src/WebApi/Features/Heroes/`)
+- `HeroesFeature.cs` — implements `IFeature` and defines the route `Group` (prefix, shared settings)
+- `Endpoints/CreateHeroEndpoint.cs`, `UpdateHeroEndpoint.cs`, `GetAllHeroesEndpoint.cs` — one file per endpoint
+
+### Wiring Up the Slice
+1. **Register the strongly typed ID**: add `[EfCoreConverter<HeroId>]` to `VogenEfCoreConverters` in `src/WebApi/Common/Persistence/`. The app fails at startup if a strongly typed ID is missing from this class.
+2. **Create the migration**:
    ```bash
-   dotnet ef migrations add PersonTable --project src/WebApi/WebApi.csproj --startup-project src/WebApi/WebApi.csproj --output-dir Common/Database/Migrations
+   dotnet ef migrations add HeroTable --project src/WebApi/WebApi.csproj --startup-project src/WebApi/WebApi.csproj --output-dir Common/Database/Migrations
    ```
-3. **Entity Configuration**: Create `{Entity}Configuration.cs` in `Common/Persistence/` implementing `IEntityTypeConfiguration<T>`
 
 ## Testing Strategy
 

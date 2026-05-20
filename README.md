@@ -148,20 +148,16 @@ dotnet new ssw-vsa --name {{SolutionName}}
 
 ### Adding a Feature Slice
 
-To speed up development there is a `dotnet new` template to create a full Vertical Slice:
+A full Vertical Slice is a set of files across the domain, persistence, and feature layers:
 
-- Creates a domain object in `Common/Domain/*`
-- Adds domain configuration in `Common/Persistence/*`
-- Creates Command & Query API endpoints in `Features/*`
+- A domain object in `src/WebApi/Common/Domain/*`
+- Domain configuration in `src/WebApi/Common/Persistence/*`
+- Command & Query API endpoints in `src/WebApi/Features/*`
+
+AI coding agents working in this repo know how to scaffold one. The structure is documented in [`AGENTS.md`](AGENTS.md), so ask your agent to add a feature and it will create these files for you.
 
 1. Add a new Feature
-   ```bash
-   cd src/WebApi/
-   dotnet new ssw-vsa-slice --feature Person --feature-plural People
-   ```
-    
-`--feature` or `-f` where the value is the **singular** name of the feature.
-`--feature-plural` or `-fp` where the value is the **plural** name of the feature.
+   Ask your AI coding agent to scaffold the slice, or copy an existing feature such as `Heroes` and rename it.
 
 2. Configure this Feature
    This project uses [strongly typed IDs](https://www.ssw.com.au/rules/do-you-use-strongly-typed-ids/), which require registration in the `VogenEfCoreConverters` class:
