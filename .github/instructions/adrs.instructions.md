@@ -236,7 +236,7 @@ Chosen option: "[Selected option]", because [primary reasoning].
 
 When creating ADRs, reference existing architectural decisions and patterns:
 
-- Link to feature templates in `/templates/` (e.g., `dotnet new ssw-vsa-slice`)
+- Reference the slice scaffolding guidance in `AGENTS.md` and existing features such as `Heroes` under `src/WebApi/Features/`
 - Reference the slice structure: `{FeatureName}Feature.cs`, FastEndpoints in `/Endpoints/` directory
 - Connect to domain layer patterns: strongly-typed IDs, specifications, domain events
 - Reference testing approaches in `/tests/` (unit, integration, architecture tests)

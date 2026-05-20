@@ -1,5 +1,5 @@
 using FastEndpoints;
-using SSW.VerticalSliceArchitecture.Features.Heroes.Endpoints;
+using SSW.VerticalSliceArchitecture.Features.Heroes.GetAllHeroes;
 using SSW.VerticalSliceArchitecture.IntegrationTests.Common;
 using SSW.VerticalSliceArchitecture.IntegrationTests.Common.Factories;
 

@@ -3,7 +3,7 @@
   <metadata>
 
     <id>SSW.VerticalSliceArchitecture.Template</id>
-    <version>2025.10.24</version>
+    <version>2025.12.10</version>
     <title>Vertical Slice Architecture Template</title>
     <authors>SSW Consulting</authors>
     <description>Vertical Slice Architecture template using ASP.NET Core</description>
@@ -12,7 +12,7 @@
       This template is just one way to apply the Vertical Slice Architecture.
     </summary>
     <releaseNotes>
-      Updates release workflow
+      Updated to .NET 10.
     </releaseNotes>
     <readme>README.md</readme>
 
