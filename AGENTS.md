@@ -1,369 +1,44 @@
-# Copilot Instructions for SSW Vertical Slice Architecture
+# SSW Vertical Slice Architecture — Agent Instructions
 
 ## Project Overview
-This is an enterprise-ready Vertical Slice Architecture template for .NET 9 with Aspire orchestration. Each feature is organized as a self-contained vertical slice in `src/WebApi/Features/`, with shared domain models in `Common/Domain/` and infrastructure in `Common/`.
 
-## Architecture Patterns
+A template for **.NET 10 + Vertical Slice Architecture + Aspire**. Each feature is a self-contained vertical slice under `src/WebApi/Features/`, shared domain types sit in `src/WebApi/Common/Domain/`, and infrastructure (EF Core, middleware, services) lives in `src/WebApi/Common/`.
 
-### Vertical Slice Organization
-- **Features**: `src/WebApi/Features/{FeatureName}/` contains one folder per slice, plus `{FeatureName}Feature.cs` (implementing `IFeature`) and `{FeatureName}Group.cs`
-- **Slices**: Each use case is a folder under `Features/{FeatureName}/` (e.g. `CreateHero/`). The endpoint inherits from `Endpoint<TRequest, TResponse>` or `EndpointWithoutRequest<TResponse>`, and the namespace matches the folder, e.g. `Features.Heroes.CreateHero`
-- **Endpoint Discovery**: FastEndpoints automatically discovers and registers all endpoints at startup
-- **Groups**: Each feature defines a `Group` class in `{FeatureName}Group.cs` to configure routing prefix and shared settings (e.g., `HeroesGroup` for `/api/heroes`)
+## Technology Stack
 
-### Domain Layer (`Common/Domain/`)
-- **Entities**: Inherit from `Entity<TId>` or `AggregateRoot<TId>` for domain events
-- **Strongly Typed IDs**: Use `[ValueObject<Guid>]` from Vogen (e.g., `HeroId`, `TeamId`)
-  - **CRITICAL**: Register ALL new strongly typed IDs in `Common/Persistence/VogenEfCoreConverters.cs` with `[EfCoreConverter<YourId>]`
-  - IDs use `Guid.CreateVersion7()` for time-ordered GUIDs
-- **Value Objects**: Encapsulate invariants with private setters and validation (e.g., `Power`, `Mission`)
-- **Domain Events**: Inherit from `DomainEvent`, raised via `AddDomainEvent()` on aggregates
-- **Specifications**: Use Ardalis.Specification for loading aggregates and commonly used queries
-  - Place specs in `Common/Domain/{Entity}/` (e.g., `HeroByIdSpec`, `TeamByIdSpec`)
-  - Inherit from `SingleResultSpecification<T>` or `Specification<T>` 
-  - Apply with `.WithSpecification(new YourSpec())` on DbSet queries
-  - Example: `dbContext.Heroes.WithSpecification(new HeroByIdSpec(heroId)).FirstOrDefault()`
+- **.NET 10**, ASP.NET Core, EF Core (SQL Server)
+- **FastEndpoints** — HTTP endpoints with strongly-typed request/response
+- **Aspire** — local orchestration, observability, service discovery
+- **Vogen** — strongly typed IDs
+- **Ardalis.Specification** — query specs
+- **ErrorOr** + **FluentValidation** — result & input handling
+- **Bogus** — dev seed data
+- **xUnit** + **Testcontainers** + **Respawn** — integration tests against a real SQL Server
 
-### FastEndpoints
+## Rules
 
-This project uses **FastEndpoints** for defining HTTP endpoints with a clean, strongly-typed API structure.
+Detailed conventions are in `.claude/rules/` (auto-loaded by Claude Code when matching files are in scope):
 
-#### Endpoint Structure
-Each slice folder under `Features/{FeatureName}/` contains the types below. The request and response can sit in the endpoint file or in their own files; validators and summaries always get their own file.
-- **Endpoint classes**: Inherit from `Endpoint<TRequest, TResponse>` or `EndpointWithoutRequest<TResponse>`
-- **Request records**: Define the input contract (e.g., `CreateHeroRequest`)
-- **Response records**: Define the output contract (e.g., `CreateHeroResponse`)
-- **Validator classes**: Inherit from `Validator<TRequest>` for request validation
-- **Summary classes**: Inherit from `Summary<TEndpoint>` for OpenAPI documentation with examples
+| File | Covers |
+|---|---|
+| `architecture.md` | VSA slice layout, FastEndpoints conventions, groups, error handling |
+| `domain.md` | entities, aggregates, value objects, specs, strongly typed IDs, domain events |
+| `database.md` | adding entities, migration commands, seeding |
+| `testing.md` | unit, integration, and architecture test projects |
 
-#### Creating Endpoints
+## Running the App
 
-**With Request and Response:**
-```csharp
-public record CreateHeroRequest(string Name, string Alias, IEnumerable<PowerDto> Powers);
-public record CreateHeroResponse(Guid Id);
-
-public class CreateHeroEndpoint(ApplicationDbContext dbContext)
-    : Endpoint<CreateHeroRequest, CreateHeroResponse>
-{
-    public override void Configure()
-    {
-        Post("/");
-        Group<HeroesGroup>();
-        Description(x => x.WithName("CreateHero"));
-    }
-
-    public override async Task HandleAsync(CreateHeroRequest req, CancellationToken ct)
-    {
-        // Business logic here
-        await dbContext.SaveChangesAsync(ct);
-        await Send.OkAsync(new CreateHeroResponse(id), ct);
-    }
-}
-```
-
-**Without Request (GET all):**
-```csharp
-public class GetAllHeroesEndpoint(ApplicationDbContext dbContext) 
-    : EndpointWithoutRequest<GetAllHeroesResponse>
-{
-    public override void Configure()
-    {
-        Get("/");
-        Group<HeroesGroup>();
-        Description(x => x.WithName("GetAllHeroes"));
-    }
-
-    public async override Task HandleAsync(CancellationToken ct)
-    {
-        // Query logic here
-        await Send.OkAsync(new GetAllHeroesResponse(heroes), ct);
-    }
-}
-```
-
-#### Endpoint Groups
-Define a `Group` class per feature to configure common settings and routing:
-```csharp
-public class HeroesGroup : Group
-{
-    public HeroesGroup()
-    {
-        Configure("heroes", ep => ep.Description(x => x.ProducesProblemDetails(500)));
-    }
-}
-```
-- The prefix (e.g., "heroes") becomes `/api/heroes` and is used as the OpenAPI tag
-- All endpoints using `Group<HeroesGroup>()` inherit this configuration
-
-#### Validation
-Create validators using FluentValidation patterns:
-```csharp
-public class CreateHeroRequestValidator : Validator<CreateHeroRequest>
-{
-    public CreateHeroRequestValidator()
-    {
-        RuleFor(v => v.Name).NotEmpty();
-        RuleFor(v => v.Alias).NotEmpty();
-    }
-}
-```
-- Validation runs automatically before `HandleAsync()`
-- Failed validation returns 400 Bad Request with error details
-
-#### OpenAPI Documentation
-Use `Summary<TEndpoint>` classes for rich API documentation:
-```csharp
-public class CreateHeroSummary : Summary<CreateHeroEndpoint>
-{
-    public CreateHeroSummary()
-    {
-        Summary = "Create a new hero";
-        Description = "Creates a new hero with the specified name, alias, and powers.";
-        ExampleRequest = new CreateHeroRequest(...);
-        Response(200, "Hero created successfully", example: new CreateHeroResponse(...));
-    }
-}
-```
-
-#### Response Handling
-FastEndpoints provides `Send` helper for responses:
-- `await Send.OkAsync(response, ct)` - 200 OK
-- `await Send.CreatedAsync(url, response, ct)` - 201 Created
-- `await Send.NoContentAsync(ct)` - 204 No Content
-- `await Send.NotFoundAsync(ct)` - 404 Not Found
-
-### Error Handling
-- FastEndpoints provides built-in response helpers: `Send.NotFoundAsync()`, `Send.ForbiddenAsync()`, etc.
-- Use `ThrowError()` in endpoints to return validation errors with custom messages
-- Global exception handling catches unhandled exceptions and returns appropriate HTTP responses
-- For eventual consistency failures in domain event handlers, throw `EventualConsistencyException` (handled by middleware)
-
-## Adding New Features
-
-### Creating a Feature Slice
-
-A slice for an entity is a set of files spread across three layers. The examples below use `Hero`
-(plural `Heroes`). Substitute your own entity name. The existing `Heroes` feature is the reference
-to copy from.
-
-**Domain** (`src/WebApi/Common/Domain/Heroes/`)
-- `Hero.cs` — entity inheriting `Entity<HeroId>` or `AggregateRoot<HeroId>` (use `AggregateRoot` when it raises domain events), plus the `[ValueObject<Guid>]` strongly typed ID `HeroId`
-- `HeroByIdSpec.cs` — Ardalis specification for loading the aggregate
-- `HeroErrors.cs` — domain error definitions
-
-**Persistence** (`src/WebApi/Common/Persistence/Heroes/`)
-- `HeroConfiguration.cs` — `IEntityTypeConfiguration<Hero>`
-- `ApplicationDbContext.Heroes.cs` — `partial ApplicationDbContext` exposing the `DbSet<Hero>`
-
-**Feature** (`src/WebApi/Features/Heroes/`)
-- `HeroesFeature.cs` — implements `IFeature` and defines the route `Group` (prefix, shared settings)
-- `Endpoints/CreateHeroEndpoint.cs`, `UpdateHeroEndpoint.cs`, `GetAllHeroesEndpoint.cs` — one file per endpoint
-
-### Wiring Up the Slice
-1. **Register the strongly typed ID**: add `[EfCoreConverter<HeroId>]` to `VogenEfCoreConverters` in `src/WebApi/Common/Persistence/`. The app fails at startup if a strongly typed ID is missing from this class.
-2. **Create the migration**:
-   ```bash
-   dotnet ef migrations add HeroTable --project src/WebApi/WebApi.csproj --startup-project src/WebApi/WebApi.csproj --output-dir Common/Database/Migrations
-   ```
-
-## Testing Strategy
-
-### Unit Tests (`tests/WebApi.UnitTests/`)
-- Test domain logic, value objects, and entity invariants
-- No EF Core mocking needed - pure domain tests
-- Example: `Features/Heroes/HeroTests.cs` validates `Hero.Create()` and `UpdatePowers()`
-
-### Integration Tests (`tests/WebApi.IntegrationTests/`)
-- Inherit from `IntegrationTestBase` for `TestingDatabaseFixture`
-- Uses **TestContainers** (SQL Server) + **Respawn** for database cleanup between tests
-- Use `GetAnonymousClient()` for HTTP client, `GetQueryable<T>()` for EF queries
-- Tests run against real database - fast due to Respawn
-- Example: `Endpoints/Heroes/Commands/CreateHeroCommandTests.cs`
-
-### Architecture Tests (`tests/WebApi.ArchitectureTests/`)
-- Enforces naming: handlers must be named `Handler`
-- Validates layer dependencies and namespace conventions
-- Run with `dotnet test` - failures indicate architectural violations
-
-## Development Workflows
-
-### Running the Application
 ```bash
-cd tools/AppHost/
-dotnet run
-```
-- Opens Aspire Dashboard for observability
-- Auto-provisions SQL Server (Docker/Podman), runs migrations, seeds data
-- Access API at https://localhost:7255/scalar/v1 (Scalar UI for OpenAPI)
-
-### Database Migrations
-```bash
-# Add migration
-dotnet ef migrations add MigrationName --project src/WebApi/WebApi.csproj --startup-project src/WebApi/WebApi.csproj --output-dir Common/Database/Migrations
-
-# Migrations run automatically via MigrationService on startup
+aspire start
 ```
 
-### Running Tests
-```bash
-# All tests
-dotnet test
+Aspire provisions SQL Server (Docker/Podman), runs migrations and seeds via `tools/MigrationService`, then exposes the API at `https://localhost:7255/swagger` (FastEndpoints Swagger UI). The Aspire Dashboard opens automatically for traces and logs.
 
-# Specific test project
-dotnet test tests/WebApi.IntegrationTests/
-```
+## Reference Slice
 
-## Key Conventions
+`src/WebApi/Features/Heroes/CreateHero/` is the canonical example. Copy its shape when adding a new use case.
 
-### Endpoint Routing
-- FastEndpoints automatically discovers and registers all endpoints at startup
-- Use `Group<TGroup>()` in endpoint `Configure()` to assign to a route group
-- Define a `Group` class per feature to set the route prefix (e.g., `HeroesGroup` configures `"heroes"` → `/api/heroes`)
-- Example: `Group<HeroesGroup>()` in an endpoint routes to `/api/heroes/{endpoint-route}`
+## Not Included (by design)
 
-### Global Usings (`GlobalUsings.cs`)
-- `EntityFrameworkCore`, `FluentValidation`, `ErrorOr`, `Vogen`, `Ardalis.Specification` pre-imported
-- `SSW.VerticalSliceArchitecture.Common.Features` and `.Common.Persistence` available globally
-
-### Build Configuration
-- `Directory.Build.props`: Treats warnings as errors in Release builds, enforces code style
-- `Directory.Packages.props`: Central package management - update versions here
-- Release builds enforce `TreatWarningsAsErrors` and `EnforceCodeStyleInBuild`
-
-### FastEndpoints Pipeline
-- **Validation**: Automatically runs FluentValidation validators before `HandleAsync()` - returns 400 Bad Request on failure
-- **Exception Handling**: Global exception handler catches unhandled exceptions and returns appropriate error responses
-- **Performance Logging**: Built-in logging for slow requests
-
-### Domain Events & Eventual Consistency
-- Events dispatched by `DispatchDomainEventsInterceptor` after `SaveChangesAsync()`
-- Event handlers run in same transaction - if they fail, throw `EventualConsistencyException`
-- `EventualConsistencyMiddleware` catches these and returns appropriate HTTP errors
-- Example: `PowerLevelUpdatedEventHandler` updates team power when hero power changes
-
-## Aspire Configuration
-- `AppHost` project orchestrates services: SQL Server, MigrationService, WebApi
-- `ServiceDefaults` provides telemetry, health checks, service discovery
-- `builder.AddServiceDefaults()` in `Program.cs` enables observability
-
-## Data Seeding
-- Seeding happens in `tools/MigrationService/Initializers/ApplicationDbContextInitializer.cs`
-- Only runs in Development environment (controlled in `Worker.cs`)
-- Uses **Bogus** library for fake data generation
-- Pattern: Create initializer inheriting from `DbContextInitializerBase<T>`, implement `SeedDataAsync()`
-- Seeds run in transaction for atomicity
-- Check for existing data before seeding: `if (DbContext.Heroes.Any()) return;`
-- Example seed flow:
-  ```csharp
-  var faker = new Faker<Hero>()
-      .CustomInstantiator(f => Hero.Create(f.Person.FirstName, f.Random.AlphaNumeric(2)));
-  var heroes = faker.Generate(20);
-  await DbContext.Heroes.AddRangeAsync(heroes);
-  await DbContext.SaveChangesAsync();
-  ```
-
-## Common Pitfalls
-1. Forgetting to register strongly typed IDs in `VogenEfCoreConverters` → runtime EF Core errors
-2. Not creating `Summary<TEndpoint>` classes → missing OpenAPI documentation and examples
-3. Forgetting to call `Group<TGroup>()` in endpoint `Configure()` → endpoint not properly grouped/routed
-4. Not using `await Send.OkAsync()` or similar response methods → no HTTP response sent
-5. Forgetting to add `return` after `await Send.OkAsync()` (or similar)
-6. Loading aggregates without specifications → missing related entities or inconsistent query patterns
-
-## What's NOT Included
-- **Authentication/Authorization**: This is a template - implement auth as needed for your use case
-- **Feature-specific service registration**: Most features don't need custom DI - use `IFeature.ConfigureServices()` only when required
-
-# CLI Task Documentation
-
-When creating documentation files (MD files) during CLI tasks, follow these guidelines to avoid unnecessary documentation noise:
-
-### When to Create New Documentation
-
-**DO create new documentation for**:
-- Significant architectural changes or new features
-- Major refactorings that affect multiple modules
-- New patterns or conventions being established
-- Implementation guides that will be referenced by team members or future contributors
-- Complex changes that need detailed explanation for future reference
-
-**DO NOT create new documentation for**:
-- Minor bug fixes or corrections
-- Small adjustments to existing code
-- Clarifications or improvements to existing implementations
-- Changes that can be adequately explained in commit messages
-
-**When unsure**: Ask if documentation should be created before writing it. It's better to update existing documentation than create redundant files.
-
-### Documentation File Naming Format
-All documentation files created during CLI tasks should be saved to `docs/cli-tasks/` with the following format:
-
-```
-yyyyMMdd-II-XX-description.md
-```
-
-Where:
-- `yyyyMMdd` = Current date (e.g., 20251002)
-- `II` = Author's initials from git config (e.g., GB for Gordon Beeming)
-- `XX` = Sequential number starting at 01 for the day (01, 02, 03, etc.)
-- `description` = Kebab-case description of the task/document
-
-### Examples
-- `20251002-GB-01-graceful-row-failure-implementation-summary.md`
-- `20251002-GB-02-graceful-row-failure-refactoring-guide.md`
-- `20251002-GB-03-graceful-row-failure-changes-summary.md`
-
-### Process
-1. **Determine if documentation is needed** - Is this a significant change?
-2. Get current date: `date +%Y%m%d`
-3. Get author initials from git config: `git config user.name`
-4. Check existing files in `docs/cli-tasks/` for today's date to determine next sequence number
-5. **Check if existing documentation should be updated instead** of creating new
-6. Create file with proper naming format only if genuinely needed
-7. If multiple related documents, use sequential numbers to maintain order
-
-### Updating Existing Documentation
-
-Prefer updating existing documentation when:
-- The change is related to a recent task documented today
-- It's a bug fix or improvement to something recently implemented
-- It adds clarification or correction to existing docs
-- The change is minor and fits within the scope of existing documentation
-
-### Purpose
-This approach:
-- Reduces documentation noise and clutter
-- Keeps related information together
-- Makes documentation easier to navigate and maintain
-- Ensures only significant changes are documented separately
-- Maintains high signal-to-noise ratio in documentation
-
-## Working Directory and File Management
-
-### Repository Boundaries
-All work, including temporary files, must be done within the repository boundaries:
-
-**DO**:
-- Create temporary files/directories within the repository root
-- Use `/tmp/` directory at repository root for temporary work files
-- Add temporary directories to `.gitignore` if they shouldn't be committed
-- Clean up temporary files after completing tasks
-
-**DO NOT**:
-- Create files outside the repository directory
-- Work in system temp directories or home directory
-- Leave temporary files scattered throughout the repository
-
-### Temporary Files
-- Use `/tmp/` at the repository root for scratch work
-- This directory is already in `.gitignore`
-- Always clean up temporary files when done
-- Document any temporary files that need to persist
-
-### Purpose
-This approach:
-- Keeps all work contained within the project
-- Prevents pollution of system directories
-- Makes cleanup easier and more predictable
-- Ensures proper git ignore handling
+- **Auth** — add the auth scheme your project needs.
+- **Per-feature DI** — most slices don't need `IFeature.ConfigureServices()`. Add it only when a slice has its own services.
