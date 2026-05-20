@@ -34,7 +34,7 @@ public class Worker(
             }
 
             sw.Stop();
-            logger.LogInformation("DB creation and seeding took {ElapsedTime}", sw.Elapsed);
+            logger.DatabaseInitialized(sw.Elapsed);
         }
         catch (Exception ex)
         {
@@ -44,4 +44,12 @@ public class Worker(
 
         hostApplicationLifetime.StopApplication();
     }
+}
+
+// Compile-time logging: the source generator emits a level-checked, allocation-free
+// method, which also satisfies CA1873 (the generated call is not an ILogger.Log* shape).
+internal static partial class WorkerLog
+{
+    [LoggerMessage(LogLevel.Information, "DB creation and seeding took {ElapsedTime}")]
+    public static partial void DatabaseInitialized(this ILogger logger, TimeSpan elapsedTime);
 }
