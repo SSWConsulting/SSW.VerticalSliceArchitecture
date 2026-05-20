@@ -479,4 +479,5 @@ $RECYCLE.BIN/
 .idea/
 .serena/
 .claude/plans/
+.claude/worktrees/
 *.lscache
