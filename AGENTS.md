@@ -32,7 +32,7 @@ Detailed conventions are in `.claude/rules/` (auto-loaded by Claude Code when ma
 aspire start
 ```
 
-Aspire provisions SQL Server (Docker/Podman), runs migrations and seeds via `tools/MigrationService`, then exposes the API at `https://localhost:7255/scalar/v1` (Scalar OpenAPI UI). The Aspire Dashboard opens automatically for traces and logs.
+Aspire provisions SQL Server (Docker/Podman), runs migrations and seeds via `tools/MigrationService`, then exposes the API at `https://localhost:7255/swagger` (FastEndpoints Swagger UI). The Aspire Dashboard opens automatically for traces and logs.
 
 ## Reference Slice
 

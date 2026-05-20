@@ -1,7 +1,6 @@
 ---
 paths:
   - "src/WebApi/Common/Persistence/**/*"
-  - "src/WebApi/Common/Database/**/*"
   - "tools/MigrationService/**/*"
 ---
 
@@ -21,7 +20,7 @@ paths:
 dotnet ef migrations add MigrationName \
   --project src/WebApi/WebApi.csproj \
   --startup-project src/WebApi/WebApi.csproj \
-  --output-dir Common/Database/Migrations
+  --output-dir Common/Persistence/Migrations
 ```
 
 Migrations apply automatically on startup via `tools/MigrationService`, so you don't need to run `database update` manually in dev.

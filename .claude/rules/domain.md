@@ -15,7 +15,7 @@ paths:
 ## Strongly Typed IDs
 
 - `[ValueObject<Guid>]` from Vogen. IDs use `Guid.CreateVersion7()` for time-ordered values.
-- **Every new ID must also be registered in `Common/Persistence/VogenEfCoreConverters.cs`** with `[EfCoreConverter<YourId>]`. The app fails at startup if one is missing.
+- **Every new ID must also be registered in `src/WebApi/Common/Persistence/VogenEfCoreConverters.cs`** with `[EfCoreConverter<YourId>]`. The app fails at startup if one is missing.
 
 ## Specifications
 
