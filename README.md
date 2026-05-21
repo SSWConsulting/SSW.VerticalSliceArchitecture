@@ -102,7 +102,8 @@ Read more on [SSW Rules to Better Vertical Slice Architecture](https://www.ssw.c
    dotnet new install SSW.VerticalSliceArchitecture.Template
    ```
 
-> [!NOTE] The template only needs to be installed once. Running this command again will update your version of the template.
+> [!NOTE] 
+> The template only needs to be installed once. Running this command again will update your version of the template.
 
 2. Create a new directory
    ```bash
@@ -115,7 +116,8 @@ Read more on [SSW Rules to Better Vertical Slice Architecture](https://www.ssw.c
    dotnet new ssw-vsa
    ```
 
-> [!NOTE] `name` is optional; if you don't specify it, the directory name will be used as the solution name and project namespaces.
+> [!NOTE]
+> `name` is optional; if you don't specify it, the directory name will be used as the solution name and project namespaces.
 
 Alternatively, you can specify the `name` and `output` directory as follows:
 
@@ -140,7 +142,8 @@ dotnet new ssw-vsa --name {{SolutionName}}
    dotnet run
    ```
 
-> [!NOTE] The first time you run the solution, it may take a while to download the docker images, create the DB, and seed the data.
+> [!NOTE]
+> The first time you run the solution, it may take a while to download the docker images, create the DB, and seed the data.
 
 4. Open https://localhost:7255/swagger in your browser to see it running ️🏃‍♂️
 
@@ -205,6 +208,7 @@ aspire config set features.execCommandEnabled true
 ```bash
 aspire exec --resource api -- dotnet ef migrations remove --project ..\Infrastructure --force
 ```
+
 > [!NOTE]
 > The `--force` flag is needed because .NET Aspire will start the application when this command is run, which triggers the migrations to run. This will apply your migrations to the database, and make EF Core unhappy when it tries to delete the latest migration. This should therefore be used with caution - a safer approach is to "roll forward" and create new migrations that safely undo the undesired change(s).
 
@@ -285,7 +289,8 @@ Template will be published to NuGet.org when changes are made to `VerticalSliceA
 3. `package` GitHub Action will run and publish the new version to NuGet.org
 4. Create a GitHub release to document the changes
 
-> [!NOTE] We are now using CalVer for versioning. The version number should be in the format `YYYY.M.D` (e.g. `2024.2.12`).
+> [!NOTE]
+> We are now using CalVer for versioning. The version number should be in the format `YYYY.M.D` (e.g. `2024.2.12`).
 
 ## 🤝 Contributing
 
