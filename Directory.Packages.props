@@ -34,7 +34,7 @@
     <PackageVersion Include="OpenTelemetry.Instrumentation.Runtime" Version="1.15.1" />
   </ItemGroup>
   <ItemGroup Condition="$(IsAspireHost) == 'true'">
-    <PackageVersion Include="Aspire.Hosting.AppHost" Version="13.3.2" />
+    <PackageVersion Include="Aspire.Hosting.AppHost" Version="13.3.5" />
     <PackageVersion Include="Aspire.Hosting.SqlServer" Version="13.3.2" />
   </ItemGroup>
   <ItemGroup Condition="$(IsTestProject) == 'true'">
