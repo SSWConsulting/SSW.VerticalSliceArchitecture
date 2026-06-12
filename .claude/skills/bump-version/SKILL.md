@@ -19,15 +19,17 @@ So the `<version>` value in `VerticalSliceArchitecture.nuspec` *is* the release.
 
 ## Versioning scheme: CalVer
 
-Versions are calendar dates, `YYYY.MM.DD` (e.g. `2025.12.10`, `2026.06.12`). There is no SemVer major/minor/patch decision — the new version is simply today's date. Confirm with `git tag --sort=-v:refname | head` if you need to see recent releases.
+Versions are calendar dates, `YYYY.MM.DD` (e.g. `2025.12.10`, `2026.06.12`). There is no SemVer major/minor/patch decision — the new version is simply today's date.
+
+To find the latest published version, use `gh release view --json tagName -q .tagName` — that's authoritative. Don't trust `git tag --sort=-v:refname | head`: the repo has both `v`-prefixed and bare tags (`v2025.10.24` *and* `2025.12.10`), and the mixed namespace makes that sort return a stale tag above the real latest.
 
 ## Steps
 
 1. Read the current `<version>` from `VerticalSliceArchitecture.nuspec`.
 2. Compute today's date as `YYYY.MM.DD`. That is the new version.
-3. Guard against a same-day re-release: run `git tag` and check the date isn't already a tag. If it is, a release already shipped today — append a numeric suffix (`YYYY.MM.DD.1`) or ask the user how they want to disambiguate. Don't silently overwrite.
+3. Guard against a same-day re-release: run `git fetch --tags` first (release tags are created by CI on the remote, so a local-only `git tag` can miss one shipped earlier today), then check the date isn't already a tag. If it is, a release already shipped today — append a numeric suffix (`YYYY.MM.DD.1`) or ask the user how they want to disambiguate. Don't silently overwrite.
 4. Update `<version>` to the new value.
-5. Refresh `<releaseNotes>`: summarise what changed since the last release. Get the commit list with `git log --oneline <last-tag>..HEAD` and distil it into a short, human summary (one or two sentences). This is the NuGet page blurb — GitHub generates the full PR-list notes separately, so keep it terse.
+5. Refresh `<releaseNotes>`: summarise what changed since the last release. The `<version>` you read in step 1 (before bumping) is the previous release's tag, so use it as the changelog base: `git log --oneline <previous-version>..HEAD`. Distil that into a short, human summary (one or two sentences). This is the NuGet page blurb — GitHub generates the full PR-list notes separately, so keep it terse.
 6. Run the `humanizer` skill over the release-notes prose before finishing (per the repo/global content-writing rule).
 
 ## Guardrails
