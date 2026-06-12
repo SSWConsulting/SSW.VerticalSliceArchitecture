@@ -27,7 +27,7 @@ public class AddHeroToTeamCommandTests(TestingDatabaseFixture fixture) : Integra
 
         // Assert
         var updatedTeam = await GetQueryable<Team>()
-            .WithSpecification(new TeamByIdSpec(team.Id))
+            .WithSpecification(TeamSpec.ById(team.Id))
             .FirstOrDefaultAsync(CancellationToken);
 
         result.StatusCode.Should().Be(HttpStatusCode.NoContent);

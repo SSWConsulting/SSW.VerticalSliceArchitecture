@@ -20,8 +20,22 @@ paths:
 ## Specifications
 
 - Use Ardalis.Specification for any non-trivial query and for loading aggregates.
-- Place specs alongside the aggregate: `Common/Domain/{Entity}/{Entity}ByIdSpec.cs`.
-- Apply via `.WithSpecification(new HeroByIdSpec(id))` on the DbSet.
+- One spec class per aggregate: `Common/Domain/{Aggregate}/{Aggregate}Spec.cs`, extending `SingleResultSpecification<T>`. Add a static factory method per query so all of an aggregate's queries live in one discoverable place.
+- Apply via `.WithSpecification(HeroSpec.ById(id))` on the DbSet.
+
+```csharp
+public sealed class HeroSpec : SingleResultSpecification<Hero>
+{
+    public static HeroSpec ById(HeroId heroId)
+    {
+        var spec = new HeroSpec();
+        spec.Query.Where(h => h.Id == heroId);
+        return spec;
+    }
+
+    // Add further factory methods here as new queries are needed
+}
+```
 
 ## Value Objects
 

@@ -19,7 +19,7 @@ public class CompleteMissionEndpoint(ApplicationDbContext dbContext)
     {
         var teamId = TeamId.From(req.TeamId);
         var team = dbContext.Teams
-            .WithSpecification(new TeamByIdSpec(teamId))
+            .WithSpecification(TeamSpec.ById(teamId))
             .FirstOrDefault();
 
         if (team is null)

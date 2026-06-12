@@ -27,7 +27,7 @@ public class ExecuteMissionCommandTests(TestingDatabaseFixture fixture) : Integr
 
         // Assert
         var updatedTeam = await GetQueryable<Team>()
-            .WithSpecification(new TeamByIdSpec(team.Id))
+            .WithSpecification(TeamSpec.ById(team.Id))
             .FirstOrDefaultAsync(CancellationToken);
         var mission = updatedTeam!.Missions.First();
 
