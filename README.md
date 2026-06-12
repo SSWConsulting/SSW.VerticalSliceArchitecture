@@ -92,8 +92,9 @@ Read more on [SSW Rules to Better Vertical Slice Architecture](https://www.ssw.c
 
 ### Prerequisites
 
-- [Docker](https://www.docker.com/get-started/) / [Podman](https://podman.io/get-started)
-- [Dotnet 9](https://dotnet.microsoft.com/en-us/download/dotnet/9.0)
+- [Docker](https://www.docker.com/get-started/) / [Podman](https://podman.io/get-started) / [OrbStack](https://orbstack.dev/)
+- [.NET 10 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/10.0)
+- [Aspire CLI](https://aspire.dev/get-started/install-cli/)
 
 ### Installing the Template
 
@@ -127,25 +128,15 @@ dotnet new ssw-vsa --name {{SolutionName}}
 
 ### Running the Solution
 
-1. Change directory<br />
-   Windows:
-   ```ps
-   cd tools\AppHost\
-   ```
-   Mac/Linux:
+1. Run the solution
    ```bash
-   cd tools/AppHost/
-   ```
-
-2. Run the solution
-   ```bash
-   dotnet run
+   aspire start
    ```
 
 > [!NOTE]
 > The first time you run the solution, it may take a while to download the docker images, create the DB, and seed the data.
 
-4. Open https://localhost:7255/swagger in your browser to see it running ️🏃‍♂️
+2. Open https://localhost:7255/swagger in your browser to see it running ️🏃‍♂️
 
 ## Adding Features
 
