@@ -28,7 +28,7 @@ public class PowerLevelUpdatedEventHandler(
         }
 
         var team = dbContext.Teams
-            .WithSpecification(new TeamByIdSpec(hero.TeamId.Value))
+            .WithSpecification(TeamSpec.ById(hero.TeamId.Value))
             .FirstOrDefault();
 
         if (team is null)
