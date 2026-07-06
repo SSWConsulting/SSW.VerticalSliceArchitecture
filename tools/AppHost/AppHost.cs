@@ -25,8 +25,8 @@ var sqlServer = builder
         // Configure SQL Server to run locally as a container
         container.WithLifetime(ContainerLifetime.Persistent);
 
-        // Use SQL Server 2022 as the default of SQL Server 2025 doesn't work on Linux/MacOS
-        container.WithImage("mssql/server:2022-latest");
+        // SQL Server 2025. Runs locally on macOS via OrbStack (Docker Desktop on Apple Silicon may not work).
+        container.WithImage("mssql/server:2025-latest");
 
         // Group under one "SSW-VSA" project in Docker Desktop / OrbStack (cosmetic only)
         container.InDockerProject();
