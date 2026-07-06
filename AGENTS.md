@@ -25,6 +25,7 @@ Detailed conventions are in `.claude/rules/` (auto-loaded by Claude Code when ma
 | `domain.md` | entities, aggregates, value objects, specs, strongly typed IDs, domain events |
 | `database.md` | adding entities, migration commands, seeding |
 | `testing.md` | unit, integration, and architecture test projects |
+| `dependencies.md` | NuGet audit (NU1903) failures, transitive pinning, verifying pins |
 
 ## Running the App
 
