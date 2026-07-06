@@ -1,3 +1,8 @@
+---
+paths:
+  - "**/*"
+---
+
 # Verification
 
 A green Debug build is the weakest signal this template gives you. Real
@@ -10,8 +15,8 @@ done.
 
 Not every edit earns the full gauntlet.
 
-- **Runtime changes** — endpoints, DI registration, EF Core mappings or
-  migrations, middleware, `ServiceDefaults`, the AppHost — run everything:
+- **Runtime changes** (endpoints, DI registration, EF Core mappings or
+  migrations, middleware, `ServiceDefaults`, the AppHost) — run everything:
   builds, all tests, the Aspire boot, and REST smoke checks.
 - **Domain, spec, or validator changes** with no wiring change — builds plus the
   unit and integration tests. Skip the Aspire loop only if nothing you changed
@@ -68,7 +73,7 @@ aspire start                # aspire start --isolated inside a git worktree
 ```
 
 Then drive the health check through the **aspire skill** rather than reading raw
-logs by hand — it knows how to wait on a resource (`aspire wait <resource>`),
+logs by hand. It knows how to wait on a resource (`aspire wait <resource>`),
 list resources, and read their health and traces. Confirm every resource
 (SQL Server, the migration/seed step, the WebApi) reaches a healthy state before
 you trust anything downstream. If the environment itself looks wrong,
@@ -78,19 +83,22 @@ you trust anything downstream. If the environment itself looks wrong,
 
 A healthy resource can still serve a broken endpoint. Once the app is up, call
 the surface you actually changed plus a known-good baseline, and read the
-responses — a 200 with the wrong body still fails verification.
+responses. A 200 with the wrong body still fails verification.
 
 - Hit the endpoints your change touched, across the status codes that matter
   (the success path and at least one validation or not-found path).
-- Call a baseline you didn't touch — a Heroes read, `/swagger`, or
-  `/swagger/v1/swagger.json` — to confirm the app is genuinely serving traffic
+- Call a baseline you didn't touch (a Heroes read, `/swagger`, or
+  `/swagger/v1/swagger.json`) to confirm the app is genuinely serving traffic
   and the failure, if any, is scoped to your change.
 - The Swagger UI at `https://localhost:7255/swagger` is the quickest way to
   exercise an endpoint by hand; `curl` against the same routes works for a
   scripted check.
 
 One caveat inherited from [dependencies.md](dependencies.md): `/swagger` and
-`swagger.json` come from FastEndpoints (NSwag), a different stack from the
-`Microsoft.AspNetCore.OpenApi` document at `/openapi/v1.json`. A 200 from
-Swagger says nothing about the OpenAPI path, so match the request to the code
-you actually changed.
+`swagger.json` come from FastEndpoints (NSwag), a different stack from
+`Microsoft.AspNetCore.OpenApi`. The two don't share a code path, so a 200 from
+Swagger tells you nothing about the OpenAPI side. As shipped the WebApi calls
+`AddOpenApi()` but never `MapOpenApi()`, so its `/openapi/v1.json` document isn't
+mapped and returns 404 until something maps it; don't smoke-test that route
+unless your change is what wired it up. Match the request to the code you
+actually changed.
