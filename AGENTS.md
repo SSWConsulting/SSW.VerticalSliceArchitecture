@@ -26,6 +26,7 @@ Detailed conventions are in `.claude/rules/` (auto-loaded by Claude Code when ma
 | `database.md` | adding entities, migration commands, seeding |
 | `testing.md` | unit, integration, and architecture test projects |
 | `dependencies.md` | NuGet audit (NU1903) failures, transitive pinning, verifying pins |
+| `verification.md` | what "done" means: Debug + Release builds, all test projects, Aspire boot + health, REST smoke checks |
 
 ## Running the App
 
