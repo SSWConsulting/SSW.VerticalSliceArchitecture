@@ -28,7 +28,7 @@ var sqlServer = builder
         // Use SQL Server 2022 as the default of SQL Server 2025 doesn't work on Linux/MacOS
         container.WithImage("mssql/server:2022-latest");
 
-        // Group under one "SSW.VSA" project in Docker Desktop / OrbStack (cosmetic only)
+        // Group under one "SSW-VSA" project in Docker Desktop / OrbStack (cosmetic only)
         container.InDockerProject();
 
         // If desired, set SQL Server Port to a constant value

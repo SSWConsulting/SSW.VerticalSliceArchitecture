@@ -12,7 +12,9 @@ namespace Aspire.Hosting;
 public static class DockerComposeGroupingExtensions
 {
     // No docker-compose.yml in this repo, so this name can't clash with a real Compose project.
-    public const string DockerProject = "SSW.VSA";
+    // Kept dot-free ([a-z0-9][a-z0-9_-]* is the Compose project-name rule) so Docker UIs reliably
+    // fold the containers into this group — a "." can make the group be silently ignored.
+    public const string DockerProject = "SSW-VSA";
 
     public static IResourceBuilder<T> InDockerProject<T>(this IResourceBuilder<T> builder, string projectName = DockerProject)
         where T : ContainerResource
