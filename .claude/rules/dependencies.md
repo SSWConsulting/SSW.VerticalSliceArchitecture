@@ -50,12 +50,21 @@ against is a binary-compatibility bet, and neither restore nor build can prove i
 A member that moved or changed signature throws `MissingMethodException` or
 `TypeLoadException`, but only when that code actually runs.
 
-So when the bumped assembly is on a runtime path a compiled package calls into
-(OpenAPI document generation is the one this repo hit), a green build isn't
-enough. Exercise the path. For OpenAPI pins: `aspire start --isolated`, then
-`GET /swagger/v1/swagger.json` and confirm HTTP 200 with a valid document.
+So a green build isn't enough. You have to hit the endpoint that actually loads
+the bumped assembly, which means knowing which stack owns it. There's a trap here:
+this template runs two separate OpenAPI stacks. `Microsoft.OpenApi` belongs to
+`Microsoft.AspNetCore.OpenApi` (`AddOpenApi()` / `MapOpenApi()`, served at
+`/openapi/v1.json`). The `/swagger` UI and `/swagger/v1/swagger.json` come from
+FastEndpoints.Swagger, which uses NSwag and never touches `Microsoft.OpenApi`. A
+200 from `swagger.json` therefore tells you nothing about a `Microsoft.OpenApi`
+pin.
 
-Pins that only touch build-time or dashboard assemblies don't need this — the
-`MessagePack` pin, for instance, backs Aspire tooling and never reaches a
-request. Generated projects may wire OpenAPI or Aspire differently, so adapt the
-check to whatever surface actually loads the assembly.
+As shipped, the WebApi calls `AddOpenApi()` but never `MapOpenApi()`, so the
+`Microsoft.OpenApi` path isn't mapped and can't be exercised at all, so the pin
+here only clears the audit. Once something maps it (`aspire start --isolated`, then
+`GET /openapi/v1.json` expecting a valid document), that's the check to run.
+
+Pins that never reach a request don't need a runtime check. The `MessagePack`
+pin, for instance, backs Aspire tooling. Match the check to whatever surface
+really loads the assembly, and if nothing does, the pin is just satisfying the
+audit.
