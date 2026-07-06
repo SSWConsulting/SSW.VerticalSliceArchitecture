@@ -16,6 +16,7 @@ Keep these points in mind:
 - Use `aspire wait` before a dependent action when readiness is the real blocker.
 - Add `--status` and `--timeout` when the ask calls for an explicit readiness condition rather than a generic wait.
 - Treat readiness as a resource-scoped concern; a missing ready signal is not automatically a reason to restart the whole AppHost.
+- `aspire wait` waits for a resource to become healthy. A run-to-completion job (a migration or seed project the app `WaitForCompletion`s) exits 0 and has no live health check, so `aspire wait <job>` can report "failed to start" even when it succeeded. Confirm those jobs with `aspire logs <job>` (look for the clean-exit line) or by watching the dependent resource reach healthy, rather than with `aspire wait`.
 
 ## Scenario: Fix Or Operate On One Resource Without Bouncing The Whole App
 
