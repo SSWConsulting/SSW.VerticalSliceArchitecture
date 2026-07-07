@@ -34,7 +34,7 @@
     <PackageVersion Include="Vogen" Version="8.0.3" />
     <PackageVersion Include="Ardalis.Specification.EntityFrameworkCore" Version="9.3.1" />
     <PackageVersion Include="Bogus" Version="35.6.5" />
-    <PackageVersion Include="FastEndpoints" Version="7.1.1" />
+    <PackageVersion Include="FastEndpoints" Version="8.2.0" />
   </ItemGroup>
   <ItemGroup Condition="$(IsAspireSharedProject) == 'true'">
     <PackageVersion Include="Microsoft.Extensions.Http.Resilience" Version="10.1.0" />
