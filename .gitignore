@@ -481,3 +481,6 @@ $RECYCLE.BIN/
 .claude/plans/
 .claude/worktrees/
 *.lscache
+
+# Log4brains ADR static site build output
+.log4brains/

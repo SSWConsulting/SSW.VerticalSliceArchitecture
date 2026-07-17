@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch: # allow manual triggering
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
@@ -27,7 +28,7 @@ jobs:
     - uses: actions/checkout@v7
     - uses: actions/setup-node@v6
       with:
-        node-version: "14"
+        node-version: "21"
 
     - name: Install Log4Brains
       run: npm install -g log4brains
@@ -38,8 +39,8 @@ jobs:
     - name: Upload artifact
       uses: actions/upload-pages-artifact@v5
       with:
-        # Upload entire repository
-        path: './_site'
+        # log4brains writes the static ADR site here (not ./_site)
+        path: './.log4brains/out'
         
     - name: Deploy to GitHub Pages
       id: deployment
