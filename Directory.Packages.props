@@ -19,14 +19,14 @@
     <!-- Transitive via Microsoft.AspNetCore.OpenApi 10.0.0; pinned above the 2.0.0 it
          resolves to in order to clear NU1903 (GHSA-v5pm-xwqc-g5wc, high severity). -->
     <PackageVersion Include="Microsoft.OpenApi" Version="2.9.0" />
-    <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.9">
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.10">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageVersion>
     <!-- Pinned to satisfy Aspire 13.4.6's transitive >= 10.0.8 requirement, now
          enforced by transitive pinning. Matches the EF Core 10.0.9 pins. -->
     <PackageVersion Include="Microsoft.Extensions.Hosting" Version="10.0.9" />
-    <PackageVersion Include="Microsoft.EntityFrameworkCore.Relational" Version="10.0.9" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Relational" Version="10.0.10" />
     <PackageVersion Include="Aspire.Microsoft.EntityFrameworkCore.SqlServer" Version="13.4.6" />
     <PackageVersion Include="Scalar.AspNetCore" Version="2.4.7" />
     <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
