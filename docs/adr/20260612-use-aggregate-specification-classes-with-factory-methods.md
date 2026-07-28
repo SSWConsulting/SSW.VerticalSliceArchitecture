@@ -72,3 +72,7 @@ dbContext.Heroes.WithSpecification(HeroSpec.ById(heroId)).FirstOrDefault();
 - ✅ Consistent `{Aggregate}Spec` naming
 - ✅ No inner-class boilerplate
 - ❌ A little more per-query boilerplate
+
+## Links
+
+- [SSW Rule - Do you use the Specification pattern in your software design?](https://www.ssw.com.au/rules/use-specification-pattern) — note the rule still documents the one-class-per-spec naming (`TeamByIdSpec`) that this ADR moves away from

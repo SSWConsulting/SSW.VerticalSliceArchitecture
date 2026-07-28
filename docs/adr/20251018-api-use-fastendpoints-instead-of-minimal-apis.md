@@ -97,6 +97,7 @@ Traditional ASP.NET Core MVC controller pattern.
 
 ## Links
 
+- [SSW Rule - Do you use Fluent Validation?](https://www.ssw.com.au/rules/use-fluent-validation)
 - [FastEndpoints Documentation](https://fast-endpoints.com/)
 - [FastEndpoints GitHub Repository](https://github.com/FastEndpoints/FastEndpoints)
 - [ASP.NET Core Minimal APIs Documentation](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/minimal-apis)

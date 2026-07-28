@@ -69,5 +69,7 @@ Leave `templates/slice/` in place but stop generating a slice in `meta-test.yml`
 
 ## Links
 
+- [SSW Rule - Do you write an AGENTS.md?](https://www.ssw.com.au/rules/write-agents-md)
+- [SSW Rule - Do you split your AGENTS.md into scoped rule files?](https://www.ssw.com.au/rules/scoped-rules-for-ai-agents)
 - [Vertical Slice Architecture Template](https://github.com/SSWConsulting/SSW.VerticalSliceArchitecture)
 - Slice-creation guidance: `AGENTS.md`, section "Adding New Features"
