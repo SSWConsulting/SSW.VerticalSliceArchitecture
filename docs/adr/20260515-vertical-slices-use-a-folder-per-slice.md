@@ -79,3 +79,5 @@ Every slice is a folder; every class gets its own file.
 ## Links
 
 - Refines [API - Use FastEndpoints instead of Minimal APIs](20251018-api-use-fastendpoints-instead-of-minimal-apis.md)
+- [SSW Rule - Vertical Slice Architecture - Do you know the main principles?](https://www.ssw.com.au/rules/vertical-slice-architecture)
+- [SSW Rule - Do you use one class per file?](https://www.ssw.com.au/rules/do-you-use-one-class-per-file)
