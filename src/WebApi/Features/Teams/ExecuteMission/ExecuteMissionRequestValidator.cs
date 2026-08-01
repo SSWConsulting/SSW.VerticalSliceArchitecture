@@ -1,3 +1,5 @@
+using SSW.VerticalSliceArchitecture.Common.Domain.Teams;
+
 namespace SSW.VerticalSliceArchitecture.Features.Teams.ExecuteMission;
 
 public class ExecuteMissionRequestValidator : Validator<ExecuteMissionRequest>
@@ -8,6 +10,7 @@ public class ExecuteMissionRequestValidator : Validator<ExecuteMissionRequest>
             .NotEmpty();
 
         RuleFor(v => v.Description)
-            .NotEmpty();
+            .NotEmpty()
+            .MaximumLength(Mission.DescriptionMaxLength);
     }
 }

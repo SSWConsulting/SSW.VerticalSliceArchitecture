@@ -9,7 +9,12 @@ Three test projects, three different jobs.
 
 ## Unit Tests — `tests/WebApi.UnitTests/`
 
-Domain logic only: entity invariants, value objects, factory rules. No EF, no mocks. Reference: `tests/WebApi.UnitTests/Features/Heroes/HeroTests.cs`.
+Anything that runs without infrastructure. No EF, no mocks.
+
+- **Domain logic** — entity invariants, value objects, factory rules. Reference: `tests/WebApi.UnitTests/Features/Heroes/HeroTests.cs`.
+- **Request validators** — construct the validator directly (`new CreateHeroRequestValidator().Validate(req)`) and assert on `IsValid` / `Errors`. No DI or test host is needed, provided the rules don't call `Resolve<T>()`. Reference: `tests/WebApi.UnitTests/Features/Heroes/CreateHeroRequestValidatorTests.cs`.
+
+Where a validator mirrors a domain limit, drive the test boundaries off the domain constant (`Hero.NameMaxLength`) rather than a literal, so the test follows the limit when it moves.
 
 ## Integration Tests — `tests/WebApi.IntegrationTests/`
 
