@@ -100,6 +100,20 @@ public class UpdateHeroRequestValidatorTests
     }
 
     [Fact]
+    public void Validator_WithNullPowers_ShouldFail()
+    {
+        // Arrange — a body that omits "powers" deserializes to null, and the endpoint enumerates it
+        var request = new UpdateHeroRequest("Clark Kent", "Superman", Guid.CreateVersion7(), null!);
+
+        // Act
+        var result = _validator.Validate(request);
+
+        // Assert
+        result.IsValid.Should().BeFalse();
+        result.Errors.Should().Contain(e => e.PropertyName == nameof(UpdateHeroRequest.Powers));
+    }
+
+    [Fact]
     public void Validator_WithValidRequest_ShouldPass()
     {
         // Act
