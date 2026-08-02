@@ -31,6 +31,7 @@ Enforces naming and layering rules. A failure here means a convention has been b
 
 - every endpoint is named `*Endpoint` and lives in a `Features.{Feature}.{Slice}` namespace
 - every endpoint with a request has a FastEndpoints `Validator<TRequest>` **in the same slice namespace** (`EndpointWithoutRequest` is exempt; a plain FluentValidation `AbstractValidator<T>` does not count, because FastEndpoints never binds one)
+- every endpoint whose request derives from `PagedRequest` has a `PagedRequestValidator<TRequest, TEntity>` in that namespace, not merely some `Validator<TRequest>` — the sort allow-list lives in that base class, and without it an unknown sort column reaches the primitives, which throw rather than return a 400
 - no slice depends on another slice's types
 - endpoints take `ApplicationDbContext`, not the `DbContext` base type — checked against IL, so `Resolve<T>()` and handler-method injection are covered too
 

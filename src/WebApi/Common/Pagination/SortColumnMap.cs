@@ -56,6 +56,9 @@ public sealed class SortColumnMap<T>
         SortDirection direction,
         Expression<Func<T, object?>> tieBreaker)
     {
+        ThrowIfNull(query);
+        ThrowIfNull(tieBreaker);
+
         var column = Resolve(sortBy);
 
         var ordered = direction == SortDirection.Descending
