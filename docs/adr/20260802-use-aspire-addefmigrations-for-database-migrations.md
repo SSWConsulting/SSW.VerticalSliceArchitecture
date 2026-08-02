@@ -1,7 +1,7 @@
 # Use Aspire's AddEFMigrations for Database Migrations
 
 - Status: accepted
-- Deciders: Daniel Mackay
+- Deciders: Daniel Mackay, Anton Polkanov
 - Date: 2026-08-02
 - Tags: aspire, database, migrations, deployment
 
