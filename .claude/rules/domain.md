@@ -43,7 +43,7 @@ public sealed class HeroSpec : SingleResultSpecification<Hero>
 
 ## Domain Events
 
-- Inherit from `DomainEvent`. Raise via `AddDomainEvent(...)` on the aggregate.
+- Declare as a `record` implementing `IEvent` (FastEndpoints). Raise via `AddDomainEvent(...)` on the aggregate. Reference: `PowerLevelUpdatedEvent.cs`.
 - Dispatched by `DispatchDomainEventsInterceptor` after `SaveChangesAsync()`. Handlers run in the same transaction.
 - If a handler can't complete, throw `EventualConsistencyException` so the middleware translates it for HTTP.
 - Example chain: `PowerLevelUpdatedEventHandler` recalculates team power when a hero's powers change.
