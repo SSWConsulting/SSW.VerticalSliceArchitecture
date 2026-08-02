@@ -1,6 +1,6 @@
 ---
 name: add-entity
-description: Scaffold a new domain entity or aggregate in this Vertical Slice Architecture template — the entity itself, its strongly typed ID, errors, specification, EF Core configuration, DbSet, the mandatory Vogen registration, and the migration. Use when the user says "add an entity", "add an aggregate", "create a domain model", "add a new table", "model X in the domain", or names a new domain concept that needs to be persisted. Use it before `/add-feature` when the use case needs a domain type that doesn't exist yet.
+description: Scaffold a new domain entity or aggregate in this Vertical Slice Architecture template — the entity itself, its strongly typed ID, errors, specification, EF Core configuration, DbSet, the mandatory Vogen registration, and the migration. Use when the user says "add an entity", "add an aggregate", "create a domain model", "add a new table", "model X in the domain", or names a new domain concept that needs to be persisted. Use it before `/add-slice` when the use case needs a domain type that doesn't exist yet.
 ---
 
 # Add an Entity

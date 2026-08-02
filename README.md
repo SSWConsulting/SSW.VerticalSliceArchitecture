@@ -34,7 +34,7 @@ Read more on [SSW Rules to Better Vertical Slice Architecture](https://www.ssw.c
 ## ✨ Features
 - 🔨 `dotnet new` cli template - to get you started quickly
 - 🤖 Agent skills - the conventions are executable, not just documented
-    - `/add-entity`, `/add-feature`, `/vsa-review` ship in `.claude/skills/`
+    - `/add-entity` and `/add-slice` ship in `.claude/skills/`
     - Scaffolds the whole slice, including the strongly typed ID registration that's a startup failure when missed
 - 🚀 Aspire
     - Dashboard
@@ -154,12 +154,13 @@ A full Vertical Slice is a set of files across the domain, persistence, and feat
 The template ships skills that scaffold all of this for you. In Claude Code:
 
 ```
-/add-entity    # domain object, strongly typed ID, spec, EF config, DbSet, Vogen registration, migration
-/add-feature   # the slice itself — endpoint, request, response, validator, summary — plus tests
-/vsa-review    # reviews what you've written against the template's conventions
+/add-entity   # domain object, strongly typed ID, spec, EF config, DbSet, Vogen registration, migration
+/add-slice    # one use case — endpoint, request, response, validator, summary — plus tests
 ```
 
-Run `/add-entity` first when the use case needs a domain type that doesn't exist yet, then `/add-feature`. The skills live in `.claude/skills/`, and the conventions they follow are documented in [`AGENTS.md`](AGENTS.md) and `.claude/rules/`. Using a different agent? Point it at `.claude/skills/add-feature/SKILL.md` — they're plain markdown.
+Run `/add-entity` first when the use case needs a domain type that doesn't exist yet, then `/add-slice`. The skills live in `.claude/skills/`, and the conventions they follow are documented in [`AGENTS.md`](AGENTS.md) and `.claude/rules/`. Using a different agent? Point it at `.claude/skills/add-slice/SKILL.md` — they're plain markdown.
+
+`/add-slice` adds a *slice* — one use case in its own folder. It creates the Feature and its route Group as well, but only when the slice is the first one in that Feature. [`CONTEXT.md`](CONTEXT.md) defines both terms.
 
 To do it by hand instead, copy an existing feature such as `Heroes` and rename it. Two steps are easy to miss:
 

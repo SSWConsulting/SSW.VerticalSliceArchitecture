@@ -1,6 +1,6 @@
 # Command slice templates
 
-Placeholders: `{Feature}` the plural feature (`Heroes`), `{UseCase}` the verb+noun (`CreateHero`), `{Entity}` the aggregate (`Hero`).
+Placeholders: `{Feature}` the Feature that groups the slices (`Heroes`), `{UseCase}` the slice's verb+noun (`CreateHero`), `{Entity}` the aggregate (`Hero`).
 
 The namespace root (`SSW.VerticalSliceArchitecture`) is rewritten by `dotnet new` on instantiation, so use it verbatim.
 
@@ -8,11 +8,11 @@ The namespace root (`SSW.VerticalSliceArchitecture`) is rewritten by `dotnet new
 
 ---
 
-## Feature group
+## Group
 
 `src/WebApi/Features/{Feature}/{Feature}Group.cs`
 
-One per feature. The prefix becomes the route segment, the Swagger tag, and the group name at once.
+One per Feature — it's the route prefix every slice in that Feature registers under. The prefix becomes the route segment, the Swagger tag, and the group name at once.
 
 ```csharp
 namespace SSW.VerticalSliceArchitecture.Features.{Feature};
@@ -31,11 +31,13 @@ public class {Feature}Group : Group
 
 ---
 
-## Feature DI registration (usually skip this)
+## Feature service registration (usually skip this)
 
 `src/WebApi/Features/{Feature}/{Feature}Feature.cs`
 
-Only add this when the feature has its own services to register. `FeatureDiscovery` reflects over `IFeature` implementations at startup and invokes `ConfigureServices`, so an empty one costs a reflection hit and tells the next reader a lie about the feature having dependencies.
+Only add this when the Feature has its own services to register. `FeatureDiscovery` reflects over `IFeature` implementations at startup and invokes `ConfigureServices`, so an empty one costs a reflection hit and tells the next reader a lie about the Feature having dependencies.
+
+This is per-Feature, not per-slice: one `{Feature}Feature.cs` sits beside the Group and serves every slice in the Feature.
 
 ```csharp
 using SSW.VerticalSliceArchitecture.Common.Interfaces;
