@@ -27,13 +27,14 @@ public sealed record PagingParams
     public int Skip => (Page - FirstPage) * PageSize;
 
     /// <summary>
-    /// Brings a caller's page and page size into range.
+    /// Applies the defaults for anything the caller omitted, and brings the rest into range.
     /// </summary>
     /// <remarks>
     /// Clamped rather than rejected: the cap exists to stop a caller pulling the whole table, and
     /// failing the request would punish them for asking for more than they can have. An unknown sort
     /// column is treated differently — see <see cref="SortColumnMap{T}"/>.
     /// </remarks>
-    public static PagingParams From(int page, int pageSize) =>
-        new(Math.Max(page, FirstPage), Math.Clamp(pageSize, MinPageSize, MaxPageSize));
+    public static PagingParams From(int? page, int? pageSize) =>
+        new(Math.Max(page ?? FirstPage, FirstPage),
+            Math.Clamp(pageSize ?? DefaultPageSize, MinPageSize, MaxPageSize));
 }

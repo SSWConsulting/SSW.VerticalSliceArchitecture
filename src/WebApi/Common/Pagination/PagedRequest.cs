@@ -8,12 +8,16 @@ namespace SSW.VerticalSliceArchitecture.Common.Pagination;
 /// Slice requests inherit this so the parameter names stay identical across features. Values are the
 /// caller's raw input — run them through <see cref="PagingParams.From"/> and
 /// <see cref="SortDirections.From"/> before building a query.
+/// <para>
+/// Every property is nullable, including the numbers: a non-nullable <c>int</c> with an initialiser looks
+/// like a required parameter to Swagger, and the defaults belong in <see cref="PagingParams"/> anyway.
+/// </para>
 /// </remarks>
 public abstract record PagedRequest
 {
-    public int Page { get; init; } = PagingParams.FirstPage;
+    public int? Page { get; init; }
 
-    public int PageSize { get; init; } = PagingParams.DefaultPageSize;
+    public int? PageSize { get; init; }
 
     public string? SortBy { get; init; }
 

@@ -48,6 +48,17 @@ public class PagingParamsTests
     }
 
     [Fact]
+    public void From_ShouldApplyDefaults_WhenNothingIsSpecified()
+    {
+        // Act
+        var paging = PagingParams.From(null, null);
+
+        // Assert
+        paging.Page.Should().Be(PagingParams.FirstPage);
+        paging.PageSize.Should().Be(PagingParams.DefaultPageSize);
+    }
+
+    [Fact]
     public void Skip_ShouldNeverBeNegative_WhenPageIsOutOfRange()
     {
         // Act
