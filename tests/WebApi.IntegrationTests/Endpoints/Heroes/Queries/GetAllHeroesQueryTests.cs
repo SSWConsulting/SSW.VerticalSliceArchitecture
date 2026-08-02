@@ -26,7 +26,7 @@ public class GetAllHeroesQueryTests(TestingDatabaseFixture fixture) : Integratio
         await AddRangeAsync(HeroFactory.Generate(entityCount));
 
         // Act
-        var page = await GetPage(Route);
+        var page = await GetPage<GetAllHeroesResponse>(Route);
 
         // Assert
         page.Items.Should().HaveCount(PagingParams.DefaultPageSize);
@@ -46,7 +46,7 @@ public class GetAllHeroesQueryTests(TestingDatabaseFixture fixture) : Integratio
         var expected = await SortedAliases();
 
         // Act
-        var page = await GetPage($"{Route}?page=2&pageSize=4&sortBy=alias");
+        var page = await GetPage<GetAllHeroesResponse>($"{Route}?page=2&pageSize=4&sortBy=alias");
 
         // Assert
         page.Page.Should().Be(2);
@@ -62,7 +62,7 @@ public class GetAllHeroesQueryTests(TestingDatabaseFixture fixture) : Integratio
         await AddRangeAsync(HeroFactory.Generate(10));
 
         // Act
-        var page = await GetPage($"{Route}?page=3&pageSize=4");
+        var page = await GetPage<GetAllHeroesResponse>($"{Route}?page=3&pageSize=4");
 
         // Assert
         page.Items.Should().HaveCount(2);
@@ -77,7 +77,7 @@ public class GetAllHeroesQueryTests(TestingDatabaseFixture fixture) : Integratio
         await AddRangeAsync(HeroFactory.Generate(10));
 
         // Act
-        var page = await GetPage($"{Route}?page=99&pageSize=10");
+        var page = await GetPage<GetAllHeroesResponse>($"{Route}?page=99&pageSize=10");
 
         // Assert
         page.Items.Should().BeEmpty();
@@ -93,7 +93,7 @@ public class GetAllHeroesQueryTests(TestingDatabaseFixture fixture) : Integratio
         await AddRangeAsync(HeroFactory.Generate(entityCount));
 
         // Act
-        var page = await GetPage($"{Route}?pageSize=5000");
+        var page = await GetPage<GetAllHeroesResponse>($"{Route}?pageSize=5000");
 
         // Assert
         page.PageSize.Should().Be(PagingParams.MaxPageSize);
@@ -108,7 +108,7 @@ public class GetAllHeroesQueryTests(TestingDatabaseFixture fixture) : Integratio
         await AddRangeAsync(HeroFactory.Generate(3));
 
         // Act
-        var page = await GetPage($"{Route}?page=0");
+        var page = await GetPage<GetAllHeroesResponse>($"{Route}?page=0");
 
         // Assert
         page.Page.Should().Be(PagingParams.FirstPage);
@@ -127,10 +127,47 @@ public class GetAllHeroesQueryTests(TestingDatabaseFixture fixture) : Integratio
             expected = [.. expected.Reverse()];
 
         // Act
-        var page = await GetPage($"{Route}?pageSize=10&sortBy=alias&sortDirection={sortDirection}");
+        var page = await GetPage<GetAllHeroesResponse>($"{Route}?pageSize=10&sortBy=alias&sortDirection={sortDirection}");
 
         // Assert
         page.Items.Select(h => h.Alias).Should().Equal(expected);
+    }
+
+    // A numeric column's ordering lambda compiles to Convert(h.PowerLevel, Object), a different expression
+    // shape from a string column's — so a string-only sorting suite says nothing about whether EF Core can
+    // translate the numeric one, and a numeric column is the first thing a new map gains.
+    [Theory]
+    [InlineData("asc")]
+    [InlineData("desc")]
+    public async Task Query_ShouldSortByANumericColumn(string sortDirection)
+    {
+        // Arrange
+        await AddRangeAsync(HeroFactory.Generate(10));
+        var expected = await SortedPowerLevels();
+        if (sortDirection == "desc")
+            expected = [.. expected.Reverse()];
+
+        // Act
+        var page = await GetPage<GetAllHeroesResponse>(
+            $"{Route}?pageSize=10&sortBy=powerLevel&sortDirection={sortDirection}");
+
+        // Assert
+        page.Items.Select(h => h.PowerLevel).Should().Equal(expected);
+    }
+
+    [Fact]
+    public async Task Query_ShouldReturnNoItems_WhenPageIsFarEnoughPastTheEndToOverflow()
+    {
+        // Arrange — (page - 1) * pageSize overflows int, so this is the request that used to produce a
+        // negative OFFSET rather than an empty page
+        await AddRangeAsync(HeroFactory.Generate(3));
+
+        // Act
+        var page = await GetPage<GetAllHeroesResponse>($"{Route}?page={int.MaxValue}&pageSize=100");
+
+        // Assert
+        page.Items.Should().BeEmpty();
+        page.TotalCount.Should().Be(3);
     }
 
     [Fact]
@@ -170,23 +207,13 @@ public class GetAllHeroesQueryTests(TestingDatabaseFixture fixture) : Integratio
         await AddRangeAsync(HeroFactory.Generate(1));
 
         // Act
-        var page = await GetPage(Route);
+        var page = await GetPage<GetAllHeroesResponse>(Route);
 
         // Assert
         var hero = page.Items.Should().ContainSingle().Subject;
         hero.Id.Should().NotBeEmpty();
         hero.Name.Should().NotBeEmpty();
         hero.Powers.Should().NotBeEmpty();
-    }
-
-    private async Task<PagedList<GetAllHeroesResponse>> GetPage(string url)
-    {
-        var response = await GetAnonymousClient().GetAsync(url, CancellationToken);
-
-        response.IsSuccessStatusCode.Should().BeTrue();
-
-        var page = await response.Content.ReadFromJsonAsync<PagedList<GetAllHeroesResponse>>(CancellationToken);
-        return page.Should().NotBeNull().And.Subject.As<PagedList<GetAllHeroesResponse>>();
     }
 
     /// <remarks>
@@ -198,5 +225,12 @@ public class GetAllHeroesQueryTests(TestingDatabaseFixture fixture) : Integratio
             .OrderBy(h => h.Alias)
             .ThenBy(h => h.Id)
             .Select(h => h.Alias)
+            .ToArrayAsync(CancellationToken);
+
+    private async Task<int[]> SortedPowerLevels() =>
+        await GetQueryable<Hero>()
+            .OrderBy(h => h.PowerLevel)
+            .ThenBy(h => h.Id)
+            .Select(h => h.PowerLevel)
             .ToArrayAsync(CancellationToken);
 }

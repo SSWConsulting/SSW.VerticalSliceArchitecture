@@ -20,7 +20,6 @@ public class GetAllTeamsEndpoint(ApplicationDbContext dbContext)
 
         var teams = await dbContext.Teams.ToPagedListAsync(
             spec,
-            paging,
             t => new GetAllTeamsResponse(t.Id.Value, t.Name, t.TotalPowerLevel),
             ct);
 

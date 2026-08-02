@@ -1,5 +1,7 @@
+using System.Net.Http.Json;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using SSW.VerticalSliceArchitecture.Common.Pagination;
 using SSW.VerticalSliceArchitecture.Common.Persistence;
 
 namespace SSW.VerticalSliceArchitecture.IntegrationTests.Common;
@@ -51,6 +53,24 @@ public abstract class IntegrationTestBase : IAsyncLifetime
     }
 
     protected HttpClient GetAnonymousClient() => _fixture.AnonymousClient.Value;
+
+    /// <summary>
+    /// GETs a paged list endpoint by raw URL and deserialises the standard paged envelope.
+    /// </summary>
+    /// <remarks>
+    /// Takes a URL rather than a request DTO on purpose: what a paged endpoint's tests pin down is the
+    /// query-string contract — the parameter names and how out-of-range values are treated — and a typed
+    /// helper would go around it.
+    /// </remarks>
+    protected async Task<PagedList<T>> GetPage<T>(string url)
+    {
+        var response = await GetAnonymousClient().GetAsync(url, CancellationToken);
+
+        response.IsSuccessStatusCode.Should().BeTrue();
+
+        var page = await response.Content.ReadFromJsonAsync<PagedList<T>>(CancellationToken);
+        return page.Should().NotBeNull().And.Subject.As<PagedList<T>>();
+    }
 
     protected CancellationToken CancellationToken => TestContext.Current.CancellationToken;
 

@@ -47,8 +47,10 @@ The primitives live in `src/WebApi/Common/Pagination/`. Reference slice: `Featur
   unknown column or direction is **rejected** with a 400: inherit `PagedRequestValidator<TRequest, TEntity>`
   in the slice's validator and pass the spec's map.
 - **Querying** — `{Aggregate}Spec.Paged(paging, sortBy, sortDirection)` applies ordering, the `Id`
-  tie-breaker, and `Skip`/`Take`; `dbContext.Set.ToPagedListAsync(spec, paging, projection, ct)` runs the
-  page and its count off the same spec and projects into the response DTO.
+  tie-breaker, and `Skip`/`Take`; `dbContext.Set.ToPagedListAsync(spec, projection, ct)` runs the page and
+  its count off the same spec and projects into the response DTO. The envelope's `page`/`pageSize` are read
+  back off the spec, so the body can't describe a window the query didn't fetch — pass a spec built by
+  anything other than a `Paged` factory and it throws rather than lying.
 - **Swagger** — document the four parameters via `Params[nameof(...)]` in the slice's `Summary`, and use a
   `PagedList<…>` response example so the envelope shows up.
 

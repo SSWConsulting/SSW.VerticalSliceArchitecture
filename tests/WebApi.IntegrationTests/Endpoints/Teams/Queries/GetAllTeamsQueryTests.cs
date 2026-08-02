@@ -21,7 +21,7 @@ public class GetAllTeamsQueryTests(TestingDatabaseFixture fixture) : Integration
         await AddRangeAsync(TeamFactory.Generate(entityCount));
 
         // Act
-        var page = await GetPage(Route);
+        var page = await GetPage<GetAllTeamsResponse>(Route);
 
         // Assert
         page.Items.Should().HaveCount(PagingParams.DefaultPageSize);
@@ -41,7 +41,7 @@ public class GetAllTeamsQueryTests(TestingDatabaseFixture fixture) : Integration
         var expected = await SortedNames();
 
         // Act
-        var page = await GetPage($"{Route}?page=2&pageSize=4");
+        var page = await GetPage<GetAllTeamsResponse>($"{Route}?page=2&pageSize=4");
 
         // Assert
         page.Page.Should().Be(2);
@@ -57,7 +57,7 @@ public class GetAllTeamsQueryTests(TestingDatabaseFixture fixture) : Integration
         var expected = await SortedNames();
 
         // Act
-        var page = await GetPage($"{Route}?pageSize=5&sortBy=name&sortDirection=desc");
+        var page = await GetPage<GetAllTeamsResponse>($"{Route}?pageSize=5&sortBy=name&sortDirection=desc");
 
         // Assert
         page.Items.Select(t => t.Name).Should().Equal(expected.Reverse());
@@ -70,7 +70,7 @@ public class GetAllTeamsQueryTests(TestingDatabaseFixture fixture) : Integration
         await AddRangeAsync(TeamFactory.Generate(5));
 
         // Act
-        var page = await GetPage($"{Route}?pageSize=5000");
+        var page = await GetPage<GetAllTeamsResponse>($"{Route}?pageSize=5000");
 
         // Assert
         page.PageSize.Should().Be(PagingParams.MaxPageSize);
@@ -89,16 +89,6 @@ public class GetAllTeamsQueryTests(TestingDatabaseFixture fixture) : Integration
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         var body = await response.Content.ReadAsStringAsync(CancellationToken);
         body.Should().Contain("not a sortable column");
-    }
-
-    private async Task<PagedList<GetAllTeamsResponse>> GetPage(string url)
-    {
-        var response = await GetAnonymousClient().GetAsync(url, CancellationToken);
-
-        response.IsSuccessStatusCode.Should().BeTrue();
-
-        var page = await response.Content.ReadFromJsonAsync<PagedList<GetAllTeamsResponse>>(CancellationToken);
-        return page.Should().NotBeNull().And.Subject.As<PagedList<GetAllTeamsResponse>>();
     }
 
     /// <remarks>

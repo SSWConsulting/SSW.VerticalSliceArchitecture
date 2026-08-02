@@ -20,7 +20,6 @@ public class GetAllHeroesEndpoint(ApplicationDbContext dbContext)
 
         var heroes = await dbContext.Heroes.ToPagedListAsync(
             spec,
-            paging,
             h => new GetAllHeroesResponse(
                 h.Id.Value,
                 h.Name,

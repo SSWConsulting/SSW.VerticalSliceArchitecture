@@ -67,4 +67,20 @@ public class PagingParamsTests
         // Assert
         paging.Skip.Should().Be(0);
     }
+
+    // (Page - 1) * PageSize overflows int long before Page does, and a wrapped offset reaches SQL Server
+    // as a negative or arbitrary positive OFFSET.
+    [Theory]
+    [InlineData(int.MaxValue, PagingParams.MaxPageSize)]
+    [InlineData(100_000_000, PagingParams.MaxPageSize)]
+    [InlineData(int.MaxValue, PagingParams.MinPageSize)]
+    public void Skip_ShouldSaturate_RatherThanOverflow(int page, int pageSize)
+    {
+        // Act
+        var paging = PagingParams.From(page, pageSize);
+
+        // Assert
+        paging.Skip.Should().BeGreaterThanOrEqualTo(0);
+        paging.Skip.Should().Be((int)Math.Min((long)(page - 1) * pageSize, int.MaxValue));
+    }
 }
