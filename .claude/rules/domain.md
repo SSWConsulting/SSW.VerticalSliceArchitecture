@@ -20,11 +20,12 @@ paths:
 ## Specifications
 
 - Use Ardalis.Specification for any non-trivial query and for loading aggregates.
-- One spec class per aggregate: `Common/Domain/{Aggregate}/{Aggregate}Spec.cs`, extending `SingleResultSpecification<T>`. Add a static factory method per query so all of an aggregate's queries live in one discoverable place.
+- One spec class per aggregate: `Common/Domain/{Aggregate}/{Aggregate}Spec.cs`, extending `Specification<T>`. Add a static factory method per query so all of an aggregate's queries live in one discoverable place.
 - Apply via `.WithSpecification(HeroSpec.ById(id))` on the DbSet.
+- The base is `Specification<T>`, not `SingleResultSpecification<T>`: the same class holds single-result and list queries, and the single-result marker only matters to the Ardalis repository, which this template doesn't use.
 
 ```csharp
-public sealed class HeroSpec : SingleResultSpecification<Hero>
+public sealed class HeroSpec : Specification<Hero>
 {
     public static HeroSpec ById(HeroId heroId)
     {
@@ -36,6 +37,10 @@ public sealed class HeroSpec : SingleResultSpecification<Hero>
     // Add further factory methods here as new queries are needed
 }
 ```
+
+### Sorting & paging
+
+A list query's spec also owns the sort allow-list, because mapping a query-string column name to an ordering expression is knowledge of the entity. Each aggregate exposes a `SortColumnMap<T>` plus a `Paged(...)` factory — see `HeroSpec` and [architecture.md](architecture.md).
 
 ## Value Objects
 
