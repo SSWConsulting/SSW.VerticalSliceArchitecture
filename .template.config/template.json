@@ -34,6 +34,8 @@
         "**/.git/**",
         "**/.idea/**",
         "**/.vscode/**",
+        "**/.serena/**",
+        "**/.playwright-mcp/**",
         "**/.claude/worktrees/**",
         "**/.claude/plans/**",
         "**/.claude/settings.local.json",

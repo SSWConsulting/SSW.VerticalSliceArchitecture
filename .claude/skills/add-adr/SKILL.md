@@ -53,8 +53,8 @@ H1, pattern `[Category] - [Decision]`, or just the decision when no category fit
 - `Database - Use SQL Temporal Tables when data auditing is required`
 - `Use Aggregate Specification Classes with Factory Methods`
 
-Categories in use: `Project`, `API`, `Database`, `Hosting`, `Security`,
-`Communications`, `Vertical Slices`.
+Categories in use: `API`, `Project`, `Vertical Slices`. Introduce a new one when
+the decision genuinely doesn't fit — don't force it into an existing category.
 
 ## 4. Metadata
 
@@ -98,7 +98,9 @@ something.
 - Use the vocabulary from [`CONTEXT.md`](../../../CONTEXT.md) and avoid the synonyms
   it lists under _Avoid_ — a slice is a slice, not a module or a handler.
 - Link to real code (`src/WebApi/Features/Heroes/CreateHero/`) and to related ADRs by
-  relative path. Images go in `/l4b-static/images/`.
+  relative path. Images go in `docs/adr/l4b-static/` — Log4brains serves that folder
+  at the site root, so reference them as `/l4b-static/<file>` with alt text. The
+  folder doesn't exist yet; create it with the first image.
 - Keep code examples minimal and focused on the decision, not the implementation.
 
 ## Repo context worth referencing
