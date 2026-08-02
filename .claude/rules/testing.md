@@ -25,9 +25,9 @@ Enforces naming and layering rules. A failure here means a convention has been b
 `FeatureTests` covers the slice conventions:
 
 - every endpoint is named `*Endpoint` and lives in a `Features.{Feature}.{Slice}` namespace
-- every endpoint with a request has a matching `Validator<TRequest>` (`EndpointWithoutRequest` is exempt)
+- every endpoint with a request has a FastEndpoints `Validator<TRequest>` **in the same slice namespace** (`EndpointWithoutRequest` is exempt; a plain FluentValidation `AbstractValidator<T>` does not count, because FastEndpoints never binds one)
 - no slice depends on another slice's types
-- endpoints take `ApplicationDbContext`, not the `DbContext` base type
+- endpoints take `ApplicationDbContext`, not the `DbContext` base type — checked against IL, so `Resolve<T>()` and handler-method injection are covered too
 
 `DomainTests` covers the domain conventions: entities and value objects inherit the right base types, and entities have a private parameterless constructor for EF.
 
