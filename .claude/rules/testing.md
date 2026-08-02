@@ -27,6 +27,17 @@ Where a validator mirrors a domain limit, drive the test boundaries off the doma
 
 Enforces naming and layering rules. A failure here means a convention has been broken; fix the code, not the test.
 
+`FeatureTests` covers the slice conventions:
+
+- every endpoint is named `*Endpoint` and lives in a `Features.{Feature}.{Slice}` namespace
+- every endpoint with a request has a FastEndpoints `Validator<TRequest>` **in the same slice namespace** (`EndpointWithoutRequest` is exempt; a plain FluentValidation `AbstractValidator<T>` does not count, because FastEndpoints never binds one)
+- no slice depends on another slice's types
+- endpoints take `ApplicationDbContext`, not the `DbContext` base type — checked against IL, so `Resolve<T>()` and handler-method injection are covered too
+
+`DomainTests` covers the domain conventions: entities and value objects inherit the right base types, and entities have a private parameterless constructor for EF.
+
+Every test guards its match set with `Should().NotBeEmpty()` first. Without that, a filter that stops matching — a renamed namespace, a dropped interface — turns the test green instead of red, and it silently stops enforcing anything. Copy the guard into any new rule.
+
 ## Running
 
 ```bash
