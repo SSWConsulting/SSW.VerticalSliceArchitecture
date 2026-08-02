@@ -28,10 +28,10 @@ Should we keep a file per specification, or group an aggregate's queries togethe
 
 Chosen option: **Option 2 — one class per aggregate with static factory methods**, because it puts every query for an aggregate in one place and cuts the file count without losing any clarity.
 
-The class extends `SingleResultSpecification<T>` and each query is a static factory method that configures an instance through `spec.Query`. The naming convention is `{Aggregate}Spec`.
+The class extends `Specification<T>` and each query is a static factory method that configures an instance through `spec.Query`. The naming convention is `{Aggregate}Spec`.
 
 ```csharp
-public sealed class HeroSpec : SingleResultSpecification<Hero>
+public sealed class HeroSpec : Specification<Hero>
 {
     public static HeroSpec ById(HeroId heroId)
     {
@@ -47,6 +47,8 @@ Usage:
 ```csharp
 dbContext.Heroes.WithSpecification(HeroSpec.ById(heroId)).FirstOrDefault();
 ```
+
+`Specification<T>` rather than `SingleResultSpecification<T>`: one class per aggregate means the same class holds single-result and list queries, and a list query needs `OrderBy`/`Skip`/`Take` on a type that doesn't claim to return one row. The single-result marker only matters to the Ardalis repository's `SingleOrDefaultAsync`, which this template doesn't use — queries are applied with `.WithSpecification(...)` and terminated explicitly.
 
 ### Consequences
 
