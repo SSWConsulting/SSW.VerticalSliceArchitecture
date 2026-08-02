@@ -45,11 +45,13 @@ Rule: [`.claude/rules/database.md`](../../../rules/database.md)
 The Vogen check is the one to run first and report loudest. To verify:
 
 ```bash
-grep -rn "ValueObject<Guid>" src/WebApi/Common/Domain     # every ID that exists
-grep -n "EfCoreConverter" src/WebApi/Common/Persistence/VogenEfCoreConverters.cs   # every ID registered
+# every strongly typed ID that exists
+grep -rn "readonly partial struct" src/WebApi/Common/Domain
+# every ID that's registered
+grep -n "EfCoreConverter" src/WebApi/Common/Persistence/VogenEfCoreConverters.cs
 ```
 
-Every ID in the first list must appear in the second — child entity IDs included.
+Every ID in the first list must appear in the second — child entity IDs included. Grep for the struct declaration rather than the `[ValueObject<Guid>]` attribute, because the attribute sits on the line above and doesn't name the type.
 
 ---
 
@@ -96,7 +98,7 @@ To find cross-slice imports:
 grep -rn "using SSW.VerticalSliceArchitecture.Features" src/WebApi/Features
 ```
 
-Every hit should be a file importing its *own* feature namespace (a slice using its own `{Feature}Group`) or a domain event handler referencing the event's own feature. Anything else is a slice reaching sideways.
+On an unmodified template this returns **nothing at all** — a slice needs no `using` for its own feature, because it's already in that namespace. So any hit is a slice reaching sideways and is worth reading before you report it.
 
 Adjust the namespace root to match the project if it was renamed on template instantiation — read `src/WebApi/GlobalUsings.cs`.
 
