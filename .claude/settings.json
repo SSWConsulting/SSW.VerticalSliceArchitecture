@@ -35,8 +35,8 @@
       "Bash(git show:*)",
       "Bash(git blame:*)",
       "Bash(git ls-files:*)",
-      "Bash(git branch --list:*)",
-      "Bash(git branch --show-current)",
+      "Bash(git branch:*)",
+      "Bash(git push:*)",
 
       "Bash(gh issue view:*)",
       "Bash(gh issue list:*)",
@@ -44,7 +44,9 @@
       "Bash(gh pr diff:*)",
       "Bash(gh pr list:*)",
       "Bash(gh run list:*)",
-      "Bash(gh run view:*)"
+      "Bash(gh run view:*)",
+      "Bash(gh pr create:*)",
+      "Bash(gh pr merge:*)"
     ],
     "ask": [
       "Bash(dotnet ef database update:*)",
@@ -55,11 +57,7 @@
       "Bash(aspire deploy:*)",
       "Bash(aspire destroy:*)",
       "Bash(aspire do:*)",
-      "Bash(aspire secret:*)",
-      "Bash(git push:*)",
-      "Bash(git branch:*)",
-      "Bash(gh pr create:*)",
-      "Bash(gh pr merge:*)"
+      "Bash(aspire secret:*)"
     ]
   }
 }
