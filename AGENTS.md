@@ -53,7 +53,7 @@ GitHub Issues on `SSWConsulting/SSW.VerticalSliceArchitecture`, driven with the 
 
 ### Triage labels
 
-The five canonical triage labels, unrenamed — but only `wontfix` exists on the repo so far. See `docs/agents/triage-labels.md`.
+The five canonical triage labels, unrenamed. See `docs/agents/triage-labels.md`.
 
 ### Domain docs
 
