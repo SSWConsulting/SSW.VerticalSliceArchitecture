@@ -1,7 +1,10 @@
+using SSW.VerticalSliceArchitecture.Common.Domain.Teams;
+using SSW.VerticalSliceArchitecture.Common.Pagination;
+
 namespace SSW.VerticalSliceArchitecture.Features.Teams.GetAllTeams;
 
 public class GetAllTeamsEndpoint(ApplicationDbContext dbContext)
-    : EndpointWithoutRequest<GetAllTeamsResponse>
+    : Endpoint<GetAllTeamsRequest, PagedList<GetAllTeamsResponse>>
 {
     public override void Configure()
     {
@@ -10,12 +13,17 @@ public class GetAllTeamsEndpoint(ApplicationDbContext dbContext)
         Description(x => x.WithName("GetAllTeams"));
     }
 
-    public override async Task HandleAsync(CancellationToken ct)
+    public override async Task HandleAsync(GetAllTeamsRequest req, CancellationToken ct)
     {
-        var teams = await dbContext.Teams
-            .Select(t => new GetAllTeamsResponse.TeamDto(t.Id.Value, t.Name))
-            .ToListAsync(ct);
+        var paging = PagingParams.From(req.Page, req.PageSize);
+        var spec = TeamSpec.Paged(paging, req.SortBy, SortDirections.From(req.SortDirection));
 
-        await Send.OkAsync(new GetAllTeamsResponse(teams), ct);
+        var teams = await dbContext.Teams.ToPagedListAsync(
+            spec,
+            paging,
+            t => new GetAllTeamsResponse(t.Id.Value, t.Name, t.TotalPowerLevel),
+            ct);
+
+        await Send.OkAsync(teams, ct);
     }
 }
