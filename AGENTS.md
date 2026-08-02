@@ -28,6 +28,23 @@ Detailed conventions are in `.claude/rules/` (auto-loaded by Claude Code when ma
 | `dependencies.md` | NuGet audit (NU1903) failures, transitive pinning, verifying pins |
 | `verification.md` | what "done" means: Debug + Release builds, all test projects, Aspire boot + health, REST smoke checks |
 
+## Skills
+
+The rules describe the conventions; the skills in `.claude/skills/` run them. Invoke one by name in Claude Code (`/add-slice`) or read its `SKILL.md` directly — the `references/` folder beside each holds the code templates.
+
+| Skill | Does |
+|---|---|
+| `add-entity` | Domain object, strongly typed ID, errors, spec, EF configuration, `DbSet`, the `VogenEfCoreConverters` registration, and the migration |
+| `add-slice` | One use case in its own folder — endpoint, request, response, validator, summary — plus the Feature and Group when it's the first slice, and its tests |
+| `aspire` | Operating the AppHost through the Aspire CLI — start, wait, inspect resources, read logs and traces |
+| `bump-version` | Cuts a template release by bumping the version in `VerticalSliceArchitecture.nuspec` |
+
+Run `/add-entity` before `/add-slice` when the use case needs a domain type that doesn't exist yet.
+
+`add-slice` scaffolds a **slice**, not a Feature: a slice is one use case, a Feature is the group of slices over an aggregate. See `CONTEXT.md`.
+
+The templates in `references/` are copies of the shapes in `Features/Heroes/` and `Common/Domain/Heroes/`, so they drift when those change. Fix the template as part of whatever change made it stale.
+
 ## Running the App
 
 ```bash

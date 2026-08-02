@@ -33,6 +33,9 @@ Read more on [SSW Rules to Better Vertical Slice Architecture](https://www.ssw.c
 
 ## ✨ Features
 - 🔨 `dotnet new` cli template - to get you started quickly
+- 🤖 Agent skills - the conventions are executable, not just documented
+    - `/add-entity` and `/add-slice` ship in `.claude/skills/`
+    - Scaffolds the whole slice, including the strongly typed ID registration that's a startup failure when missed
 - 🚀 Aspire
     - Dashboard
     - Resource orchestration
@@ -148,22 +151,30 @@ A full Vertical Slice is a set of files across the domain, persistence, and feat
 - Domain configuration in `src/WebApi/Common/Persistence/*`
 - Command & Query API endpoints in `src/WebApi/Features/*`
 
-AI coding agents working in this repo know how to scaffold one. The structure is documented in [`AGENTS.md`](AGENTS.md), so ask your agent to add a feature and it will create these files for you.
+The template ships skills that scaffold all of this for you. In Claude Code:
 
-1. Add a new Feature
-   Ask your AI coding agent to scaffold the slice, or copy an existing feature such as `Heroes` and rename it.
+```
+/add-entity   # domain object, strongly typed ID, spec, EF config, DbSet, Vogen registration, migration
+/add-slice    # one use case — endpoint, request, response, validator, summary — plus tests
+```
 
-2. Configure this Feature
-   This project uses [strongly typed IDs](https://www.ssw.com.au/rules/do-you-use-strongly-typed-ids/), which require registration in the `VogenEfCoreConverters` class:
+Run `/add-entity` first when the use case needs a domain type that doesn't exist yet, then `/add-slice`. The skills live in `.claude/skills/`, and the conventions they follow are documented in [`AGENTS.md`](AGENTS.md) and `.claude/rules/`. Using a different agent? Point it at `.claude/skills/add-slice/SKILL.md` — they're plain markdown.
+
+`/add-slice` adds a *slice* — one use case in its own folder. It creates the Feature and its route Group as well, but only when the slice is the first one in that Feature. [`CONTEXT.md`](CONTEXT.md) defines both terms.
+
+To do it by hand instead, copy an existing feature such as `Heroes` and rename it. Two steps are easy to miss:
+
+1. Register the strongly typed ID
+   This project uses [strongly typed IDs](https://www.ssw.com.au/rules/do-you-use-strongly-typed-ids/), which require registration in the `VogenEfCoreConverters` class. Miss this and the app throws on startup — it isn't a compile error:
    ```csharp
    // Register the newly created Entity ID here
    [EfCoreConverter<PersonId>]
    internal sealed partial class VogenEfCoreConverters;
    ```
 
-3. Add a migration for the new Entity
+2. Add a migration for the new Entity
    ```bash
-   dotnet ef migrations add --project src/WebApi/WebApi.csproj --startup-project src/WebApi/WebApi.csproj --output-dir Common/Database/Migrations PersonTable 
+   dotnet ef migrations add AddPerson --project src/WebApi/WebApi.csproj --startup-project src/WebApi/WebApi.csproj --output-dir Common/Persistence/Migrations
    ```
 
 ### EF Migrations
