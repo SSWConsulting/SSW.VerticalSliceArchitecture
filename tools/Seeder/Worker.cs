@@ -1,40 +1,36 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using MigrationService.Initializers;
+using Seeder.Initializers;
 using System.Diagnostics;
 
-namespace MigrationService;
+namespace Seeder;
 
 public class Worker(
     IServiceProvider serviceProvider,
     IHostApplicationLifetime hostApplicationLifetime,
     ILogger<Worker> logger) : BackgroundService
 {
-    public const string ActivitySourceName = "Migrations";
+    public const string ActivitySourceName = "Seeding";
     private static readonly ActivitySource ActivitySource = new(ActivitySourceName);
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        using var activity = ActivitySource.StartActivity("Migrating database", ActivityKind.Client);
+        using var activity = ActivitySource.StartActivity("Seeding database", ActivityKind.Client);
 
         try
         {
             var sw = Stopwatch.StartNew();
             using var scope = serviceProvider.CreateScope();
-            var environment = scope.ServiceProvider.GetRequiredService<IHostEnvironment>();
 
-            var warehouseInitializer = scope.ServiceProvider.GetRequiredService<ApplicationDbContextInitializer>();
-            await warehouseInitializer.EnsureDatabaseAsync(stoppingToken);
-            await warehouseInitializer.CreateSchemaAsync(true, stoppingToken);
-
-            if (environment.IsDevelopment())
-            {
-                await warehouseInitializer.SeedDataAsync(stoppingToken);
-            }
+            // No environment check: the AppHost only adds this resource in run mode, so it
+            // can never reach a deployed environment. The schema is already in place — the
+            // "migrations" resource runs to completion before this project starts.
+            var initializer = scope.ServiceProvider.GetRequiredService<ApplicationDbContextInitializer>();
+            await initializer.SeedDataAsync(stoppingToken);
 
             sw.Stop();
-            logger.DatabaseInitialized(sw.Elapsed);
+            logger.DatabaseSeeded(sw.Elapsed);
         }
         catch (Exception ex)
         {
@@ -50,6 +46,6 @@ public class Worker(
 // method, which also satisfies CA1873 (the generated call is not an ILogger.Log* shape).
 internal static partial class WorkerLog
 {
-    [LoggerMessage(LogLevel.Information, "DB creation and seeding took {ElapsedTime}")]
-    public static partial void DatabaseInitialized(this ILogger logger, TimeSpan elapsedTime);
+    [LoggerMessage(LogLevel.Information, "DB seeding took {ElapsedTime}")]
+    public static partial void DatabaseSeeded(this ILogger logger, TimeSpan elapsedTime);
 }
