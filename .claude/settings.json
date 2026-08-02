@@ -27,26 +27,7 @@
       "Bash(aspire restore:*)",
 
       "Bash(curl http://localhost:*)",
-      "Bash(curl https://localhost:*)",
-
-      "Bash(git status:*)",
-      "Bash(git diff:*)",
-      "Bash(git log:*)",
-      "Bash(git show:*)",
-      "Bash(git blame:*)",
-      "Bash(git ls-files:*)",
-      "Bash(git branch:*)",
-      "Bash(git push:*)",
-
-      "Bash(gh issue view:*)",
-      "Bash(gh issue list:*)",
-      "Bash(gh pr view:*)",
-      "Bash(gh pr diff:*)",
-      "Bash(gh pr list:*)",
-      "Bash(gh run list:*)",
-      "Bash(gh run view:*)",
-      "Bash(gh pr create:*)",
-      "Bash(gh pr merge:*)"
+      "Bash(curl https://localhost:*)"
     ],
     "ask": [
       "Bash(dotnet ef database update:*)",
