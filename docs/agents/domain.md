@@ -9,6 +9,8 @@ How the engineering skills should consume this repo's domain documentation when 
 
 If any of these files don't exist, **proceed silently**. Don't flag their absence; don't suggest creating them upfront. The `/domain-modeling` skill (reached via `/grill-with-docs` and `/improve-codebase-architecture`) creates them lazily when terms or decisions actually get resolved.
 
+Those skills ship outside this repo — `.claude/skills/` here only holds `aspire` and `bump-version`. If a referenced skill isn't installed, do the reading described above by hand and move on rather than trying to invoke it.
+
 ## File structure
 
 This is a **single-context** repo — one glossary, one ADR directory, both at the root:
@@ -20,7 +22,8 @@ This is a **single-context** repo — one glossary, one ADR directory, both at t
 │   ├── index.md
 │   ├── template.md
 │   ├── 20251018-api-use-fastendpoints-instead-of-minimal-apis.md
-│   └── 20260612-use-aggregate-specification-classes-with-factory-methods.md
+│   ├── 20260612-use-aggregate-specification-classes-with-factory-methods.md
+│   └── ...                                             ← run `ls docs/adr/` for the full set
 └── src/
     ├── WebApi/
     └── ServiceDefaults/

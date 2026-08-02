@@ -49,11 +49,11 @@ Aspire provisions SQL Server (Docker/Podman), runs migrations and seeds via `too
 
 ### Issue tracker
 
-GitHub Issues on `SSWConsulting/VerticalSliceArchitecture`, driven with the `gh` CLI. See `docs/agents/issue-tracker.md`.
+GitHub Issues on `SSWConsulting/SSW.VerticalSliceArchitecture`, driven with the `gh` CLI. See `docs/agents/issue-tracker.md`.
 
 ### Triage labels
 
-The five canonical triage labels, unrenamed. See `docs/agents/triage-labels.md`.
+The five canonical triage labels, unrenamed — but only `wontfix` exists on the repo so far. See `docs/agents/triage-labels.md`.
 
 ### Domain docs
 
