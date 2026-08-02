@@ -36,6 +36,7 @@
         "**/.vscode/**",
         "**/.claude/worktrees/**",
         "**/.claude/plans/**",
+        "**/.claude/settings.local.json",
         "*.nuspec",
         "**/node_modules/**",
         "docs/banner.png",

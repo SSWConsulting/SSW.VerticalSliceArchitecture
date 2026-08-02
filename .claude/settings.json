@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "allow": [
+      "Bash(dotnet build:*)",
+      "Bash(dotnet test:*)",
+      "Bash(dotnet restore:*)",
+      "Bash(dotnet format:*)",
+      "Bash(dotnet list package:*)",
+      "Bash(dotnet ef migrations add:*)",
+      "Bash(dotnet ef migrations list:*)",
+      "Bash(dotnet ef migrations script:*)",
+      "Bash(dotnet ef database update:*)",
+
+      "Bash(aspire start:*)",
+      "Bash(aspire stop:*)",
+      "Bash(aspire restart:*)",
+      "Bash(aspire run:*)",
+      "Bash(aspire wait:*)",
+      "Bash(aspire ps:*)",
+      "Bash(aspire resource:*)",
+      "Bash(aspire resources:*)",
+      "Bash(aspire logs:*)",
+      "Bash(aspire otel:*)",
+      "Bash(aspire describe:*)",
+      "Bash(aspire docs:*)",
+      "Bash(aspire doctor:*)",
+      "Bash(aspire restore:*)",
+
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git show:*)",
+      "Bash(git branch:*)",
+      "Bash(git blame:*)",
+      "Bash(git ls-files:*)",
+
+      "Bash(gh issue view:*)",
+      "Bash(gh issue list:*)",
+      "Bash(gh pr view:*)",
+      "Bash(gh pr diff:*)",
+      "Bash(gh pr list:*)",
+      "Bash(gh run list:*)",
+      "Bash(gh run view:*)"
+    ],
+    "ask": [
+      "Bash(dotnet ef database drop:*)",
+      "Bash(dotnet ef migrations remove:*)",
+      "Bash(dotnet nuget push:*)",
+      "Bash(aspire publish:*)",
+      "Bash(aspire deploy:*)",
+      "Bash(aspire secret:*)",
+      "Bash(git push:*)",
+      "Bash(gh pr create:*)",
+      "Bash(gh pr merge:*)"
+    ]
+  }
+}
