@@ -193,6 +193,7 @@ public class {UseCase}Endpoint(ApplicationDbContext dbContext)
         var {entity}Id = {Entity}Id.From(req.{Entity}Id);
 
         var {entity} = await dbContext.{Entities}
+            .Include(x => x.{Children})
             .FirstOrDefaultAsync(x => x.Id == {entity}Id, ct);
 
         if ({entity} is null)
@@ -213,6 +214,13 @@ public class {UseCase}Endpoint(ApplicationDbContext dbContext)
 ```csharp
 public record {UseCase}Request(Guid {Entity}Id, string Name);
 ```
+
+Whether that `Include` is load-bearing depends on how the children are mapped, so check the EF configuration before you keep or drop it:
+
+- **Owned collections** — `OwnsMany(...).ToJson()`, as `Hero.Powers` is. EF loads these with their parent automatically, so the `Include` is belt-and-braces. It's why `HeroSpec.ById` gets away with declaring none, and why `CreateHeroCommandTests` can assert on `Powers` after a bare `Set<Hero>()` query.
+- **Referenced navigations** — `HasMany`, as `Team.Missions` and `Team.Heroes` are. These do *not* come for free. Without an `Include` here or a spec that declares one, the collection arrives empty with no error, and mutating from there quietly writes wrong data.
+
+Keep the line for `HasMany` children; drop it for owned ones, or when the aggregate has no children at all.
 
 Route parameter and body bind into the same record — the route token `{{entity}Id}` matches the `{Entity}Id` property by name, so there's no separate binding attribute.
 
@@ -243,7 +251,9 @@ if ({entity} is null)
 }
 ```
 
-A bare `FirstOrDefaultAsync` returns the aggregate with its child collections empty and no error. Mutating from there quietly writes wrong data — which is why the spec is the default for any load-then-mutate path.
+The `Include`s live in the spec — `TeamSpec.ById` pulls `Missions` and `Heroes`, so every caller loading a team to mutate it gets the same complete aggregate. That's why the spec is the default for a load-then-mutate path.
+
+A spec only brings what it declares, though, so reaching for one isn't automatically enough — check that the factory method you're calling loads the collections you're about to touch. `HeroSpec.ById` is a bare `Where` with no `Include` at all, which is fine only because `Hero.Powers` is owned and comes with its parent regardless. Point that same shape at a `HasMany` navigation and the collection arrives empty with no error, and mutating from there quietly writes wrong data.
 
 ---
 

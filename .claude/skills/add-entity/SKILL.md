@@ -22,7 +22,9 @@ Before generating anything, read the canonical aggregate and its persistence wir
 - `src/WebApi/Common/Persistence/Heroes/HeroConfiguration.cs` — EF configuration
 - `src/WebApi/Common/Persistence/VogenEfCoreConverters.cs` — the registration list
 
-The templates in `references/` mirror these files, but the repo is the source of truth. If the two disagree, the repo wins — follow it and update the template (see *Keeping this skill honest* at the bottom).
+The templates in `references/` follow these files, but the repo is the source of truth. If the two disagree, the repo wins — follow it and update the template (see *Keeping this skill honest* at the bottom).
+
+One deliberate divergence: the aggregate template gives properties a `private set` plus a named mutator, following `Team.cs`. `Hero.cs` uses a public `set` instead, so `UpdateHeroEndpoint` can assign `hero.Name` directly. Both keep the guard in the setter, which is the part that matters; prefer the `Team.cs` shape for new work, because it keeps the aggregate in charge of how it changes.
 
 ## What you need to know before scaffolding
 

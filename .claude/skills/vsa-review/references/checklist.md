@@ -18,7 +18,8 @@ Rule: [`.claude/rules/domain.md`](../../../rules/domain.md)
 | Guards live in the property setter using `field`, not in `Create` | The setter is the only path every assignment goes through, including EF materialisation and later mutation. A guard in the factory is bypassed the moment anything else assigns | Violation |
 | Every string property has a `public const int {Property}MaxLength` | The EF configuration reads the same constant, so the column and the guard can't drift | Violation |
 | IDs use `Guid.CreateVersion7()` | Time-ordered, so it doesn't fragment the clustered index | Violation |
-| Value objects are `record` and implement `IValueObject` | Structural equality is the point, and `IValueObject` is what the architecture tests match on | Blocker (CI red) |
+| Value objects implement `IValueObject` | It's one of the four shapes `DomainTests.DomainModel_Should_InheritsBaseClasses` accepts; without it the domain type matches none of them | Blocker (CI red) |
+| Value objects are `record`, not `class` | Structural equality is the point of a value object. Not CI-enforced — the architecture test passes for a `class` implementing `IValueObject` | Violation |
 | Errors are `Error` constants in `{Entity}Errors`, coded `{Entity}.{Condition}` | The code is part of the API contract, not a log message | Violation |
 | Behaviour that can legitimately fail returns `ErrorOr<Success>` rather than throwing | An unavailable team is an expected outcome, not an exception | Violation |
 | A new query on an aggregate is a factory method on the existing spec, not a new spec class | One spec per aggregate keeps its queries discoverable in one place | Violation |
@@ -71,11 +72,11 @@ Rule: [`.claude/rules/architecture.md`](../../../rules/architecture.md)
 | Every non-200 status the handler sends is declared with `Produces(...)` | Absent from the OpenAPI document means clients don't model it | Violation |
 | Input validation is in the `Validator<T>`, not in `HandleAsync` | The validator runs first and auto-returns 400 | Violation |
 | Validator max lengths match the entity's `const` | Otherwise an over-long value gets a 500 from the domain guard instead of a 400 | Violation |
-| Load-then-mutate goes through `.WithSpecification({Entity}Spec...)` | A bare `FirstOrDefaultAsync` returns the aggregate with empty child collections and no error, then quietly writes wrong data | **Blocker** |
+| Load-then-mutate loads any `HasMany` collection it mutates — via a spec that declares the `Include`s (`TeamSpec.ById`) or an explicit `.Include(...)` | The collection otherwise arrives empty with no error, then quietly writes wrong data. Check the EF configuration first: owned collections (`OwnsMany(...).ToJson()`) always load with their parent, so `HeroSpec.ById` needs no includes and isn't a finding. A spec on its own isn't proof either — read what the factory method declares | **Blocker** |
 | Queries project inside `Select` rather than materialising tracked aggregates | Fetches only the needed columns and skips change tracking | Violation |
 | Domain event handlers live in the consuming feature, not the domain | The domain raises events; it doesn't know who reacts | Violation |
 | A handler that can't complete throws `EventualConsistencyException` | Handlers run in the same transaction; swallowing the failure leaves inconsistent data | Blocker |
-| `{Feature}Feature.cs` exists only when the feature registers services | An empty `ConfigureServices` costs a reflection hit and misleads the next reader | Violation |
+| `{Feature}Feature.cs` exists only when the feature registers services | An empty `ConfigureServices` costs a reflection hit and misleads the next reader. The shipped `HeroesFeature` and `TeamsFeature` are empty on purpose — they demonstrate the hook, so don't report them | Violation |
 | No MVC — no `IActionResult`, no `[HttpGet]`, no controllers | See [`docs/adr/20251018-api-use-fastendpoints-instead-of-minimal-apis.md`](../../../../docs/adr/20251018-api-use-fastendpoints-instead-of-minimal-apis.md) | Blocker (design) |
 
 ---
@@ -123,8 +124,8 @@ Rule: [`.claude/rules/testing.md`](../../../rules/testing.md)
 
 ## Severity, decided by consequence
 
-- **Blocker** — breaks at runtime, or turns CI red. The Vogen registration, a missing `Group<>`, a missing `Send`, a load-then-mutate without its spec, a failing architecture test. Also design breaks bad enough to be worth stopping for: a slice importing another slice, business logic in an endpoint.
-- **Violation** — works and merges, but breaks a documented convention. Costs the next reader.
+- **Blocker** — broken on the normal path, or CI red. The app doesn't start (Vogen registration), the route isn't where it should be (missing `Group<>`), every call returns the wrong thing (missing `Send`), data is silently lost (unloaded `HasMany` on a mutate), a test fails. Also design breaks worth stopping for: a slice importing another slice, business logic in an endpoint.
+- **Violation** — works on the normal path but breaks a documented convention, degrades an error path, or costs the next reader. A validator that lets an over-long string through returns an ugly 500 instead of a clean 400 — bad, but only for input that was already invalid, so it's a Violation rather than a Blocker.
 - **Gap** — nothing wrong with what's there; something expected is absent. Almost always tests.
 
 When a check isn't in this list and you're unsure, read the rule file before calling it. `.claude/rules/` is the source of truth — this checklist is a working index of it, and when the two disagree, the rule wins and this file needs updating.

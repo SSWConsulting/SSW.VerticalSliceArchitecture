@@ -95,10 +95,12 @@ The namespace deliberately doesn't match the folder. It has to stay `Common.Pers
 
 `src/WebApi/Common/Persistence/VogenEfCoreConverters.cs`
 
+This file already exists — edit it, don't regenerate it. Add one `using` for your aggregate's namespace *only if it isn't already there*, and one attribute per new ID. A duplicate `using` is CS0105, which Release turns into a build error via `TreatWarningsAsErrors`.
+
 ```csharp
 using SSW.VerticalSliceArchitecture.Common.Domain.Heroes;
 using SSW.VerticalSliceArchitecture.Common.Domain.Teams;
-using SSW.VerticalSliceArchitecture.Common.Domain.{Aggregate};
+using SSW.VerticalSliceArchitecture.Common.Domain.{Aggregate};   // <-- only if new
 
 namespace SSW.VerticalSliceArchitecture.Common.Persistence;
 

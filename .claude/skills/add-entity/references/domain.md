@@ -217,7 +217,11 @@ public sealed class {Entity}Spec : SingleResultSpecification<{Entity}>
 }
 ```
 
-Use a spec whenever you load an aggregate you intend to mutate — it's what guarantees the child collections come with it. A bare `FirstOrDefaultAsync` gives you an aggregate with empty children and no error, and the bug shows up later as silently lost data.
+Use a spec whenever you load an aggregate you intend to mutate: the `Include`s live in the spec, so every caller gets the same complete aggregate instead of each remembering its own list of navigations.
+
+A spec only brings what it declares, though. `ById` above is a bare `Where` — it's `ByIdWith{Children}` that loads the children.
+
+Which of those you need depends on the EF mapping. Owned collections (`OwnsMany(...).ToJson()`) always come with their parent, which is why the repo's `HeroSpec.ById` declares no `Include` and still yields a Hero with its `Powers`. A `HasMany` navigation doesn't: load one with neither a spec that includes it nor an explicit `.Include(...)` and you get an empty collection and no error, with the bug showing up later as silently lost data.
 
 Applied at the call site with `.WithSpecification(...)`, which needs `using Ardalis.Specification.EntityFrameworkCore;`:
 

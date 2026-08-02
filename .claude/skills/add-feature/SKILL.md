@@ -51,7 +51,7 @@ Every one of these compiles fine when you get it wrong.
 - **A `Produces(...)` for every non-200 path you send.** The status code has to be in the OpenAPI document or clients won't handle it.
 - **Business rules in the aggregate, not the endpoint.** If the handler contains an `if` about domain state, that check belongs on the entity, returning `ErrorOr<Success>`.
 - **No `using` from another slice.** Two slices needing the same code means it belongs in `Common/`, or the domain, or duplicated. Slices don't import each other.
-- **Load with a spec before mutating.** `.WithSpecification({Entity}Spec.ById(id))` brings the child collections; a bare `FirstOrDefaultAsync` silently gives you an aggregate with empty children.
+- **Load the child collections before mutating.** Only `HasMany` navigations need this — owned collections (`OwnsMany(...).ToJson()`, like `Hero.Powers`) always come with their parent. For a `HasMany`, either call a spec factory that declares the `Include`s (`TeamSpec.ById` does; `HeroSpec.ById` declares none) or `.Include(...)` explicitly. With neither, the children arrive silently empty.
 
 ## Verification
 
