@@ -63,7 +63,7 @@ Work in this order. Later steps depend on earlier ones compiling.
    Then **read the generated migration** and confirm the tables and columns match what you configured. An empty `Up()` means EF didn't see your entity — usually a missing `DbSet` or a configuration that wasn't picked up by `ApplyConfigurationsFromAssembly`.
 
 8. **Test data** — add a Bogus factory at `tests/WebApi.IntegrationTests/Common/Factories/{Entity}Factory.cs` so integration tests have something to seed. Template in [references/persistence.md](references/persistence.md).
-9. **Seeding (optional)** — extend `tools/MigrationService/Initializers/ApplicationDbContextInitializer.cs` if the entity should show up in dev. Keep it idempotent: short-circuit when rows already exist.
+9. **Seeding (optional)** — extend `tools/Seeder/Initializers/ApplicationDbContextInitializer.cs` if the entity should show up in dev. Keep it idempotent: short-circuit when rows already exist.
 10. **Unit tests** — invariants and factory rules belong in `tests/WebApi.UnitTests/Features/{Aggregate}/{Entity}Tests.cs`. Cover the guards you wrote: a null/blank string should throw, an over-long string should throw, and the happy path should succeed.
 
 ## Verification

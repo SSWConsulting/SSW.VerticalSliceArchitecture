@@ -230,7 +230,7 @@ Chosen option: "[Selected option]", because [primary reasoning].
 - **Domain Modeling**: Aggregate roots, domain events, value objects, strongly-typed IDs with `Guid.CreateVersion7()`
 - **Validation**: FluentValidation integrated with FastEndpoints - validators run automatically before endpoint handlers
 - **Testing Strategy**: Unit tests for domain logic, integration tests with TestContainers and Respawn, architecture tests with NetArchTest
-- **Orchestration**: .NET Aspire with AppHost, ServiceDefaults, and MigrationService
+- **Orchestration**: .NET Aspire with AppHost, ServiceDefaults, an `AddEFMigrations` migrations resource, and a run-mode-only Seeder
 
 ### References to Existing Patterns
 
