@@ -50,7 +50,7 @@
     <PackageVersion Include="Aspire.Hosting.SqlServer" Version="13.4.6" />
   </ItemGroup>
   <ItemGroup Condition="$(IsTestProject) == 'true'">
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.8.1" />
     <PackageVersion Include="xunit.v3" Version="3.2.1" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5">
       <PrivateAssets>all</PrivateAssets>
