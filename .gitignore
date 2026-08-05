@@ -480,6 +480,8 @@ $RECYCLE.BIN/
 .serena/
 .claude/plans/
 .claude/worktrees/
+.claude/settings.local.json
+.playwright-mcp/
 *.lscache
 
 # Log4brains ADR static site build output

@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "allow": [
+      "Bash(dotnet build:*)",
+      "Bash(dotnet test:*)",
+      "Bash(dotnet restore:*)",
+      "Bash(dotnet format:*)",
+      "Bash(dotnet list package:*)",
+      "Bash(dotnet ef migrations add:*)",
+      "Bash(dotnet ef migrations list:*)",
+      "Bash(dotnet ef migrations script:*)",
+
+      "Bash(aspire start:*)",
+      "Bash(aspire stop:*)",
+      "Bash(aspire run:*)",
+      "Bash(aspire wait:*)",
+      "Bash(aspire ps:*)",
+      "Bash(aspire ls:*)",
+      "Bash(aspire resource:*)",
+      "Bash(aspire logs:*)",
+      "Bash(aspire otel:*)",
+      "Bash(aspire describe:*)",
+      "Bash(aspire export:*)",
+      "Bash(aspire docs:*)",
+      "Bash(aspire doctor:*)",
+      "Bash(aspire restore:*)",
+
+      "Bash(curl http://localhost:*)",
+      "Bash(curl https://localhost:*)"
+    ],
+    "ask": [
+      "Bash(dotnet ef database update:*)",
+      "Bash(dotnet ef database drop:*)",
+      "Bash(dotnet ef migrations remove:*)",
+      "Bash(dotnet nuget push:*)",
+      "Bash(aspire publish:*)",
+      "Bash(aspire deploy:*)",
+      "Bash(aspire destroy:*)",
+      "Bash(aspire do:*)",
+      "Bash(aspire secret:*)"
+    ]
+  }
+}
