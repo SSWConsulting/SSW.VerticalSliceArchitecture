@@ -34,7 +34,11 @@
   <files>
     <file src=".template.config\icon.png" target="" />
     <file src="README.md" />
-    <file src=".\**" target="content" exclude="**\bin\**;**\obj\**;**\.vs\**;**\.vscode\**;**\.git\**;**\.github\**;**\LICENSE;**\*.nupkg" />
+    <!-- .claude\rules, .claude\skills and .claude\settings.json are deliberately packed - they ship the
+         conventions, the scaffolding skills, and the pre-approved build/test permissions with the template.
+         .claude\worktrees, .claude\plans and settings.local.json are gitignored working files that nuget
+         reads straight off disk, so they only need excluding for local packs. -->
+    <file src=".\**" target="content" exclude="**\bin\**;**\obj\**;**\.vs\**;**\.vscode\**;**\.git\**;**\.github\**;**\.idea\**;**\.serena\**;**\.playwright-mcp\**;**\.claude\worktrees\**;**\.claude\plans\**;**\.claude\settings.local.json;**\LICENSE;**\*.nupkg" />
   </files>
 
 </package>

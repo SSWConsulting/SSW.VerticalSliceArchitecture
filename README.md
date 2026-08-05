@@ -33,6 +33,9 @@ Read more on [SSW Rules to Better Vertical Slice Architecture](https://www.ssw.c
 
 ## ✨ Features
 - 🔨 `dotnet new` cli template - to get you started quickly
+- 🤖 Agent skills - the conventions are executable, not just documented
+    - `/add-entity` and `/add-slice` ship in `.claude/skills/`
+    - Scaffolds the whole slice, including the strongly typed ID registration that's a startup failure when missed
 - 🚀 Aspire
     - Dashboard
     - Resource orchestration
@@ -95,6 +98,13 @@ Read more on [SSW Rules to Better Vertical Slice Architecture](https://www.ssw.c
 - [Docker](https://www.docker.com/get-started/) / [Podman](https://podman.io/get-started) / [OrbStack](https://orbstack.dev/)
 - [.NET 10 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/10.0)
 - [Aspire CLI](https://aspire.dev/get-started/install-cli/)
+- `dotnet-ef`, restored from the solution's tool manifest:
+  ```bash
+  dotnet tool restore
+  ```
+  The AppHost's `migrations` resource shells out to `dotnet ef database update` on every start,
+  so the app won't boot without it. `.config/dotnet-tools.json` pins the version that matches the
+  solution's EF Core packages — a mismatched global `dotnet-ef` will not do.
 
 ### Installing the Template
 
@@ -128,7 +138,12 @@ dotnet new ssw-vsa --name {{SolutionName}}
 
 ### Running the Solution
 
-1. Run the solution
+1. Restore the local tools (first run only)
+   ```bash
+   dotnet tool restore
+   ```
+
+2. Run the solution
    ```bash
    aspire start
    ```
@@ -148,60 +163,66 @@ A full Vertical Slice is a set of files across the domain, persistence, and feat
 - Domain configuration in `src/WebApi/Common/Persistence/*`
 - Command & Query API endpoints in `src/WebApi/Features/*`
 
-AI coding agents working in this repo know how to scaffold one. The structure is documented in [`AGENTS.md`](AGENTS.md), so ask your agent to add a feature and it will create these files for you.
+The template ships skills that scaffold all of this for you. In Claude Code:
 
-1. Add a new Feature
-   Ask your AI coding agent to scaffold the slice, or copy an existing feature such as `Heroes` and rename it.
+```
+/add-entity   # domain object, strongly typed ID, spec, EF config, DbSet, Vogen registration, migration
+/add-slice    # one use case — endpoint, request, response, validator, summary — plus tests
+```
 
-2. Configure this Feature
-   This project uses [strongly typed IDs](https://www.ssw.com.au/rules/do-you-use-strongly-typed-ids/), which require registration in the `VogenEfCoreConverters` class:
+Run `/add-entity` first when the use case needs a domain type that doesn't exist yet, then `/add-slice`. The skills live in `.claude/skills/`, and the conventions they follow are documented in [`CLAUDE.md`](CLAUDE.md) and `.claude/rules/`. Using a different agent? Point it at `.claude/skills/add-slice/SKILL.md` — they're plain markdown.
+
+`/add-slice` adds a *slice* — one use case in its own folder. It creates the Feature and its route Group as well, but only when the slice is the first one in that Feature. [`CONTEXT.md`](CONTEXT.md) defines both terms.
+
+To do it by hand instead, copy an existing feature such as `Heroes` and rename it. Two steps are easy to miss:
+
+1. Register the strongly typed ID
+   This project uses [strongly typed IDs](https://www.ssw.com.au/rules/do-you-use-strongly-typed-ids/), which require registration in the `VogenEfCoreConverters` class. Miss this and the app throws on startup — it isn't a compile error:
    ```csharp
    // Register the newly created Entity ID here
    [EfCoreConverter<PersonId>]
    internal sealed partial class VogenEfCoreConverters;
    ```
 
-3. Add a migration for the new Entity
+2. Add a migration for the new Entity
    ```bash
-   dotnet ef migrations add --project src/WebApi/WebApi.csproj --startup-project src/WebApi/WebApi.csproj --output-dir Common/Database/Migrations PersonTable 
+   dotnet ef migrations add AddPerson --project src/WebApi/WebApi.csproj --startup-project src/WebApi/WebApi.csproj --output-dir Common/Persistence/Migrations
    ```
 
 ### EF Migrations
-Due to .NET Aspire orchestrating the application startup and migration runner, EF migrations need to be handled a little differently to normal.
+
+Migrations are their own Aspire resource. The AppHost declares it with
+`AddEFMigrations("migrations")`, and `RunDatabaseUpdateOnStart()` runs
+`dotnet ef database update` before the API starts. Both the migrations and the `ApplicationDbContext`
+live in `src/WebApi`, so every command below targets that one project.
 
 #### Adding a Migration
-Adding new migrations is still the same old command you would expect, but with a couple of specific parameters to account for the separation of concerns. This can be performed via native dotnet tooling or through the Aspire CLI:
-
-1. Run either of following commands from the root of the solution.
 
 ```bash
-dotnet ef migrations add YourMigrationName --project ./src/Infrastructure/Infrastructure.csproj --startup-project ./src/WebApi/WebApi.csproj --output-dir ./Persistence/Migrations
-```
-
-```bash
-aspire exec --resource api -- dotnet ef migrations add YourMigrationName --project ../Infrastructure/Infrastructure.csproj --output-dir ./Persistence/Migrations
+dotnet ef migrations add YourMigrationName --project src/WebApi/WebApi.csproj --startup-project src/WebApi/WebApi.csproj --output-dir Common/Persistence/Migrations
 ```
 
 #### Applying a Migration
-.NET Aspire handles this for you - just start the project!
+
+Locally, .NET Aspire handles this for you — just start the project. The `migrations` resource
+runs to completion, then the `seeder` and `api` resources start. Watch its progress in the
+Aspire Dashboard like any other resource.
+
+On Azure this is a deployment step rather than something the app does to itself — see
+[Deploying to Azure](#deploying-to-azure).
 
 #### Removing a Migration
-This is where things need to be done a little differently and requires the Aspire CLI.
-
-1. Enable the `exec` function:
 
 ```bash
-aspire config set features.execCommandEnabled true
+dotnet ef migrations remove --project src/WebApi/WebApi.csproj --startup-project src/WebApi/WebApi.csproj
 ```
 
-2. Pass the EF migration shell command through Aspire from the root of the solution:
-
-```bash
-aspire exec --resource api -- dotnet ef migrations remove --project ..\Infrastructure --force
-```
-
-> [!NOTE]
-> The `--force` flag is needed because .NET Aspire will start the application when this command is run, which triggers the migrations to run. This will apply your migrations to the database, and make EF Core unhappy when it tries to delete the latest migration. This should therefore be used with caution - a safer approach is to "roll forward" and create new migrations that safely undo the undesired change(s).
+No `--force` and no `aspire exec`: the app no longer has to be running for this. Removing a
+migration that has already been applied to your local database still fails, which is EF Core
+protecting you rather than a quirk of the orchestration. Either drop the local database first
+(the **Drop Database** command on the `AppDb` resource in the dashboard) or roll forward with a
+new migration that undoes the change — rolling forward is the safer habit once a migration has
+left your machine.
 
 ## Deploying to Azure
 
@@ -209,11 +230,14 @@ The template can be deployed to Azure via
 the [Azure Developer CLI (AZD)](https://learn.microsoft.com/en-us/azure/developer/azure-developer-cli/install-azd?tabs=winget-windows,brew-mac,script-linux&pivots=os-mac).
 This will setup the following:
 
-- Azure App Services: API + MigrationService
+- Azure App Service: API
 - Azure SQL Server + Database: Data storage
 - Application Insights + Log Analytics: For monitoring and logging
 - Managed Identities: For secure access to Azure resources
 - Azure Container Registry: For storing Docker images
+
+The `seeder` resource is deliberately absent. It's only added to the graph in run mode, so it
+never reaches Azure and Bogus data can't land in a deployed database.
 
 ### Steps to Deploy
 
@@ -229,13 +253,7 @@ This will setup the following:
     azd init
     ```
 
-3. Update environment variables
-
-    ```bash
-    azd env set ASPNETCORE_ENVIRONMENT Development
-    ```
-
-4. Deploy to Azure
+3. Deploy to Azure
 
     ```bash
     azd up
@@ -244,6 +262,34 @@ This will setup the following:
 > [!NOTE]
 > `azd up` combines `azd provision` and `azd deploy` commands to create the resources and deploy the application. If running this from a CI/CD
 > pipeline, you can use `azd provision` and `azd deploy` separately in the appropriate places.
+
+### Applying Migrations on Azure
+
+**`azd up` does not apply migrations.** `PublishAsMigrationBundle()` writes an artifact; it
+doesn't run one. Applying it is a step you own.
+
+Publishing produces a self-contained [EF Core migration bundle](https://learn.microsoft.com/en-us/ef/core/managing-schemas/migrations/applying#bundles)
+at `efmigrations/migrations` in the output directory. Run it against the target database as a
+deployment step, after `azd provision` and before (or alongside) `azd deploy`:
+
+```bash
+aspire publish --output-path ./publish
+./publish/efmigrations/migrations --connection "<target-connection-string>"
+```
+
+> [!IMPORTANT]
+> The bundle is a native executable built for the platform that published it. Publishing on a
+> macOS or Windows dev box produces a binary that will not run on a Linux CI agent. Generate it
+> on a runner matching wherever you intend to execute it.
+
+Two alternatives, depending on how your organisation prefers to ship schema changes:
+
+- `PublishAsMigrationScript()` in place of `PublishAsMigrationBundle()` emits an idempotent
+  `.sql` script instead of a binary. It has no platform problem and it's reviewable before it
+  runs, which many DBA-gated environments require.
+- `PublishAsAzureContainerAppJob()` is the one option that applies migrations automatically on
+  deploy, but it needs Azure Container Apps. This template targets App Service, so it isn't
+  wired up here.
 
 
 ## 🎓 Learn More

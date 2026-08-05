@@ -1,7 +1,7 @@
 ---
 paths:
   - "src/WebApi/Common/Persistence/**/*"
-  - "tools/MigrationService/**/*"
+  - "tools/Seeder/**/*"
 ---
 
 # Database
@@ -23,12 +23,20 @@ dotnet ef migrations add MigrationName \
   --output-dir Common/Persistence/Migrations
 ```
 
-Migrations apply automatically on startup via `tools/MigrationService`, so you don't need to run `database update` manually in dev.
+Migrations apply automatically in dev, so you don't need to run `database update` by hand. The
+AppHost declares a `migrations` resource (`AddEFMigrations` + `RunDatabaseUpdateOnStart`) that runs
+`dotnet ef database update` before the API starts. That resource shells out to the `dotnet-ef` tool,
+so `dotnet tool restore` must have been run — `.config/dotnet-tools.json` pins the matching version.
+
+On Azure this is a deployment step, not something the app does on boot: publishing emits a
+migration bundle to `efmigrations/` and running it is up to the pipeline. See the README.
 
 ## Seeding
 
-- Lives in `tools/MigrationService/Initializers/`.
-- Inherit `DbContextInitializerBase<T>` and implement `SeedDataAsync()`.
-- Dev-only: `Worker.cs` gates seeding by environment.
-- Idempotent: short-circuit if data already exists (`if (DbContext.Heroes.Any()) return;`).
+- Lives in `tools/Seeder/Initializers/`.
+- Implement `SeedDataAsync()`, taking `ApplicationDbContext` on the constructor.
+- Dev-only, enforced by the AppHost: the `seeder` resource is only added under
+  `builder.ExecutionContext.IsRunMode`, so it can never reach a deployed environment. There is no
+  environment check in `Worker.cs` to keep in sync.
+- Idempotent: short-circuit if data already exists (`if (dbContext.Heroes.Any()) return;`).
 - Bogus for fake data: `new Faker<Hero>().CustomInstantiator(f => Hero.Create(...)).Generate(20)`.

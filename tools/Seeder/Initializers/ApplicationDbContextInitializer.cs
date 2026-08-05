@@ -4,9 +4,9 @@ using SSW.VerticalSliceArchitecture.Common.Domain.Heroes;
 using SSW.VerticalSliceArchitecture.Common.Domain.Teams;
 using SSW.VerticalSliceArchitecture.Common.Persistence;
 
-namespace MigrationService.Initializers;
+namespace Seeder.Initializers;
 
-public class ApplicationDbContextInitializer(ApplicationDbContext dbContext) : DbContextInitializerBase<ApplicationDbContext>(dbContext)
+public class ApplicationDbContextInitializer(ApplicationDbContext dbContext)
 {
     private const int NumHeroes = 20;
 
@@ -65,21 +65,21 @@ public class ApplicationDbContextInitializer(ApplicationDbContext dbContext) : D
 
     public async Task SeedDataAsync(CancellationToken cancellationToken)
     {
-        var strategy = DbContext.Database.CreateExecutionStrategy();
+        var strategy = dbContext.Database.CreateExecutionStrategy();
         await strategy.ExecuteAsync(async () =>
         {
             // Seed the database
-            await using var transaction = await DbContext.Database.BeginTransactionAsync(cancellationToken);
+            await using var transaction = await dbContext.Database.BeginTransactionAsync(cancellationToken);
             var heroes = await SeedHeroes();
             await SeedTeams(heroes);
-            // await DbContext.SaveChangesAsync(cancellationToken);
+            // await dbContext.SaveChangesAsync(cancellationToken);
             await transaction.CommitAsync(cancellationToken);
         });
     }
 
     private async Task<List<Hero>> SeedHeroes()
     {
-        if (DbContext.Heroes.Any())
+        if (dbContext.Heroes.Any())
             return [];
 
         var faker = new Faker<Hero>()
@@ -94,15 +94,15 @@ public class ApplicationDbContextInitializer(ApplicationDbContext dbContext) : D
             });
 
         var heroes = faker.Generate(NumHeroes);
-        await DbContext.Heroes.AddRangeAsync(heroes);
-        await DbContext.SaveChangesAsync();
+        await dbContext.Heroes.AddRangeAsync(heroes);
+        await dbContext.SaveChangesAsync();
 
         return heroes;
     }
 
     private async Task SeedTeams(List<Hero> heroes)
     {
-        if (DbContext.Teams.Any())
+        if (dbContext.Teams.Any())
             return;
 
         var faker = new Faker<Team>()
@@ -127,7 +127,7 @@ public class ApplicationDbContextInitializer(ApplicationDbContext dbContext) : D
             });
 
         var teams = faker.Generate(NumTeams);
-        await DbContext.Teams.AddRangeAsync(teams);
-        await DbContext.SaveChangesAsync();
+        await dbContext.Teams.AddRangeAsync(teams);
+        await dbContext.SaveChangesAsync();
     }
 }
