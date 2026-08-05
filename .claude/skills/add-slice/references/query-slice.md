@@ -6,17 +6,20 @@ A query reads and projects. It never mutates, never calls `SaveChangesAsync`, an
 
 ---
 
-## List query — no request
+## List query — paged and sorted
 
-Three files: endpoint, response, summary. No request record and no validator, because there's nothing to bind or validate. This is `GetAllHeroes`.
+Five files: endpoint, request, validator, response, summary. Every list endpoint pages — returning a whole table is a bug waiting for the table to grow — so there is always something to bind and validate. This is `GetAllHeroes`. The conventions are in [architecture.md](../../../rules/architecture.md) § Paging & Sorting.
 
 ### `{UseCase}Endpoint.cs`
 
 ```csharp
+using SSW.VerticalSliceArchitecture.Common.Domain.{Aggregate};
+using SSW.VerticalSliceArchitecture.Common.Pagination;
+
 namespace SSW.VerticalSliceArchitecture.Features.{Feature}.{UseCase};
 
 public class {UseCase}Endpoint(ApplicationDbContext dbContext)
-    : EndpointWithoutRequest<{UseCase}Response>
+    : Endpoint<{UseCase}Request, PagedList<{UseCase}Response>>
 {
     public override void Configure()
     {
@@ -25,73 +28,129 @@ public class {UseCase}Endpoint(ApplicationDbContext dbContext)
         Description(x => x.WithName("{UseCase}"));
     }
 
-    public override async Task HandleAsync(CancellationToken ct)
+    public override async Task HandleAsync({UseCase}Request req, CancellationToken ct)
     {
-        var {entities} = await dbContext.{Entities}
-            .Select(x => new {UseCase}Response.{Entity}Dto(
+        var paging = PagingParams.From(req.Page, req.PageSize);
+        var spec = {Entity}Spec.Paged(paging, req.SortBy, SortDirections.From(req.SortDirection));
+
+        var {entities} = await dbContext.{Entities}.ToPagedListAsync(
+            spec,
+            x => new {UseCase}Response(
                 x.Id.Value,
                 x.Name,
-                x.{Children}.Select(c => new {UseCase}Response.{Child}Dto(c.Name, c.Value)).ToList()))
-            .ToListAsync(ct);
+                x.{Children}.Select(c => new {UseCase}Response.{Child}Dto(c.Name, c.Value)).ToList()),
+            ct);
 
-        await Send.OkAsync(new {UseCase}Response({entities}), ct);
+        await Send.OkAsync({entities}, ct);
     }
 }
 ```
 
-`EndpointWithoutRequest<TResponse>` is the no-input shape, and its `HandleAsync` takes only the cancellation token.
+Project straight into the response DTO inside the projection. That means no `Include` and no tracked entities — EF translates the whole thing to one query returning only the columns the response needs. Loading entities and mapping afterwards fetches columns nobody reads and pays for change tracking the query will never use.
 
-Project straight into the response DTO inside the `Select`. That means no `Include`, no spec, and no tracked entities — EF translates the whole thing to one query returning only the columns the response needs. Loading entities and mapping afterwards fetches columns nobody reads and pays for change tracking the query will never use.
+`ToPagedListAsync` runs the page and its total count off the same spec, and reads the envelope's `page`/`pageSize` back off that spec — pass one that didn't come from a `Paged` factory and it throws rather than describing a window it never fetched.
 
 `x.Id.Value` unwraps the Vogen ID. The API contract speaks `Guid`; strongly typed IDs stay inside the domain.
+
+The `Paged` factory and its sort allow-list live on the aggregate's spec, not here — see [domain.md](../../../rules/domain.md) § Sorting & paging.
+
+### `{UseCase}Request.cs`
+
+```csharp
+using SSW.VerticalSliceArchitecture.Common.Pagination;
+
+namespace SSW.VerticalSliceArchitecture.Features.{Feature}.{UseCase};
+
+public record {UseCase}Request : PagedRequest;
+```
+
+Inheriting `PagedRequest` is what keeps `page` / `pageSize` / `sortBy` / `sortDirection` spelled the same on every list endpoint. Add slice-specific filter properties to this record; don't redeclare the paging ones.
+
+### `{UseCase}RequestValidator.cs`
+
+```csharp
+using SSW.VerticalSliceArchitecture.Common.Domain.{Aggregate};
+using SSW.VerticalSliceArchitecture.Common.Pagination;
+
+namespace SSW.VerticalSliceArchitecture.Features.{Feature}.{UseCase};
+
+public class {UseCase}RequestValidator : PagedRequestValidator<{UseCase}Request, {Entity}>
+{
+    public {UseCase}RequestValidator()
+        : base({Entity}Spec.SortColumns)
+    {
+    }
+}
+```
+
+It must be a `PagedRequestValidator`, not a bare `Validator<{UseCase}Request>` — the sort allow-list rules live in that base class, and an architecture test enforces it. Without them an unknown sort column reaches the primitives, which throw, turning the documented 400 into a 500. Add slice-specific rules in the constructor body; the inherited ones still run.
+
+No page or page-size rules: `PagingParams.From` clamps those, so there is nothing left to reject.
 
 ### `{UseCase}Response.cs`
 
 ```csharp
 namespace SSW.VerticalSliceArchitecture.Features.{Feature}.{UseCase};
 
-public record {UseCase}Response(List<{UseCase}Response.{Entity}Dto> {Entities})
+public record {UseCase}Response(
+    Guid Id,
+    string Name,
+    IReadOnlyList<{UseCase}Response.{Child}Dto> {Children})
 {
-    public record {Entity}Dto(
-        Guid Id,
-        string Name,
-        IReadOnlyList<{Child}Dto> {Children});
-
     public record {Child}Dto(string Name, int Value);
 }
 ```
 
-Wrapping the list in a response record rather than returning a bare array leaves room to add paging metadata later without breaking the contract.
+For a list use case the response record is **one item**, not the list — the endpoint returns `PagedList<{UseCase}Response>`, so the envelope is the same shape on every list endpoint and a generated client can treat paging uniformly.
 
 ### `{UseCase}Summary.cs`
 
 ```csharp
+using SSW.VerticalSliceArchitecture.Common.Domain.{Aggregate};
+using SSW.VerticalSliceArchitecture.Common.Pagination;
+
 namespace SSW.VerticalSliceArchitecture.Features.{Feature}.{UseCase};
 
 public class {UseCase}Summary : Summary<{UseCase}Endpoint>
 {
     public {UseCase}Summary()
     {
-        Summary = "Get all {entities}";
-        Description = "Retrieves a list of all {entities}.";
+        Summary = "Get a page of {entities}";
+        Description = "Retrieves a page of {entities}, wrapped in the standard paged envelope " +
+                      "(items plus page, pageSize, totalCount, totalPages).";
+
+        Params[nameof({UseCase}Request.Page)] =
+            $"1-based page number. Defaults to {PagingParams.FirstPage}; anything lower is treated as the first page.";
+        Params[nameof({UseCase}Request.PageSize)] =
+            $"Items per page. Defaults to {PagingParams.DefaultPageSize} and is clamped to at most {PagingParams.MaxPageSize}.";
+        Params[nameof({UseCase}Request.SortBy)] =
+            $"Column to sort by — one of: {string.Join(", ", {Entity}Spec.SortColumns.AllowedColumns)}. Anything else returns 400.";
+        Params[nameof({UseCase}Request.SortDirection)] =
+            $"Sort direction — one of: {string.Join(", ", SortDirections.Allowed)}. Defaults to ascending.";
 
         // Response example
         Response(200, "{Entities} retrieved successfully",
-            example: new {UseCase}Response(
-            [
-                new {UseCase}Response.{Entity}Dto(
-                    Id: Guid.Parse("3fa85f64-5717-4562-b3fc-2c963f66afa6"),
-                    Name: "Peter Parker",
-                    {Children}:
-                    [
-                        new {UseCase}Response.{Child}Dto("Web Slinging", 3)
-                    ])
-            ]));
+            example: new PagedList<{UseCase}Response>(
+                Items:
+                [
+                    new {UseCase}Response(
+                        Id: Guid.Parse("3fa85f64-5717-4562-b3fc-2c963f66afa6"),
+                        Name: "Peter Parker",
+                        {Children}:
+                        [
+                            new {UseCase}Response.{Child}Dto("Web Slinging", 3)
+                        ])
+                ],
+                Page: 1,
+                PageSize: 10,
+                TotalCount: 1));
+
+        Response(400, "Unknown sort column or sort direction");
     }
 }
 ```
 
-`Response(200, ..., example: ...)` documents the output shape, where a command's summary uses `ExampleRequest` for the input.
+`Response(200, ..., example: ...)` documents the output shape, where a command's summary uses `ExampleRequest` for the input. The `Params` entries are what put the four query parameters in Swagger with their defaults and allowed values — build them from the constants and the allow-list so the docs can't drift from the code.
 
 ---
 

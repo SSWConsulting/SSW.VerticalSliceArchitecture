@@ -87,7 +87,8 @@ public async Task Command_WhenNotFound_ShouldReturn404()
 `tests/WebApi.IntegrationTests/Endpoints/{Feature}/Queries/{UseCase}QueryTests.cs`
 
 ```csharp
-using FastEndpoints;
+using System.Net;
+using SSW.VerticalSliceArchitecture.Common.Pagination;
 using SSW.VerticalSliceArchitecture.Features.{Feature}.{UseCase};
 using SSW.VerticalSliceArchitecture.IntegrationTests.Common;
 using SSW.VerticalSliceArchitecture.IntegrationTests.Common.Factories;
@@ -96,31 +97,48 @@ namespace SSW.VerticalSliceArchitecture.IntegrationTests.Endpoints.{Feature}.Que
 
 public class {UseCase}QueryTests(TestingDatabaseFixture fixture) : IntegrationTestBase(fixture)
 {
+    private const string Route = "/api/{entities}";
+
     [Fact]
-    public async Task Query_ShouldReturnAll{Entities}()
+    public async Task Query_ShouldReturnFirstPage_WhenPagingIsNotSpecified()
     {
         // Arrange
-        const int entityCount = 10;
-        var entities = {Entity}Factory.Generate(entityCount);
-        await AddRangeAsync(entities);
-        var client = GetAnonymousClient();
+        const int entityCount = 25;
+        await AddRangeAsync({Entity}Factory.Generate(entityCount));
 
         // Act
-        var result = await client.GETAsync<{UseCase}Endpoint, {UseCase}Response>();
+        var page = await GetPage<{UseCase}Response>(Route);
 
         // Assert
-        result.Response.IsSuccessStatusCode.Should().BeTrue();
-        result.Result.Should().NotBeNull();
-        result.Result!.{Entities}.Should().HaveCount(entityCount);
+        page.Items.Should().HaveCount(PagingParams.DefaultPageSize);
+        page.TotalCount.Should().Be(entityCount);
+        page.HasNextPage.Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task Query_ShouldReturnBadRequest_WhenSortColumnIsNotAllowed()
+    {
+        // Arrange
+        await AddRangeAsync({Entity}Factory.Generate(3));
+
+        // Act
+        var response = await GetAnonymousClient().GetAsync($"{Route}?sortBy=notAColumn", CancellationToken);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
 }
 ```
+
+A paged endpoint's tests go through raw URLs and `GetPage<T>` on `IntegrationTestBase` rather than the typed FastEndpoints client, because what they pin down *is* the query-string contract — the parameter names and how out-of-range values are treated. A typed helper would go around the thing under test.
+
+Cover the boundaries, not just the happy path: the default page, an explicit `page`/`pageSize`, a partial last page, a page past the end (empty `items`, correct `totalCount`), `pageSize` above the cap, both sort directions, and a 400 for an unknown sort column and direction. `GetAllHeroes` has the full set.
 
 Seed through the Bogus factory (`tests/WebApi.IntegrationTests/Common/Factories/{Entity}Factory.cs` — template in [`add-entity/references/persistence.md`](../../add-entity/references/persistence.md)) rather than constructing entities inline, so a change to the entity's factory signature lands in one place.
 
 `AddAsync` seeds one, `AddRangeAsync` seeds many. Both save immediately.
 
-For a query with a route parameter, pass the request record:
+For a single-item query with a route parameter, the typed client is the right tool — there's no query string to pin down:
 
 ```csharp
 var result = await client.GETAsync<{UseCase}Endpoint, {UseCase}Request, {UseCase}Response>(
