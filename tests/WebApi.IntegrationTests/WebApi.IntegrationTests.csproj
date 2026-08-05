@@ -25,6 +25,5 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\WebApi\WebApi.csproj" />
-    <ProjectReference Include="..\..\tools\MigrationService\MigrationService.csproj" />
   </ItemGroup>
 </Project>

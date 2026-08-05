@@ -39,30 +39,35 @@ var db = sqlServer
     .AddDatabase("AppDb", "app-db")
     .WithDropDatabaseCommand();
 
-var migrationService = builder.AddProject<MigrationService>("migrations")
-    .PublishAsAzureAppServiceWebsite((_, site) =>
-    {
-        const string envNetCoreEnvironment = "ASPNETCORE_ENVIRONMENT";
-
-        // Needed for hosted service to run
-        site.SiteConfig.IsAlwaysOn = true;
-
-        // Dynamically set environment, so we can enable seeding of data (only happens in 'development')
-        var environment = Environment.GetEnvironmentVariable(envNetCoreEnvironment);
-        if (string.IsNullOrWhiteSpace(environment))
-            return;
-
-        var envSetting = new AppServiceNameValuePair { Name = envNetCoreEnvironment, Value = environment };
-        site.SiteConfig.AppSettings.Add(new BicepValue<AppServiceNameValuePair>(envSetting));
-    })
-    .WithReference(db)
-    .WaitFor(sqlServer);
-
 var api = builder
     .AddProject<WebApi>("api")
     .WithExternalHttpEndpoints()
+    .WithReference(db);
+
+// Migrations live in the WebApi project (Common/Persistence/Migrations) alongside the only
+// DbContext in that assembly, so neither WithMigrationsProject<T>() nor an explicit context
+// name is needed. On publish this emits a migration bundle under efmigrations/ rather than
+// running anything — applying it is a deployment step (see the README).
+var migrations = api.AddEFMigrations("migrations")
     .WithReference(db)
-    .WaitForCompletion(migrationService);
+    .WaitFor(sqlServer)
+    .RunDatabaseUpdateOnStart()
+    .PublishAsMigrationBundle();
+
+if (builder.ExecutionContext.IsRunMode)
+{
+    // Seeding is dev-only, and this guard is what enforces it — the resource is never
+    // added in publish mode, so Bogus data has no path to a deployed environment.
+    var seeder = builder.AddProject<Seeder>("seeder")
+        .WithReference(db)
+        .WaitForCompletion(migrations);
+
+    api.WaitForCompletion(seeder);
+}
+else
+{
+    api.WaitForCompletion(migrations);
+}
 
 // Configure Application Insights and Log Analytics only if in publish mode
 // When running locally, use Aspire Dashboard instead
@@ -71,7 +76,6 @@ if (builder.ExecutionContext.IsPublishMode)
     var logAnalytics = builder.AddAzureLogAnalyticsWorkspace("log-analytics");
     var insights = builder.AddAzureApplicationInsights("insights", logAnalytics);
     api.WithReference(insights);
-    migrationService.WithReference(insights);
 }
 
 builder.Build().Run();

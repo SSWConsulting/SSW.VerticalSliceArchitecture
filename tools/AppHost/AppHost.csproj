@@ -11,6 +11,7 @@
     <PackageReference Include="Aspire.Hosting.Azure.ApplicationInsights" />
     <PackageReference Include="Aspire.Hosting.Azure.AppService" />
     <PackageReference Include="Aspire.Hosting.Azure.Sql" />
+    <PackageReference Include="Aspire.Hosting.EntityFrameworkCore" />
     <PackageReference Include="Aspire.Hosting.SqlServer" />
     <PackageReference Include="Aspire.Microsoft.EntityFrameworkCore.SqlServer" />
   </ItemGroup>
@@ -20,7 +21,7 @@
       <IsAspireProjectResource>false</IsAspireProjectResource>
     </ProjectReference>
     <ProjectReference Include="..\..\src\WebApi\WebApi.csproj" />
-    <ProjectReference Include="..\MigrationService\MigrationService.csproj" />
+    <ProjectReference Include="..\Seeder\Seeder.csproj" />
   </ItemGroup>
 
 </Project>

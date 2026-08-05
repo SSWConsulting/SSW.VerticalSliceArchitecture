@@ -486,3 +486,4 @@ $RECYCLE.BIN/
 
 # Log4brains ADR static site build output
 .log4brains/
+tmp/screenshots/

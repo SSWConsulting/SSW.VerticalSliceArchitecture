@@ -128,9 +128,9 @@ dotnet ef migrations add Add{Entity} \
   --output-dir Common/Persistence/Migrations
 ```
 
-Needs the EF tool — `dotnet tool install --global dotnet-ef` if `dotnet ef` isn't found.
+Needs the EF tool — `dotnet tool restore` if `dotnet ef` isn't found. The version is pinned in `.config/dotnet-tools.json`; don't reach for a global install, which can drift from the solution's EF Core packages.
 
-Migrations apply on startup through `tools/MigrationService`, so there's no `database update` to run in dev. Just start the app.
+Migrations apply in dev through the AppHost's `migrations` resource (`AddEFMigrations`), so there's no `database update` to run yourself. Just start the app.
 
 Read the generated file before moving on. Things that show up here:
 
@@ -172,23 +172,23 @@ public static class {Entity}Factory
 
 ## Dev seeding (optional)
 
-`tools/MigrationService/Initializers/ApplicationDbContextInitializer.cs`
+`tools/Seeder/Initializers/ApplicationDbContextInitializer.cs`
 
 Add a private `Seed{Entities}` method and call it from `SeedDataAsync`, inside the existing transaction.
 
 ```csharp
 private async Task Seed{Entities}()
 {
-    if (DbContext.{Entities}.Any())
+    if (dbContext.{Entities}.Any())
         return;
 
     var faker = new Faker<{Entity}>()
         .CustomInstantiator(f => {Entity}.Create(f.Company.CompanyName()));
 
     var {entities} = faker.Generate(Num{Entities});
-    await DbContext.{Entities}.AddRangeAsync({entities});
-    await DbContext.SaveChangesAsync();
+    await dbContext.{Entities}.AddRangeAsync({entities});
+    await dbContext.SaveChangesAsync();
 }
 ```
 
-The `Any()` short-circuit is what makes it idempotent — the initializer runs on every startup, not just the first. Seeding is gated to dev by `Worker.cs`, so it never touches a real environment.
+The `Any()` short-circuit is what makes it idempotent — the initializer runs on every startup, not just the first. Seeding never touches a real environment because the AppHost only adds the `seeder` resource under `builder.ExecutionContext.IsRunMode`.

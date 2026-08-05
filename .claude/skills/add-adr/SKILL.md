@@ -115,7 +115,7 @@ The decisions that keep recurring here, and where the existing patterns live:
   through Ardalis.Specification factory methods. See ADR `20260612-use-aggregate-specification-classes-with-factory-methods`.
 - **Domain modelling** — aggregate roots, domain events, value objects, `Guid.CreateVersion7()`.
 - **Testing** — unit, integration (Testcontainers + Respawn), architecture (NetArchTest).
-- **Orchestration** — .NET 10 with Aspire: AppHost, ServiceDefaults, MigrationService.
+- **Orchestration** — .NET 10 with Aspire: AppHost, ServiceDefaults, an `AddEFMigrations` migrations resource, and a run-mode-only Seeder.
 
 If the new ADR contradicts an existing one, say so explicitly rather than quietly
 overriding it — name the ADR and argue why it's worth reopening.

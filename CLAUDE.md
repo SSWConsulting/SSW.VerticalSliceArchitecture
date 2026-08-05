@@ -49,10 +49,11 @@ The templates in `references/` are copies of the shapes in `Features/Heroes/` an
 ## Running the App
 
 ```bash
+dotnet tool restore   # first run only — the migrations resource needs dotnet-ef
 aspire start
 ```
 
-Aspire provisions SQL Server (Docker/Podman), runs migrations and seeds via `tools/MigrationService`, then exposes the API at `https://localhost:7255/swagger` (FastEndpoints Swagger UI). The Aspire Dashboard opens automatically for traces and logs.
+Aspire provisions SQL Server (Docker/Podman), applies migrations through its `migrations` resource (`AddEFMigrations`, which shells out to `dotnet ef database update`), seeds dev data via `tools/Seeder`, then exposes the API at `https://localhost:7255/swagger` (FastEndpoints Swagger UI). The Aspire Dashboard opens automatically for traces and logs.
 
 ## Reference Slice
 

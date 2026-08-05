@@ -47,6 +47,10 @@
   </ItemGroup>
   <ItemGroup Condition="$(IsAspireHost) == 'true'">
     <PackageVersion Include="Aspire.Hosting.AppHost" Version="13.4.6" />
+    <!-- Prerelease is the only channel this package has ever shipped on; there is no stable
+         13.x to move to. The build number tracks the stable Aspire.Hosting.* 13.4.6 pins, so
+         bump it in lockstep with them. -->
+    <PackageVersion Include="Aspire.Hosting.EntityFrameworkCore" Version="13.4.6-preview.1.26319.6" />
     <PackageVersion Include="Aspire.Hosting.SqlServer" Version="13.4.6" />
   </ItemGroup>
   <ItemGroup Condition="$(IsTestProject) == 'true'">
