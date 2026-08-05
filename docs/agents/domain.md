@@ -9,7 +9,7 @@ How the engineering skills should consume this repo's domain documentation when 
 
 If any of these files don't exist, **proceed silently**. Don't flag their absence; don't suggest creating them upfront. The `/domain-modeling` skill (reached via `/grill-with-docs` and `/improve-codebase-architecture`) creates them lazily when terms or decisions actually get resolved.
 
-Those skills ship outside this repo — `.claude/skills/` here only holds `aspire` and `bump-version`. If a referenced skill isn't installed, do the reading described above by hand and move on rather than trying to invoke it.
+Those skills ship outside this repo. `.claude/skills/` here holds `add-entity`, `add-slice`, `add-adr`, `aspire`, and `bump-version` — `/add-adr` is the in-repo way to record a decision once one is settled. If a referenced skill isn't installed, do the reading described above by hand and move on rather than trying to invoke it.
 
 ## File structure
 

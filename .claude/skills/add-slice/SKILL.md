@@ -14,7 +14,7 @@ Not every slice is HTTP. `PowerLevelUpdated` is a slice triggered by a domain ev
 ## Read the live reference first
 
 - `src/WebApi/Features/Heroes/CreateHero/` — the canonical command slice, all five files
-- `src/WebApi/Features/Heroes/GetAllHeroes/` — a list query with no request
+- `src/WebApi/Features/Heroes/GetAllHeroes/` — a paged, sorted list query
 - `src/WebApi/Features/Teams/GetTeam/` — a single-item query with a route parameter
 - `src/WebApi/Features/Teams/AddHeroToTeam/` — a command that loads aggregates through specs
 - `src/WebApi/Features/Teams/PowerLevelUpdated/` — an event-triggered slice
@@ -39,7 +39,7 @@ Ask about anything not stated. Guessing a route or a verb produces a slice that 
 
 1. **Feature scaffolding** — only when this is the Feature's first slice: create `src/WebApi/Features/{Feature}/` and add `{Feature}Group.cs`. Skip `{Feature}Feature.cs` unless the Feature registers its own services; most don't, and an empty one is noise. Template: [references/command-slice.md](references/command-slice.md).
 2. **Slice folder** — `src/WebApi/Features/{Feature}/{UseCase}/`, namespace mirroring the folder. The endpoint has to sit exactly two segments below `Features` — one for the Feature, one for the use case — or the architecture tests fail.
-3. **The five files** — endpoint, request, response, validator, summary. One type per file, even when a file is three lines; they grow. A query with no input skips the request and validator. A command returning 204 skips the response.
+3. **The five files** — endpoint, request, response, validator, summary. One type per file, even when a file is three lines; they grow. A query with no input skips the request and validator; a list query is never one of those, because every list endpoint takes paging and sorting parameters. A command returning 204 skips the response.
    - Command: [references/command-slice.md](references/command-slice.md)
    - Query: [references/query-slice.md](references/query-slice.md)
 4. **Event-triggered slice** — when the use case reacts to a domain event rather than a request, the slice holds an `IEventHandler<TEvent>` instead of an endpoint: `src/WebApi/Features/{Feature}/{Event}/{Event}EventHandler.cs`. It belongs to the Feature that *consumes* the event, not the one that raises it.
@@ -47,10 +47,11 @@ Ask about anything not stated. Guessing a route or a verb produces a slice that 
 
 ## What CI enforces
 
-`tests/WebApi.ArchitectureTests/FeatureTests.cs` turns four of these into build failures rather than review comments:
+`tests/WebApi.ArchitectureTests/FeatureTests.cs` turns five of these into build failures rather than review comments:
 
 - **Endpoints are named `*Endpoint` and live in a slice namespace** — exactly two segments below `Features`. A slice folder nested deeper or shallower fails.
 - **Every endpoint with a request has a `Validator<TRequest>` in the same slice.** Not a shared one and not a bare `AbstractValidator` — FastEndpoints only binds validators derived from its own `Validator<T>`, and the test matches that base. An endpoint whose request type can't be read fails too, so derive from `Endpoint<TRequest, TResponse>` or one of its aliases.
+- **A `PagedRequest` needs a `PagedRequestValidator<TRequest, TEntity>`**, not merely some `Validator<TRequest>`. The sort allow-list rules live in that base class, and the primitives throw on an unknown sort column rather than returning a 400 — so a bare validator would turn a documented 400 into a 500 with every other test still green.
 - **No slice depends on another slice.** This is the rule that makes it Vertical Slice Architecture rather than layers in disguise.
 - **Endpoints take `ApplicationDbContext`** — not the `DbContext` base type, and not a second `DbContext`. The check reads IL, so `Resolve<T>()` and handler-method injection are caught as well as constructor parameters.
 

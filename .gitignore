@@ -480,7 +480,12 @@ $RECYCLE.BIN/
 .serena/
 .claude/plans/
 .claude/worktrees/
+.claude/settings.local.json
+.playwright-mcp/
 *.lscache
 
 # Log4brains ADR static site build output
 .log4brains/
+
+# Local verification evidence (screenshots) — throwaway, never committed
+tmp/screenshots/

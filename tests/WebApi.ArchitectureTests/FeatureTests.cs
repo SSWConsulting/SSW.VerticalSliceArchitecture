@@ -3,6 +3,7 @@ using FastEndpoints;
 using Microsoft.EntityFrameworkCore;
 using Mono.Cecil;
 using SSW.VerticalSliceArchitecture.ArchitectureTests.Common;
+using SSW.VerticalSliceArchitecture.Common.Pagination;
 using SSW.VerticalSliceArchitecture.Common.Persistence;
 
 // FastEndpoints ships its own TypeDefinition; this file means Cecil's throughout.
@@ -85,6 +86,43 @@ public class FeatureTests : TestBase
         missingValidators.Should().BeEmpty(
             "every endpoint with a request must have a Validator<TRequest> in the same slice, but these do not: {0}",
             Describe(missingValidators));
+    }
+
+    /// <summary>
+    /// A paged request must be validated by a <see cref="PagedRequestValidator{TRequest,TEntity}"/>, not
+    /// merely by some <c>Validator&lt;TRequest&gt;</c>.
+    /// </summary>
+    /// <remarks>
+    /// The allow-list rules live in that base class, and the primitives behind them throw on an unknown
+    /// sort column or direction rather than returning a result. So a slice that inherits
+    /// <see cref="PagedRequest"/> but writes its own bare validator still satisfies
+    /// <see cref="EndpointsWithARequest_Should_HaveAMatchingValidatorInTheirSlice"/> while turning the
+    /// documented 400 into a 500. This is the rule that makes that unreachable.
+    /// </remarks>
+    [Fact]
+    public void EndpointsWithAPagedRequest_Should_HaveAPagedRequestValidatorInTheirSlice()
+    {
+        // Arrange
+        var pagedEndpoints = Endpoints
+            .Select(t => (Endpoint: t, Request: GetRequestType(t)))
+            .Where(x => x.Request is not null && typeof(PagedRequest).IsAssignableFrom(x.Request))
+            .ToList();
+
+        pagedEndpoints.Select(x => x.Endpoint).Dump(_output);
+
+        // Act
+        var missingPagedValidators = pagedEndpoints
+            .Where(x => !HasPagedValidatorInSlice(x.Endpoint, x.Request!))
+            .Select(x => x.Endpoint)
+            .ToList();
+
+        // Assert
+        pagedEndpoints.Should().NotBeEmpty();
+        missingPagedValidators.Should().BeEmpty(
+            "every endpoint whose request derives from {0} must have a {1} in the same slice, but these do not: {2}",
+            nameof(PagedRequest),
+            "PagedRequestValidator<TRequest, TEntity>",
+            Describe(missingPagedValidators));
     }
 
     [Fact]
@@ -203,6 +241,33 @@ public class FeatureTests : TestBase
             .Any(t => t is { IsAbstract: false } &&
                       string.Equals(t.Namespace, endpoint.Namespace, StringComparison.Ordinal) &&
                       validatorBase.IsAssignableFrom(t));
+    }
+
+    /// <remarks>
+    /// Walks the base chain looking for the open <c>PagedRequestValidator&lt;,&gt;</c> rather than closing it
+    /// over a known entity type: the entity argument is the slice's own choice, so the rule can't name it.
+    /// </remarks>
+    private static bool HasPagedValidatorInSlice(Type endpoint, Type requestType)
+    {
+        var validatorBase = typeof(Validator<>).MakeGenericType(requestType);
+
+        return RootAssembly
+            .GetTypes()
+            .Any(t => t is { IsAbstract: false } &&
+                      string.Equals(t.Namespace, endpoint.Namespace, StringComparison.Ordinal) &&
+                      validatorBase.IsAssignableFrom(t) &&
+                      DerivesFromPagedRequestValidator(t));
+    }
+
+    private static bool DerivesFromPagedRequestValidator(Type validator)
+    {
+        for (var type = validator; type is not null; type = type.BaseType)
+        {
+            if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(PagedRequestValidator<,>))
+                return true;
+        }
+
+        return false;
     }
 
     private static List<TypeDefinition> GetEndpointDefinitions()
