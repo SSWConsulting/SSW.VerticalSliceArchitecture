@@ -23,6 +23,17 @@ dotnet ef migrations add MigrationName \
   --output-dir Common/Persistence/Migrations
 ```
 
+Nothing needs to be running to scaffold a migration. Removing one is the opposite — it always
+needs `--force`, because Aspire only gives the connection string to the `migrations` and `api`
+resources, so EF can't check whether the migration was applied:
+
+```bash
+dotnet ef migrations remove \
+  --project src/WebApi/WebApi.csproj \
+  --startup-project src/WebApi/WebApi.csproj \
+  --force
+```
+
 Migrations apply automatically in dev, so you don't need to run `database update` by hand. The
 AppHost declares a `migrations` resource (`AddEFMigrations` + `RunDatabaseUpdateOnStart`) that runs
 `dotnet ef database update` before the API starts. That resource shells out to the `dotnet-ef` tool,
