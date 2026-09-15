@@ -1,8 +1,7 @@
-using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using SSW.VerticalSliceArchitecture.Common.Pagination;
 using SSW.VerticalSliceArchitecture.Common.Persistence;
+using SSW.VerticalSliceArchitecture.IntegrationTests.Common.Infrastructure.GraphQL;
 
 namespace SSW.VerticalSliceArchitecture.IntegrationTests.Common;
 
@@ -12,9 +11,6 @@ namespace SSW.VerticalSliceArchitecture.IntegrationTests.Common;
 [Collection<TestingDatabaseFixtureCollection>]
 public abstract class IntegrationTestBase : IAsyncLifetime
 {
-    // Matches how the API serialises: camelCase, case-insensitive on read.
-    private static readonly JsonSerializerOptions WebJson = new(JsonSerializerDefaults.Web);
-
     private readonly IServiceScope _scope;
     private readonly TestingDatabaseFixture _fixture;
     private readonly ApplicationDbContext _dbContext;
@@ -33,6 +29,9 @@ public abstract class IntegrationTestBase : IAsyncLifetime
     {
         await _fixture.TestSetup();
     }
+
+    /// <summary>The API's services, for the rare test that needs one directly.</summary>
+    protected IServiceProvider Services => _scope.ServiceProvider;
 
     protected IQueryable<T> GetQueryable<T>() where T : class => _dbContext.Set<T>().AsNoTracking();
 
@@ -57,26 +56,9 @@ public abstract class IntegrationTestBase : IAsyncLifetime
 
     protected HttpClient GetAnonymousClient() => _fixture.AnonymousClient.Value;
 
-    /// <summary>
-    /// GETs a paged list endpoint by raw URL and deserialises the standard paged envelope.
-    /// </summary>
-    /// <remarks>
-    /// Takes a URL rather than a request DTO on purpose: what a paged endpoint's tests pin down is the
-    /// query-string contract — the parameter names and how out-of-range values are treated — and a typed
-    /// helper would go around it.
-    /// </remarks>
-    protected async Task<PagedList<T>> GetPage<T>(string url)
-    {
-        var response = await GetAnonymousClient().GetAsync(url, CancellationToken);
-        var body = await response.Content.ReadAsStringAsync(CancellationToken);
-
-        // Body in the failure message: a paged endpoint's failures are 400s carrying the reason (an
-        // unknown sort column, a binding error), and "expected True" on its own says none of it.
-        response.IsSuccessStatusCode.Should().BeTrue("GET {0} returned {1}: {2}", url, response.StatusCode, body);
-
-        var page = JsonSerializer.Deserialize<PagedList<T>>(body, WebJson);
-        return page.Should().NotBeNull().And.Subject.As<PagedList<T>>();
-    }
+    /// <summary>Sends a GraphQL document to the API as an anonymous caller.</summary>
+    protected Task<GraphQlResult> ExecuteAsync(string document, object? variables = null) =>
+        new GraphQlClient(GetAnonymousClient()).ExecuteAsync(document, variables, CancellationToken);
 
     protected CancellationToken CancellationToken => TestContext.Current.CancellationToken;
 

@@ -1,3 +1,5 @@
+using SSW.VerticalSliceArchitecture.Common.Validation;
+
 namespace SSW.VerticalSliceArchitecture.Features.Teams.AddHeroToTeam;
 
 public class AddHeroToTeamInputValidator : AbstractValidator<AddHeroToTeamInput>
@@ -5,9 +7,9 @@ public class AddHeroToTeamInputValidator : AbstractValidator<AddHeroToTeamInput>
     public AddHeroToTeamInputValidator()
     {
         RuleFor(v => v.TeamId)
-            .NotEmpty();
+            .NotEmptyId(id => id.Value);
 
         RuleFor(v => v.HeroId)
-            .NotEmpty();
+            .NotEmptyId(id => id.Value);
     }
 }

@@ -1,3 +1,5 @@
+using SSW.VerticalSliceArchitecture.Common.Validation;
+
 namespace SSW.VerticalSliceArchitecture.Features.Teams.CompleteMission;
 
 public class CompleteMissionInputValidator : AbstractValidator<CompleteMissionInput>
@@ -5,6 +7,6 @@ public class CompleteMissionInputValidator : AbstractValidator<CompleteMissionIn
     public CompleteMissionInputValidator()
     {
         RuleFor(v => v.TeamId)
-            .NotEmpty();
+            .NotEmptyId(id => id.Value);
     }
 }

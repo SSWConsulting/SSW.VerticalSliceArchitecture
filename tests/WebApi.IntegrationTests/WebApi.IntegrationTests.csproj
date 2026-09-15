@@ -9,7 +9,6 @@
   <ItemGroup>
     <PackageReference Include="AwesomeAssertions" />
     <PackageReference Include="Bogus" />
-    <PackageReference Include="FastEndpoints" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
     <PackageReference Include="NSubstitute" />
     <PackageReference Include="Respawn" />
@@ -24,6 +23,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <!-- The snapshot the schema test compares against. Linked rather than copied, so the file the
+         test reads is the one the schema export command writes. -->
+    <Content Include="..\..\src\WebApi\schema.graphql" Link="schema.graphql" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Domain\Domain.csproj" />
     <ProjectReference Include="..\..\src\WebApi\WebApi.csproj" />
   </ItemGroup>
 </Project>

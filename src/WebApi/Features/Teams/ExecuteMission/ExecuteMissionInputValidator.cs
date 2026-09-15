@@ -1,3 +1,4 @@
+using SSW.VerticalSliceArchitecture.Common.Validation;
 using SSW.VerticalSliceArchitecture.Domain.Teams;
 
 namespace SSW.VerticalSliceArchitecture.Features.Teams.ExecuteMission;
@@ -7,7 +8,7 @@ public class ExecuteMissionInputValidator : AbstractValidator<ExecuteMissionInpu
     public ExecuteMissionInputValidator()
     {
         RuleFor(v => v.TeamId)
-            .NotEmpty();
+            .NotEmptyId(id => id.Value);
 
         RuleFor(v => v.Description)
             .NotEmpty()

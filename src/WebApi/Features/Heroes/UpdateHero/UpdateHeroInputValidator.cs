@@ -1,3 +1,4 @@
+using SSW.VerticalSliceArchitecture.Common.Validation;
 using SSW.VerticalSliceArchitecture.Domain.Heroes;
 
 namespace SSW.VerticalSliceArchitecture.Features.Heroes.UpdateHero;
@@ -7,7 +8,7 @@ public class UpdateHeroInputValidator : AbstractValidator<UpdateHeroInput>
     public UpdateHeroInputValidator()
     {
         RuleFor(v => v.HeroId)
-            .NotEmpty();
+            .NotEmptyId(id => id.Value);
 
         RuleFor(v => v.Name)
             .NotEmpty()
