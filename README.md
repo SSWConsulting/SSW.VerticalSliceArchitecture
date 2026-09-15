@@ -202,6 +202,9 @@ live in `src/WebApi`, so every command below targets that one project.
 dotnet ef migrations add YourMigrationName --project src/WebApi/WebApi.csproj --startup-project src/WebApi/WebApi.csproj --output-dir Common/Persistence/Migrations
 ```
 
+Nothing needs to be running for this — no database, no AppHost. Scaffolding a migration only
+needs the model.
+
 #### Applying a Migration
 
 Locally, .NET Aspire handles this for you — just start the project. The `migrations` resource
@@ -214,15 +217,21 @@ On Azure this is a deployment step rather than something the app does to itself 
 #### Removing a Migration
 
 ```bash
-dotnet ef migrations remove --project src/WebApi/WebApi.csproj --startup-project src/WebApi/WebApi.csproj
+dotnet ef migrations remove --project src/WebApi/WebApi.csproj --startup-project src/WebApi/WebApi.csproj --force
 ```
 
-No `--force` and no `aspire exec`: the app no longer has to be running for this. Removing a
-migration that has already been applied to your local database still fails, which is EF Core
-protecting you rather than a quirk of the orchestration. Either drop the local database first
-(the **Drop Database** command on the `AppDb` resource in the dashboard) or roll forward with a
-new migration that undoes the change — rolling forward is the safer habit once a migration has
-left your machine.
+`--force` is always required here, and not because anything needs to be running. Aspire injects
+the connection string into the `migrations` and `api` resources at runtime, so a `dotnet ef` you
+run yourself never gets one. EF can't reach the database to check whether the migration has been
+applied, and refuses to guess — without `--force` it stops at
+`The ConnectionString property has not been initialized`.
+
+`--force` skips that check, so mind what the check was for. If you've started the app since
+adding the migration, the `migrations` resource has already applied it, and deleting the files
+leaves the database ahead of the model. Recover by dropping the local database — the **Drop
+Database** command on the `AppDb` resource, from the dashboard or via
+`aspire resource AppDb drop-database` — or by rolling forward with a new migration that undoes
+the change. Rolling forward is the safer habit once a migration has left your machine.
 
 ## Deploying to Azure
 
