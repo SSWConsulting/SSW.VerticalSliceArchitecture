@@ -1,4 +1,4 @@
-using SSW.VerticalSliceArchitecture.Common.Domain.Heroes;
+using SSW.VerticalSliceArchitecture.Domain.Heroes;
 using SSW.VerticalSliceArchitecture.Features.Heroes.CreateHero;
 
 namespace SSW.VerticalSliceArchitecture.UnitTests.Features.Heroes;

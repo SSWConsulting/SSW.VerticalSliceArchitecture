@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using SSW.VerticalSliceArchitecture.Common.Domain.Heroes;
+using SSW.VerticalSliceArchitecture.Domain.Heroes;
 
 namespace SSW.VerticalSliceArchitecture.Common.Persistence.Heroes;
 

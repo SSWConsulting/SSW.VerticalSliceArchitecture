@@ -1,4 +1,4 @@
-using SSW.VerticalSliceArchitecture.Common.Domain.Teams;
+using SSW.VerticalSliceArchitecture.Domain.Teams;
 using SSW.VerticalSliceArchitecture.Features.Teams.ExecuteMission;
 
 namespace SSW.VerticalSliceArchitecture.UnitTests.Features.Teams;

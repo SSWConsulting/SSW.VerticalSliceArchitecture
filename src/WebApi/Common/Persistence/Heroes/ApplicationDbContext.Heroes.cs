@@ -1,4 +1,4 @@
-﻿using SSW.VerticalSliceArchitecture.Common.Domain.Heroes;
+﻿using SSW.VerticalSliceArchitecture.Domain.Heroes;
 
 // Preserve the namespace across partial classes
 // ReSharper disable once CheckNamespace

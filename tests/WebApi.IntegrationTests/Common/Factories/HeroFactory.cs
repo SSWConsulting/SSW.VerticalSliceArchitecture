@@ -1,4 +1,4 @@
-﻿using SSW.VerticalSliceArchitecture.Common.Domain.Heroes;
+﻿using SSW.VerticalSliceArchitecture.Domain.Heroes;
 
 namespace SSW.VerticalSliceArchitecture.IntegrationTests.Common.Factories;
 

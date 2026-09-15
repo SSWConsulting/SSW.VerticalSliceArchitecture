@@ -1,5 +1,5 @@
-using SSW.VerticalSliceArchitecture.Common.Domain.Heroes;
-using SSW.VerticalSliceArchitecture.Common.Domain.Teams;
+using SSW.VerticalSliceArchitecture.Domain.Heroes;
+using SSW.VerticalSliceArchitecture.Domain.Teams;
 
 namespace SSW.VerticalSliceArchitecture.Common.Persistence;
 

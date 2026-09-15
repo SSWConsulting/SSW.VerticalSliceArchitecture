@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using SSW.VerticalSliceArchitecture.Common.Domain.Base;
+using SSW.VerticalSliceArchitecture.Domain.Base;
 
 namespace SSW.VerticalSliceArchitecture.Common.Persistence;
 

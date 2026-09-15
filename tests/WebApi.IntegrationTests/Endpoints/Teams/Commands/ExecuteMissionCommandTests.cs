@@ -1,7 +1,7 @@
 using Ardalis.Specification.EntityFrameworkCore;
 using FastEndpoints;
 using Microsoft.EntityFrameworkCore;
-using SSW.VerticalSliceArchitecture.Common.Domain.Teams;
+using SSW.VerticalSliceArchitecture.Domain.Teams;
 using SSW.VerticalSliceArchitecture.Features.Teams.ExecuteMission;
 using SSW.VerticalSliceArchitecture.IntegrationTests.Common;
 using SSW.VerticalSliceArchitecture.IntegrationTests.Common.Factories;

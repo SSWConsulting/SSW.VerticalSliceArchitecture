@@ -1,7 +1,7 @@
 using System.Net;
 using System.Net.Http.Json;
 using Microsoft.EntityFrameworkCore;
-using SSW.VerticalSliceArchitecture.Common.Domain.Heroes;
+using SSW.VerticalSliceArchitecture.Domain.Heroes;
 using SSW.VerticalSliceArchitecture.Common.Pagination;
 using SSW.VerticalSliceArchitecture.Features.Heroes.GetAllHeroes;
 using SSW.VerticalSliceArchitecture.IntegrationTests.Common;

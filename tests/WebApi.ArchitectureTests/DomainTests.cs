@@ -1,8 +1,8 @@
 ﻿using FastEndpoints;
 using System.Reflection;
 using SSW.VerticalSliceArchitecture.ArchitectureTests.Common;
-using SSW.VerticalSliceArchitecture.Common.Domain.Base;
-using SSW.VerticalSliceArchitecture.Common.Domain.Base.Interfaces;
+using SSW.VerticalSliceArchitecture.Domain.Base;
+using SSW.VerticalSliceArchitecture.Domain.Base.Interfaces;
 
 namespace SSW.VerticalSliceArchitecture.ArchitectureTests;
 

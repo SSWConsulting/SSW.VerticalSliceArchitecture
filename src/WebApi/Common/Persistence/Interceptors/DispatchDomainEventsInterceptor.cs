@@ -1,16 +1,19 @@
 ﻿using Microsoft.EntityFrameworkCore.Diagnostics;
-using SSW.VerticalSliceArchitecture.Common.Domain.Base.Interfaces;
+using SSW.VerticalSliceArchitecture.Common.Events;
 using SSW.VerticalSliceArchitecture.Common.Middleware;
+using SSW.VerticalSliceArchitecture.Domain.Base.Interfaces;
 
 namespace SSW.VerticalSliceArchitecture.Common.Persistence.Interceptors;
 
 public class DispatchDomainEventsInterceptor : SaveChangesInterceptor
 {
     private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly IDomainEventDispatcher _dispatcher;
 
-    public DispatchDomainEventsInterceptor(IHttpContextAccessor httpContextAccessor)
+    public DispatchDomainEventsInterceptor(IHttpContextAccessor httpContextAccessor, IDomainEventDispatcher dispatcher)
     {
         _httpContextAccessor = httpContextAccessor;
+        _dispatcher = dispatcher;
     }
 
     // NOTE: There are two options for dispatching domain events:
@@ -65,18 +68,18 @@ public class DispatchDomainEventsInterceptor : SaveChangesInterceptor
 
     private bool IsUserWaitingOnline() => _httpContextAccessor.HttpContext is not null;
 
-    private async Task PublishDomainEvents(IEnumerable<IEvent> domainEvents)
+    private async Task PublishDomainEvents(IEnumerable<IDomainEvent> domainEvents)
     {
         foreach (var domainEvent in domainEvents)
-            await domainEvent.PublishAsync();
+            await _dispatcher.DispatchAsync(domainEvent);
     }
 
-    private void AddDomainEventsToOfflineProcessingQueue(IEnumerable<IEvent> domainEvents)
+    private void AddDomainEventsToOfflineProcessingQueue(IEnumerable<IDomainEvent> domainEvents)
     {
         var domainEventsQueue = _httpContextAccessor.HttpContext!.Items.TryGetValue(EventualConsistencyMiddleware.DomainEventsKey, out var value) &&
-                                value is Queue<IEvent> existingDomainEvents
+                                value is Queue<IDomainEvent> existingDomainEvents
             ? existingDomainEvents
-            : new Queue<IEvent>();
+            : new Queue<IDomainEvent>();
 
         // Queue is processed by EventualConsistencyMiddleware
         foreach (var domainEvent in domainEvents)

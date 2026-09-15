@@ -1,6 +1,6 @@
 using FastEndpoints;
 using Microsoft.EntityFrameworkCore;
-using SSW.VerticalSliceArchitecture.Common.Domain.Heroes;
+using SSW.VerticalSliceArchitecture.Domain.Heroes;
 using SSW.VerticalSliceArchitecture.Features.Heroes.CreateHero;
 using SSW.VerticalSliceArchitecture.IntegrationTests.Common;
 using System.Net;

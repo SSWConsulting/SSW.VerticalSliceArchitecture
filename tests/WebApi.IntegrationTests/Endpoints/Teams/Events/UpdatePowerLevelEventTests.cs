@@ -1,8 +1,8 @@
 using Ardalis.Specification.EntityFrameworkCore;
 using FastEndpoints;
 using Microsoft.EntityFrameworkCore;
-using SSW.VerticalSliceArchitecture.Common.Domain.Heroes;
-using SSW.VerticalSliceArchitecture.Common.Domain.Teams;
+using SSW.VerticalSliceArchitecture.Domain.Heroes;
+using SSW.VerticalSliceArchitecture.Domain.Teams;
 using SSW.VerticalSliceArchitecture.Features.Heroes.UpdateHero;
 using SSW.VerticalSliceArchitecture.IntegrationTests.Common;
 using SSW.VerticalSliceArchitecture.IntegrationTests.Common.Factories;

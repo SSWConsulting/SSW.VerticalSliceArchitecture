@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>SSW.VerticalSliceArchitecture.Domain</RootNamespace>
+    <AssemblyName>Domain</AssemblyName>
+    <PackageId>SSW.VerticalSliceArchitecture.Domain</PackageId>
+  </PropertyGroup>
+
+  <!-- The domain is deliberately thin: values and results (Vogen, ErrorOr) and the
+       specification abstractions. No EF Core, no ASP.NET Core, no GraphQL — an
+       architecture test enforces that, so adding a package here will fail the build. -->
+  <ItemGroup>
+    <PackageReference Include="Ardalis.Specification" />
+    <PackageReference Include="ErrorOr" />
+    <PackageReference Include="Vogen" />
+  </ItemGroup>
+</Project>
