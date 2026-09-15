@@ -66,6 +66,10 @@
     <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="10.0.9" />
     <PackageVersion Include="Respawn" Version="7.0.0" />
     <PackageVersion Include="Testcontainers.MsSql" Version="4.9.0" />
+    <!-- Transitive via Testcontainers (pulled in by Testcontainers.MsSql); pinned above
+         the 2025.1.0 it resolves to in order to clear NU1903 (GHSA-q939-rpr3-3284,
+         high severity). -->
+    <PackageVersion Include="SSH.NET" Version="2026.0.0" />
     <PackageVersion Include="Polly" Version="8.7.0" />
   </ItemGroup>
 </Project>
