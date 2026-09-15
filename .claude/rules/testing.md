@@ -30,6 +30,13 @@ Where a validator mirrors a domain limit, drive the test boundaries off the doma
 - Reference: `tests/WebApi.IntegrationTests/Features/Heroes/Mutations/CreateHeroMutationTests.cs`.
 - Fast despite hitting a real database, because Respawn truncates rather than recreating.
 
+### Subscriptions
+
+`Features/Heroes/Subscriptions/PowerLevelUpdatedSubscriptionTests.cs` subscribes in process through
+`IRequestExecutorProvider`, then triggers the mutation over HTTP. The HTTP half matters: the
+eventual consistency middleware only publishes domain events once a response is written. A
+websocket client would add a transport to the part that already works.
+
 ### The schema snapshot
 
 `Schema/SchemaSnapshotTests.cs` compares the schema the server builds with the checked-in
