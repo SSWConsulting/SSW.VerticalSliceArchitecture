@@ -1,13 +1,16 @@
-<Project Sdk="Aspire.AppHost.Sdk/13.4.6">
+<Project Sdk="Aspire.AppHost.Sdk/13.5.3">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <IsAspireHost>true</IsAspireHost>
+    <!-- Sources the DCP and Dashboard binaries from the Aspire CLI bundle rather than
+         RID-specific NuGet packages. The bundle is set to become the only supported
+         source, and leaving this unset reports ASPIRE010. -->
+    <AspireUseCliBundle>true</AspireUseCliBundle>
     <UserSecretsId>5df8b960-6ca4-4a63-9039-5445c0911a16</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Aspire.Hosting.AppHost" />
     <PackageReference Include="Aspire.Hosting.Azure.ApplicationInsights" />
     <PackageReference Include="Aspire.Hosting.Azure.AppService" />
     <PackageReference Include="Aspire.Hosting.Azure.Sql" />

@@ -56,3 +56,12 @@ Keep these points in mind:
 - Use `aspire add <package>` when the task is to add a supported integration or regenerate AppHost APIs.
 - Use `aspire update` when the ask is specifically to refresh AppHost package references through the supported CLI workflow.
 - Use `aspire restore` after pulls, cleans, or missing generated files when the AppHost needs its local support restored before running again.
+
+### `aspire update` in this repo
+
+`aspire update --apphost tools/AppHost/AppHost.csproj --channel stable --yes --non-interactive` handles the version bump correctly, but leaves 4 things for you to finish:
+
+- It writes the new versions into `Directory.Packages.props`, not into the AppHost `.csproj`. Central package management survives the update.
+- It rewrites `tools/AppHost/AppHost.csproj` with LF line endings. The committed file uses CRLF and the repo has no `.gitattributes`, so the whole file shows as changed. Convert it back to CRLF before you read the diff.
+- It removes the `Aspire.Hosting.AppHost` `PackageReference` and its `PackageVersion`. `Aspire.AppHost.Sdk` adds that package implicitly, so the removal is correct.
+- Its own post-update restore fails whenever the new Aspire release raises a transitive floor above a central pin (`NU1109`). Read the floors out of the `Aspire.Hosting` nuspec for the target version and raise the pins in `Directory.Packages.props`. See [dependencies.md](../../../rules/dependencies.md).
