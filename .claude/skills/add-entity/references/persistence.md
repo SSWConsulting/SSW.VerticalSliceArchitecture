@@ -140,7 +140,7 @@ Read the generated file before moving on. Things that show up here:
 | Column is `nvarchar(max)` | `HasMaxLength` missing from the configuration |
 | Unexpected drops on other tables | The model snapshot was out of date; check nothing else was edited |
 
-To undo an unwanted migration, `dotnet ef migrations remove` before it's been applied anywhere. Never edit an already-applied migration — roll forward instead.
+To undo an unwanted migration, `dotnet ef migrations remove --project src/WebApi/WebApi.csproj --startup-project src/WebApi/WebApi.csproj --force`, before it's been applied anywhere. `--force` is always needed: Aspire hands the connection string to the `migrations` resource, not to your shell, so EF can't check whether the migration was applied and stops with `The ConnectionString property has not been initialized`. Never edit an already-applied migration — roll forward instead.
 
 ---
 
