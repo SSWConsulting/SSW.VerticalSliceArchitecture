@@ -9,20 +9,28 @@ The packaged artifact consumers install with `dotnet new`, built from this repo 
 _Avoid_: Boilerplate, starter kit, scaffold
 
 **Slice**:
-One use case, owning everything it needs from HTTP surface to persistence, living in its own folder under a Feature. `CreateHero` is a slice; so is `PowerLevelUpdated` — a slice may be triggered by a domain event rather than a request.
+One use case, owning everything it needs from the GraphQL field to persistence, living in its own folder under a Feature. `CreateHero` is a slice; so is `PowerLevelUpdated` — a slice may be triggered by a domain event rather than a request.
 _Avoid_: Handler, module, command (as a name for the whole use case)
 
 **Feature**:
-A group of slices over the same aggregate, sharing a route prefix. `Heroes` is a Feature; it is not itself a slice.
+A group of slices over the same aggregate, together with the object type that puts that aggregate in the schema. `Heroes` is a Feature; it is not itself a slice.
 _Avoid_: Module, area, domain (as a name for this grouping)
 
-**Group**:
-The route prefix a Feature's slices are registered under, so every endpoint in `Heroes` resolves beneath `/api/heroes`.
-_Avoid_: Route group, prefix class
+**Resolver**:
+The static partial class in a slice that contributes one field to `Query`, `Mutation` or `Subscription`, and the method that answers it. `CreateHeroMutation` is a resolver.
+_Avoid_: Endpoint, controller, action, handler
 
-**Endpoint**:
-The HTTP entry point of a slice — one route, one request shape, one response shape.
-_Avoid_: Controller, action, handler
+**Object Type**:
+The class that decides how an aggregate appears in the schema — which fields it exposes and which are resolved on demand. It lives at feature level, because every slice in the feature returns the same type.
+_Avoid_: DTO, response model, view model
+
+**Schema**:
+The full set of types the API offers, checked in as `src/WebApi/schema.graphql`. It is the published contract, so a change to it is a change to the API.
+_Avoid_: Contract file, SDL dump, API definition
+
+**DataLoader**:
+A batched, per-request load of one kind of related data, so a field on a list of parents costs one query instead of one per parent.
+_Avoid_: Batch loader, cache, repository
 
 **Aggregate**:
 A cluster of entities and value objects saved and validated as one unit, entered only through its root. `Team` is an aggregate; `Mission` is inside it and cannot be created independently.

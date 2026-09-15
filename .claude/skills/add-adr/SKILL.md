@@ -109,8 +109,9 @@ The decisions that keep recurring here, and where the existing patterns live:
 
 - **Slice organisation** — one folder per use case under `src/WebApi/Features/{Feature}/`,
   with `CreateHero` as the reference shape. See ADR `20260515-vertical-slices-use-a-folder-per-slice`.
-- **API surface** — FastEndpoints with typed request/response, FluentValidation
-  running automatically, OpenAPI via `Summary` classes. See ADR `20251018-api-use-fastendpoints-instead-of-minimal-apis`.
+- **API surface** — HotChocolate GraphQL with source-generated resolvers, FluentValidation
+  called explicitly in each mutation, and typed errors in the payload. ADR
+  `20251018-api-use-fastendpoints-instead-of-minimal-apis` is the superseded predecessor.
 - **Persistence** — EF Core on SQL Server, strongly typed IDs via Vogen, queries
   through Ardalis.Specification factory methods. See ADR `20260612-use-aggregate-specification-classes-with-factory-methods`.
 - **Domain modelling** — aggregate roots, domain events, value objects, `Guid.CreateVersion7()`.

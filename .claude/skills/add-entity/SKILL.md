@@ -1,30 +1,34 @@
 ---
 name: add-entity
-description: Scaffold a new domain entity or aggregate in this Vertical Slice Architecture template — the entity itself, its strongly typed ID, errors, specification, EF Core configuration, DbSet, the mandatory Vogen registration, and the migration. Use when the user says "add an entity", "add an aggregate", "create a domain model", "add a new table", "model X in the domain", or names a new domain concept that needs to be persisted. Use it before `/add-slice` when the use case needs a domain type that doesn't exist yet.
+description: Scaffold a new domain entity or aggregate in this Vertical Slice Architecture template — the entity itself, its strongly typed ID, errors, specification, EF Core configuration, DbSet, the mandatory Vogen and GraphQL scalar registrations, and the migration. Use when the user says "add an entity", "add an aggregate", "create a domain model", "add a new table", "model X in the domain", or names a new domain concept that needs to be persisted. Use it before `/add-slice` when the use case needs a domain type that doesn't exist yet.
 ---
 
 # Add an Entity
 
-A new persisted domain type in this template is never one file. It's a domain object, a strongly typed ID, an EF configuration, a `DbSet`, a converter registration, and a migration — spread across two folders. Miss one and you get anything from a compile error to an app that won't start.
+A new persisted domain type in this template is never one file. It's a domain object, a strongly typed ID, an EF configuration, a `DbSet`, two registrations, and a migration — spread across three projects. Miss one and you get anything from a compile error to an app that won't start.
 
 ## The trap this skill exists to close
 
-**Every strongly typed ID must be registered in `src/WebApi/Common/Persistence/VogenEfCoreConverters.cs`.**
+**Every strongly typed ID must be registered twice**, and neither registration is checked by the compiler:
 
-Forget it and nothing complains at compile time. `dotnet build` is green, the architecture tests are green, and the app throws on startup when EF Core tries to map a `HeroId` it has no converter for. That is the single most expensive thing to forget in this repo, so step 5 below is not optional and the verification step checks for it explicitly.
+- `src/WebApi/Common/Persistence/VogenEfCoreConverters.cs` — `[EfCoreConverter<{Entity}Id>]`, or EF Core cannot map the ID and the app throws on startup.
+- `src/WebApi/Common/GraphQL/Scalars/` — a scalar deriving from `VogenGuidIdType<TId>`, plus a `BindRuntimeType` call in `GraphQlExt`. Without it HotChocolate infers an object type from the Vogen struct, and the schema fails to build on a duplicate type name.
+
+`dotnet build` is green either way, and so are the architecture tests. These are the two most expensive things to forget in this repo, so steps 5 and 6 below are not optional and the verification step checks both explicitly.
 
 ## Read the live reference first
 
 Before generating anything, read the canonical aggregate and its persistence wiring:
 
-- `src/WebApi/Common/Domain/Heroes/Hero.cs` — aggregate root, Vogen ID, `field`-keyword setter guards
-- `src/WebApi/Common/Domain/Teams/Team.cs` — an aggregate that returns `ErrorOr<Success>` from behaviour
+- `src/Domain/Heroes/Hero.cs` — aggregate root, Vogen ID, `field`-keyword setter guards
+- `src/Domain/Teams/Team.cs` — an aggregate that returns `ErrorOr<Success>` from behaviour
 - `src/WebApi/Common/Persistence/Heroes/HeroConfiguration.cs` — EF configuration
-- `src/WebApi/Common/Persistence/VogenEfCoreConverters.cs` — the registration list
+- `src/WebApi/Common/Persistence/VogenEfCoreConverters.cs` — the EF Core registration list
+- `src/WebApi/Common/GraphQL/Scalars/HeroIdType.cs` — the GraphQL scalar for a Vogen ID
 
 The templates in `references/` follow these files, but the repo is the source of truth. If the two disagree, the repo wins — follow it and update the template (see *Keeping this skill honest* at the bottom).
 
-One deliberate divergence: the aggregate template gives properties a `private set` plus a named mutator, following `Team.cs`. `Hero.cs` uses a public `set` instead, so `UpdateHeroEndpoint` can assign `hero.Name` directly. Both keep the guard in the setter, which is the part that matters; prefer the `Team.cs` shape for new work, because it keeps the aggregate in charge of how it changes.
+One deliberate divergence: the aggregate template gives properties a `private set` plus a named mutator, following `Team.cs`. `Hero.cs` uses a public `set` instead, so `UpdateHeroMutation` can assign `hero.Name` directly. Both keep the guard in the setter, which is the part that matters; prefer the `Team.cs` shape for new work, because it keeps the aggregate in charge of how it changes.
 
 ## What you need to know before scaffolding
 
@@ -45,13 +49,25 @@ If the entity has no behaviour and no invariants, say so — it may want to be a
 
 Work in this order. Later steps depend on earlier ones compiling.
 
-1. **Domain folder** — create `src/WebApi/Common/Domain/{Aggregate}/` and add the entity plus its `[ValueObject<Guid>]` ID. Template: [references/domain.md](references/domain.md).
+1. **Domain folder** — create `src/Domain/{Aggregate}/` and add the entity plus its `[ValueObject<Guid>]` ID. The Domain project may only reference Ardalis.Specification, ErrorOr and Vogen; an architecture test fails the build on anything else. Template: [references/domain.md](references/domain.md).
 2. **Errors** — `{Entity}Errors.cs` with `Error` constants. Add `NotFound` at minimum; endpoints will reach for it.
-3. **Specification** — `{Entity}Spec.cs` extending `SingleResultSpecification<T>`, with a static `ById(...)` factory. One spec class per aggregate; add a factory method per query rather than a new class. Child entities don't get their own spec — they're loaded through the aggregate's.
+3. **Specification** — `{Entity}Spec.cs` extending `Specification<T>`, with a static `ById(...)` factory. One spec class per aggregate; add a factory method per query rather than a new class. Child entities don't get their own spec — they're loaded through the aggregate's.
 4. **EF configuration** — `src/WebApi/Common/Persistence/{Aggregate}/{Entity}Configuration.cs` inheriting `AuditableConfiguration<T>`. Every string property's `HasMaxLength` reads the entity's `const`, never a literal. Template: [references/persistence.md](references/persistence.md).
 5. **Vogen registration** — add `[EfCoreConverter<{Entity}Id>]` to `VogenEfCoreConverters`. See the trap above.
-6. **DbSet** — for an aggregate root only, add `ApplicationDbContext.{Entities}.cs` exposing `DbSet<{Entity}>` via `AggregateRootSet<T>()`. Child entities are reached through their aggregate, so they get no `DbSet`.
-7. **Migration** — run it yourself, don't just print the command:
+6. **GraphQL scalar** — add `src/WebApi/Common/GraphQL/Scalars/{Entity}IdType.cs`:
+
+   ```csharp
+   public sealed class MissionIdType() : VogenGuidIdType<MissionId>("MissionId")
+   {
+       protected override MissionId FromGuid(Guid value) => MissionId.From(value);
+
+       protected override Guid ToGuid(MissionId value) => value.Value;
+   }
+   ```
+
+   Then add `.BindRuntimeType<{Entity}Id, {Entity}IdType>()` in `Host/Extensions/GraphQlExt.cs`. See the trap above.
+7. **DbSet** — for an aggregate root only, add `ApplicationDbContext.{Entities}.cs` exposing `DbSet<{Entity}>` via `AggregateRootSet<T>()`. Child entities are reached through their aggregate, so they get no `DbSet`.
+8. **Migration** — run it yourself, don't just print the command:
 
    ```bash
    dotnet ef migrations add Add{Entity} \
@@ -62,9 +78,9 @@ Work in this order. Later steps depend on earlier ones compiling.
 
    Then **read the generated migration** and confirm the tables and columns match what you configured. An empty `Up()` means EF didn't see your entity — usually a missing `DbSet` or a configuration that wasn't picked up by `ApplyConfigurationsFromAssembly`.
 
-8. **Test data** — add a Bogus factory at `tests/WebApi.IntegrationTests/Common/Factories/{Entity}Factory.cs` so integration tests have something to seed. Template in [references/persistence.md](references/persistence.md).
-9. **Seeding (optional)** — extend `tools/Seeder/Initializers/ApplicationDbContextInitializer.cs` if the entity should show up in dev. Keep it idempotent: short-circuit when rows already exist.
-10. **Unit tests** — invariants and factory rules belong in `tests/WebApi.UnitTests/Features/{Aggregate}/{Entity}Tests.cs`. Cover the guards you wrote: a null/blank string should throw, an over-long string should throw, and the happy path should succeed.
+9. **Test data** — add a Bogus factory at `tests/WebApi.IntegrationTests/Common/Factories/{Entity}Factory.cs` so integration tests have something to seed. Template in [references/persistence.md](references/persistence.md).
+10. **Seeding (optional)** — extend `tools/Seeder/Initializers/ApplicationDbContextInitializer.cs` if the entity should show up in dev. Keep it idempotent: short-circuit when rows already exist.
+11. **Unit tests** — invariants and factory rules belong in `tests/WebApi.UnitTests/Domain/{Aggregate}/{Entity}Tests.cs`. Cover the guards you wrote: a null/blank string should throw, an over-long string should throw, and the happy path should succeed.
 
 ## Verification
 
@@ -75,8 +91,9 @@ dotnet test tests/WebApi.UnitTests
 
 Then confirm the two things a build can't:
 
-- **Vogen registration** — `grep EfCoreConverter src/WebApi/Common/Persistence/VogenEfCoreConverters.cs` lists your new ID. A green build proves nothing here.
-- **The app still starts** — the registration failure only surfaces at runtime, so boot it: `aspire start --isolated` (see the `aspire` skill), wait for the WebApi resource to report healthy, and check the migration ran. Alternatively `dotnet test tests/WebApi.IntegrationTests` exercises real startup against a real SQL Server, which catches the same class of failure.
+- **Both registrations** — `grep EfCoreConverter src/WebApi/Common/Persistence/VogenEfCoreConverters.cs` and `grep BindRuntimeType src/WebApi/Host/Extensions/GraphQlExt.cs` each list your new ID. A green build proves nothing here.
+- **The schema still builds** — `dotnet run --project src/WebApi -- schema export --output src/WebApi/schema.graphql`. A missing scalar fails right here, with a duplicate type name. Commit the regenerated schema; a test compares against it.
+- **The app still starts** — the EF registration failure only surfaces at runtime, so boot it: `aspire start --isolated` (see the `aspire` skill), wait for the WebApi resource to report healthy, and check the migration ran. Alternatively `dotnet test tests/WebApi.IntegrationTests` exercises real startup against a real SQL Server, which catches the same class of failure.
 
 Full detail on what "done" means: [`.claude/rules/verification.md`](../../rules/verification.md).
 
@@ -84,7 +101,8 @@ Full detail on what "done" means: [`.claude/rules/verification.md`](../../rules/
 
 - **Don't put guards in the factory.** They go in the property setter using the `field` keyword — the setter is the only path every assignment goes through, including EF materialisation and later mutation.
 - **Don't add a public parameterless constructor.** EF needs a `private` one; the architecture tests assert this.
-- **Don't reference a feature slice from the domain.** Domain types know nothing about `Features/`.
+- **Don't reference a feature slice from the domain.** Domain types know nothing about `Features/`, and the Domain project cannot reference the API project at all.
+- **Don't put a GraphQL attribute on an entity.** How the type appears in the schema is decided by an `[ObjectType<T>]` at feature level, so the domain stays free of HotChocolate.
 - **Don't hand-edit a migration** to fix a modelling mistake. Fix the entity or configuration and regenerate.
 - **Don't delete or edit existing migrations.** Roll forward with a new one.
 

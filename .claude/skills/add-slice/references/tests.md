@@ -1,240 +1,148 @@
-# Test templates
+# Test templates for a slice
 
-Three projects, three jobs — see [`.claude/rules/testing.md`](../../../rules/testing.md). A new slice earns an integration test; new domain behaviour earns a unit test. The architecture tests need nothing added, they just have to stay green.
-
-Placeholders as in [command-slice.md](command-slice.md).
+Two kinds, in two projects. Reference:
+`tests/WebApi.IntegrationTests/Features/Heroes/Mutations/CreateHeroMutationTests.cs` and
+`tests/WebApi.UnitTests/Features/Heroes/CreateHeroInputValidatorTests.cs`.
 
 ---
 
-## Integration test — command
+## Integration test
 
-`tests/WebApi.IntegrationTests/Endpoints/{Feature}/Commands/{UseCase}CommandTests.cs`
+`tests/WebApi.IntegrationTests/Features/{Feature}/{Mutations|Queries}/{UseCase}{Mutation|Query}Tests.cs`
 
 ```csharp
-using FastEndpoints;
 using Microsoft.EntityFrameworkCore;
-using SSW.VerticalSliceArchitecture.Common.Domain.{Aggregate};
-using SSW.VerticalSliceArchitecture.Features.{Feature}.{UseCase};
-using SSW.VerticalSliceArchitecture.IntegrationTests.Common;
-using System.Net;
-
-namespace SSW.VerticalSliceArchitecture.IntegrationTests.Endpoints.{Feature}.Commands;
-
-public class {UseCase}CommandTests(TestingDatabaseFixture fixture) : IntegrationTestBase(fixture)
-{
-    [Fact]
-    public async Task Command_Should{DoTheThing}()
-    {
-        // Arrange
-        var cmd = new {UseCase}Request("Clark Kent");
-        var client = GetAnonymousClient();
-
-        // Act
-        var result = await client.POSTAsync<{UseCase}Endpoint, {UseCase}Request, {UseCase}Response>(cmd);
-
-        // Assert
-        result.Response.StatusCode.Should().Be(HttpStatusCode.OK);
-
-        var item = await GetQueryable<{Entity}>().FirstAsync(CancellationToken);
-        item.Should().NotBeNull();
-        item.Name.Should().Be(cmd.Name);
-        item.CreatedAt.Should().BeCloseTo(DateTime.Now, TimeSpan.FromSeconds(10));
-    }
-}
-```
-
-What each piece is doing:
-
-- `IntegrationTestBase(fixture)` joins the shared `TestingDatabaseFixture` — a real SQL Server via Testcontainers, truncated between tests by Respawn rather than recreated, which is why these stay fast.
-- `POSTAsync<TEndpoint, TRequest, TResponse>` is FastEndpoints' typed client. Routing to the endpoint *type* means a route change can't silently leave the test passing against a stale URL.
-- `GetQueryable<T>()` is an untracked read straight from the database, so the assertion sees what was actually persisted rather than what's sitting in the endpoint's change tracker.
-- `CancellationToken` comes from the base class (`TestContext.Current.CancellationToken`).
-- `Xunit`, `AwesomeAssertions` and `Bogus` are global usings in this project.
-
-For a 204 command, the typed call drops the response type:
-
-```csharp
-var result = await client.POSTAsync<{UseCase}Endpoint, {UseCase}Request>(cmd);
-result.StatusCode.Should().Be(HttpStatusCode.NoContent);
-```
-
-Note the shape difference — the two-generic overload returns the `HttpResponseMessage` itself, so it's `result.StatusCode`, not `result.Response.StatusCode`.
-
-### Cover the failure path too
-
-A command with a 404 or a domain-error path needs a test for it. The success case alone will pass against an endpoint that swallowed the not-found branch.
-
-```csharp
-[Fact]
-public async Task Command_WhenNotFound_ShouldReturn404()
-{
-    // Arrange
-    var cmd = new {UseCase}Request(Guid.CreateVersion7(), "New name");
-    var client = GetAnonymousClient();
-
-    // Act
-    var result = await client.PUTAsync<{UseCase}Endpoint, {UseCase}Request>(cmd);
-
-    // Assert
-    result.StatusCode.Should().Be(HttpStatusCode.NotFound);
-}
-```
-
----
-
-## Integration test — query
-
-`tests/WebApi.IntegrationTests/Endpoints/{Feature}/Queries/{UseCase}QueryTests.cs`
-
-```csharp
-using System.Net;
-using SSW.VerticalSliceArchitecture.Common.Pagination;
-using SSW.VerticalSliceArchitecture.Features.{Feature}.{UseCase};
+using SSW.VerticalSliceArchitecture.Domain.{Aggregate};
 using SSW.VerticalSliceArchitecture.IntegrationTests.Common;
 using SSW.VerticalSliceArchitecture.IntegrationTests.Common.Factories;
 
-namespace SSW.VerticalSliceArchitecture.IntegrationTests.Endpoints.{Feature}.Queries;
+namespace SSW.VerticalSliceArchitecture.IntegrationTests.Features.{Feature}.Mutations;
 
-public class {UseCase}QueryTests(TestingDatabaseFixture fixture) : IntegrationTestBase(fixture)
+public class {UseCase}MutationTests(TestingDatabaseFixture fixture) : IntegrationTestBase(fixture)
 {
-    private const string Route = "/api/{entities}";
+    private const string Document =
+        """
+        mutation {UseCase}($input: {UseCase}Input!) {
+          {useCase}(input: $input) {
+            {aggregate} { id name }
+            errors { __typename ... on Error { message } }
+          }
+        }
+        """;
 
     [Fact]
-    public async Task Query_ShouldReturnFirstPage_WhenPagingIsNotSpecified()
+    public async Task Mutation_Should{DoTheThing}()
     {
         // Arrange
-        const int entityCount = 25;
-        await AddRangeAsync({Entity}Factory.Generate(entityCount));
+        var {aggregate} = {Aggregate}Factory.Generate();
+        await AddAsync({aggregate});
+
+        var input = new { {aggregate}Id = {aggregate}.Id.Value.ToString(), name = "New name" };
 
         // Act
-        var page = await GetPage<{UseCase}Response>(Route);
+        var result = await ExecuteAsync(Document, new { input });
 
         // Assert
-        page.Items.Should().HaveCount(PagingParams.DefaultPageSize);
-        page.TotalCount.Should().Be(entityCount);
-        page.HasNextPage.Should().BeTrue();
+        var payload = result.Field("{useCase}");
+        payload.GetProperty("errors").ValueKind.Should().Be(JsonValueKind.Null, result.RawBody);
+
+        var updated = await GetQueryable<{Aggregate}>()
+            .FirstAsync(x => x.Id == {aggregate}.Id, CancellationToken);
+        updated.Name.Should().Be("New name");
     }
 
     [Fact]
-    public async Task Query_ShouldReturnBadRequest_WhenSortColumnIsNotAllowed()
+    public async Task Mutation_ShouldReturnNotFound_WhenThe{Aggregate}DoesNotExist()
     {
         // Arrange
-        await AddRangeAsync({Entity}Factory.Generate(3));
+        var input = new { {aggregate}Id = Guid.CreateVersion7().ToString(), name = "New name" };
 
         // Act
-        var response = await GetAnonymousClient().GetAsync($"{Route}?sortBy=notAColumn", CancellationToken);
+        var result = await ExecuteAsync(Document, new { input });
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        var errors = result.Field("{useCase}").GetProperty("errors").EnumerateArray().ToList();
+        errors.Should().ContainSingle();
+        errors[0].GetProperty("__typename").GetString().Should().Be("NotFoundError");
+        errors[0].GetProperty("message").GetString().Should().Be({Aggregate}Errors.NotFound.Description);
     }
 }
 ```
 
-A paged endpoint's tests go through raw URLs and `GetPage<T>` on `IntegrationTestBase` rather than the typed FastEndpoints client, because what they pin down *is* the query-string contract — the parameter names and how out-of-range values are treated. A typed helper would go around the thing under test.
+What the shape is doing:
 
-Cover the boundaries, not just the happy path: the default page, an explicit `page`/`pageSize`, a partial last page, a page past the end (empty `items`, correct `totalCount`), `pageSize` above the cap, both sort directions, and a 400 for an unknown sort column and direction. `GetAllHeroes` has the full set.
+- **The document is written out in full.** It is the same text a client sends, so a renamed field
+  fails the test instead of passing against a regenerated wrapper.
+- **Assert on the payload, not the status code.** GraphQL answers a failed request with HTTP 200 and
+  an `errors` array. `result.Field(name)` fails with the whole body when the request itself errored;
+  a business failure is data inside the payload, so check `errors[0].__typename`.
+- **`errors` is null on the success path.** Assert that too — a mutation that half worked would
+  otherwise pass.
+- **Read the result back through EF.** The payload says what the resolver returned; `GetQueryable<T>`
+  says what was saved.
+- **Variables are anonymous objects**, serialised camelCase. A strongly typed id goes over the wire
+  as a string: `{aggregate}.Id.Value.ToString()`.
 
-Seed through the Bogus factory (`tests/WebApi.IntegrationTests/Common/Factories/{Entity}Factory.cs` — template in [`add-entity/references/persistence.md`](../../add-entity/references/persistence.md)) rather than constructing entities inline, so a change to the entity's factory signature lands in one place.
-
-`AddAsync` seeds one, `AddRangeAsync` seeds many. Both save immediately.
-
-For a single-item query with a route parameter, the typed client is the right tool — there's no query string to pin down:
-
-```csharp
-var result = await client.GETAsync<{UseCase}Endpoint, {UseCase}Request, {UseCase}Response>(
-    new {UseCase}Request(entity.Id.Value));
-```
+For a query, assert on the connection: `nodes`, `totalCount` and `pageInfo`. For a field resolved by
+a DataLoader, ask for it in the document — that is the only thing that proves the loader runs.
 
 ---
 
-## Unit test — domain behaviour
+## Validator unit test
 
-`tests/WebApi.UnitTests/Features/{Aggregate}/{Entity}Tests.cs`
-
-No EF, no mocks, no HTTP. Just the entity and its rules. If a test here needs a `DbContext`, the logic is in the wrong place.
+`tests/WebApi.UnitTests/Features/{Feature}/{UseCase}InputValidatorTests.cs`
 
 ```csharp
-using SSW.VerticalSliceArchitecture.Common.Domain.{Aggregate};
+using SSW.VerticalSliceArchitecture.Domain.{Aggregate};
+using SSW.VerticalSliceArchitecture.Features.{Feature}.{UseCase};
 
-namespace SSW.VerticalSliceArchitecture.UnitTests.Features.{Aggregate};
+namespace SSW.VerticalSliceArchitecture.UnitTests.Features.{Feature};
 
-public class {Entity}Tests
+public class {UseCase}InputValidatorTests
 {
-    [Fact]
-    public void Create_WithValidName_ShouldSucceed()
-    {
-        // Act
-        var {entity} = {Entity}.Create("name");
+    private readonly {UseCase}InputValidator _validator = new();
 
-        // Assert
-        {entity}.Should().NotBeNull();
-        {entity}.Name.Should().Be("name");
-    }
-
+    // The domain setters throw on over-length input, so anything the validator lets through
+    // faults the resolver instead of returning a typed error. These boundaries are the contract
+    // between the two.
     [Theory]
-    [InlineData(null)]
-    [InlineData("")]
-    [InlineData(" ")]
-    public void Create_WithBlankName_ShouldThrow(string? name)
-    {
-        // Act
-        Action act = () => {Entity}.Create(name!);
-
-        // Assert
-        act.Should().Throw<ArgumentException>();
-    }
-
-    [Fact]
-    public void {DoSomething}_WhenNotAvailable_ShouldReturnError()
+    [InlineData(0, false)]
+    [InlineData(1, true)]
+    [InlineData({Aggregate}.NameMaxLength, true)]
+    [InlineData({Aggregate}.NameMaxLength + 1, false)]
+    public void Validator_WithNameOfLength_ShouldMatchDomainLimit(int length, bool expectedValid)
     {
         // Arrange
-        var {entity} = {Entity}.Create("name");
-        {entity}.{DoSomething}("first");
+        var input = CreateInput(name: new string('a', length));
 
         // Act
-        var result = {entity}.{DoSomething}("second");
+        var result = _validator.Validate(input);
 
         // Assert
-        result.IsError.Should().BeTrue();
-        result.FirstError.Should().Be({Entity}Errors.NotAvailable);
+        result.IsValid.Should().Be(expectedValid);
     }
 
-    [Fact]
-    public void {DoSomething}_ShouldRaise{Event}Event()
-    {
-        // Arrange
-        var {entity} = {Entity}.Create("name");
-
-        // Act
-        {entity}.{DoSomething}("description");
-
-        // Assert
-        var domainEvents = {entity}.PopDomainEvents();
-        domainEvents.Should().ContainSingle()
-            .Which.Should().BeOfType<{Event}Event>();
-    }
+    private static {UseCase}Input CreateInput(
+        {Aggregate}Id? {aggregate}Id = null,
+        string name = "A name") =>
+        new({aggregate}Id ?? {Aggregate}Id.From(Guid.CreateVersion7()), name);
 }
 ```
 
-Assert on the `Error` constant itself, not on its message string. The message is prose that will get reworded; the constant is the contract.
-
-`PopDomainEvents()` drains the list, so call it once per assertion block.
-
----
-
-## Architecture tests
-
-`tests/WebApi.ArchitectureTests/` needs nothing added for a new slice — it asserts conventions across the whole assembly. A red test here means the new code broke a rule, so fix the code rather than the test. `DomainTests` is the one new entities trip: every domain type must inherit `Entity<T>` or `AggregateRoot<T>`, or implement `IEvent` or `IValueObject`, and every entity needs a private parameterless constructor.
+Drive the boundaries off the domain constant rather than a literal, so the test follows the limit
+when it moves. No DI and no test host: the validator is a plain object.
 
 ---
 
 ## Running
 
 ```bash
-dotnet test tests/WebApi.UnitTests           # fast, no infrastructure
-dotnet test tests/WebApi.ArchitectureTests   # fast, no infrastructure
+dotnet test tests/WebApi.UnitTests
 dotnet test tests/WebApi.IntegrationTests    # needs Docker or Podman running
-dotnet test                                  # all three
 ```
 
-When the integration tests fail to start their container rather than failing an assertion, the container runtime isn't up.
+After a slice is added the schema snapshot test fails until you regenerate it:
+
+```bash
+dotnet run --project src/WebApi -- schema export --output src/WebApi/schema.graphql
+```

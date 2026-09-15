@@ -50,19 +50,16 @@ against is a binary-compatibility bet, and neither restore nor build can prove i
 A member that moved or changed signature throws `MissingMethodException` or
 `TypeLoadException`, but only when that code actually runs.
 
-So a green build isn't enough. You have to hit the endpoint that actually loads
-the bumped assembly, which means knowing which stack owns it. There's a trap here:
-this template runs two separate OpenAPI stacks. `Microsoft.OpenApi` belongs to
-`Microsoft.AspNetCore.OpenApi` (`AddOpenApi()` / `MapOpenApi()`, served at
-`/openapi/v1.json`). The `/swagger` UI and `/swagger/v1/swagger.json` come from
-FastEndpoints.Swagger, which uses NSwag and never touches `Microsoft.OpenApi`. A
-200 from `swagger.json` therefore tells you nothing about a `Microsoft.OpenApi`
-pin.
+So a green build isn't enough. You have to hit the surface that actually loads
+the bumped assembly, which means knowing which stack owns it.
 
-As shipped, the WebApi calls `AddOpenApi()` but never `MapOpenApi()`, so the
-`Microsoft.OpenApi` path isn't mapped and can't be exercised at all, so the pin
-here only clears the audit. Once something maps it (`aspire start --isolated`, then
-`GET /openapi/v1.json` expecting a valid document), that's the check to run.
+Almost everything the API serves goes through one endpoint, `POST /graphql`, so
+most runtime checks are a query against it. Two caveats. A pin under
+`HotChocolate.Types.Analyzers` is compile-time only — it is an analyzer, and the
+proof it still works is that the generated resolvers appear in `schema.graphql`,
+not that a request succeeds. And a pin under a middleware you have not exercised
+proves nothing: filtering, sorting, paging, subscriptions and DataLoaders each
+load different assemblies, so the query has to use the one you bumped.
 
 Pins that never reach a request don't need a runtime check. The `MessagePack`
 pin, for instance, backs Aspire tooling. Match the check to whatever surface
