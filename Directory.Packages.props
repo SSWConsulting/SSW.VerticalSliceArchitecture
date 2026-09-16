@@ -6,7 +6,7 @@
     <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
   </PropertyGroup>
   <ItemGroup>
-    <PackageVersion Include="Aspire.Hosting.Azure.ApplicationInsights" Version="13.5.3" />
+    <PackageVersion Include="Aspire.Hosting.Azure.ApplicationInsights" Version="13.5.4" />
     <!-- Transitive via Aspire.Hosting 13.5.3 (StreamJsonRpc 2.25.29 requires >= 2.5.302);
          also clears NU1903 (GHSA-hv8m-jj95-wg3x, high severity) that the 2.5.192 it would
          otherwise resolve to is subject to. -->
