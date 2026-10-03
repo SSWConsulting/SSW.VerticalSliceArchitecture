@@ -1,14 +1,11 @@
 using System.Reflection;
-using FastEndpoints.Swagger;
-using SSW.VerticalSliceArchitecture.Host.Extensions;
 using SSW.VerticalSliceArchitecture.Host;
+using SSW.VerticalSliceArchitecture.Host.Extensions;
 
 var appAssembly = Assembly.GetExecutingAssembly();
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
-
-builder.Services.AddCustomProblemDetails();
 
 builder.AddWebApi();
 builder.AddApplication();
@@ -29,16 +26,17 @@ else
 }
 
 app.UseHttpsRedirection();
-app.UseStaticFiles();
+app.UseWebSockets();
 
-app.UseCustomFastEndpoints();
-app.UseSwaggerGen();
 app.UseEventualConsistencyMiddleware();
 
-app.MapDefaultEndpoints();
-app.UseExceptionHandler();
+// The GraphQL endpoint, and in development the Nitro IDE, both live at /graphql.
+app.MapGraphQL();
 
-app.Run();
+app.MapDefaultEndpoints();
+
+// Run(), plus the schema commands: `dotnet run -- schema export` writes the SDL.
+app.RunWithGraphQLCommands(args);
 
 namespace SSW.VerticalSliceArchitecture
 {

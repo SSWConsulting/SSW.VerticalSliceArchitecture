@@ -489,3 +489,6 @@ $RECYCLE.BIN/
 
 # Local verification evidence (screenshots) — throwaway, never committed
 tmp/screenshots/
+
+# Emitted next to schema.graphql by `dotnet run -- schema export`; the SDL is the artifact, not this.
+schema-settings.json

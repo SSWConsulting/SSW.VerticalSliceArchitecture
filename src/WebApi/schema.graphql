@@ -1,0 +1,379 @@
+schema {
+  query: Query
+  mutation: Mutation
+  subscription: Subscription
+}
+
+type Query {
+  heroes(
+    "Returns the first _n_ elements from the list."
+    first: Int
+    "Returns the elements in the list that come after the specified cursor."
+    after: String
+    "Returns the last _n_ elements from the list."
+    last: Int
+    "Returns the elements in the list that come before the specified cursor."
+    before: String
+    where: HeroFilterInput @cost(weight: "10")
+    order: [HeroSortInput!] @cost(weight: "10")
+  ): HeroesConnection
+    @listSize(
+      assumedSize: 50
+      slicingArguments: ["first", "last"]
+      slicingArgumentDefaultValue: 10
+      sizedFields: ["edges", "nodes"]
+      requireOneSlicingArgument: false
+    )
+    @cost(weight: "10")
+  teams(
+    "Returns the first _n_ elements from the list."
+    first: Int
+    "Returns the elements in the list that come after the specified cursor."
+    after: String
+    "Returns the last _n_ elements from the list."
+    last: Int
+    "Returns the elements in the list that come before the specified cursor."
+    before: String
+    where: TeamFilterInput @cost(weight: "10")
+    order: [TeamSortInput!] @cost(weight: "10")
+  ): TeamsConnection
+    @listSize(
+      assumedSize: 50
+      slicingArguments: ["first", "last"]
+      slicingArgumentDefaultValue: 10
+      sizedFields: ["edges", "nodes"]
+      requireOneSlicingArgument: false
+    )
+    @cost(weight: "10")
+  teamById(teamId: TeamId!): Team @cost(weight: "10")
+}
+
+type Mutation {
+  createHero(input: CreateHeroInput!): CreateHeroPayload! @cost(weight: "10")
+  updateHero(input: UpdateHeroInput!): UpdateHeroPayload! @cost(weight: "10")
+  addHeroToTeam(input: AddHeroToTeamInput!): AddHeroToTeamPayload!
+    @cost(weight: "10")
+  completeMission(input: CompleteMissionInput!): CompleteMissionPayload!
+    @cost(weight: "10")
+  createTeam(input: CreateTeamInput!): CreateTeamPayload! @cost(weight: "10")
+  executeMission(input: ExecuteMissionInput!): ExecuteMissionPayload!
+    @cost(weight: "10")
+}
+
+type Subscription {
+  heroPowerLevelUpdated: Hero!
+}
+
+type AddHeroToTeamPayload {
+  team: Team
+  errors: [AddHeroToTeamError!]
+}
+
+type CompleteMissionPayload {
+  team: Team
+  errors: [CompleteMissionError!]
+}
+
+type ConflictError implements Error {
+  code: String!
+  message: String!
+}
+
+type CreateHeroPayload {
+  hero: Hero
+  errors: [CreateHeroError!]
+}
+
+type CreateTeamPayload {
+  team: Team
+  errors: [CreateTeamError!]
+}
+
+type ExecuteMissionPayload {
+  team: Team
+  errors: [ExecuteMissionError!]
+}
+
+"A hero, with the powers that add up to their power level."
+type Hero {
+  team: Team @cost(weight: "10")
+  id: HeroId!
+  name: String!
+  alias: String!
+  powerLevel: Int!
+  powers: [Power!]!
+  createdAt: DateTime!
+  updatedAt: DateTime
+}
+
+"A connection to a list of items."
+type HeroesConnection {
+  "Information to aid in pagination."
+  pageInfo: PageInfo!
+  "A list of edges."
+  edges: [HeroesEdge!]
+  "A flattened list of the nodes."
+  nodes: [Hero!]
+  "Identifies the total count of items in the connection."
+  totalCount: Int! @cost(weight: "10")
+}
+
+"An edge in a connection."
+type HeroesEdge {
+  "A cursor for use in pagination."
+  cursor: String!
+  "The item at the end of the edge."
+  node: Hero!
+}
+
+type InputValidationError implements Error {
+  message: String!
+  failures: [InputValidationFailure!]!
+}
+
+type InputValidationFailure {
+  field: String!
+  message: String!
+}
+
+type Mission {
+  id: MissionId!
+  description: String!
+  status: MissionStatus!
+  createdAt: DateTime!
+  updatedAt: DateTime
+}
+
+type NotFoundError implements Error {
+  code: String!
+  message: String!
+}
+
+"Information about pagination in a connection."
+type PageInfo {
+  "Indicates whether more edges exist following the set defined by the clients arguments."
+  hasNextPage: Boolean!
+  "Indicates whether more edges exist prior the set defined by the clients arguments."
+  hasPreviousPage: Boolean!
+  "When paginating backwards, the cursor to continue."
+  startCursor: String
+  "When paginating forwards, the cursor to continue."
+  endCursor: String
+}
+
+type Power {
+  name: String!
+  powerLevel: Int!
+}
+
+"A team of heroes, and the missions they have taken on."
+type Team {
+  heroes: [Hero!]! @cost(weight: "10")
+  missions: [Mission!]! @cost(weight: "10")
+  id: TeamId!
+  name: String!
+  totalPowerLevel: Int!
+  status: TeamStatus!
+  createdAt: DateTime!
+  updatedAt: DateTime
+}
+
+"A connection to a list of items."
+type TeamsConnection {
+  "Information to aid in pagination."
+  pageInfo: PageInfo!
+  "A list of edges."
+  edges: [TeamsEdge!]
+  "A flattened list of the nodes."
+  nodes: [Team!]
+  "Identifies the total count of items in the connection."
+  totalCount: Int! @cost(weight: "10")
+}
+
+"An edge in a connection."
+type TeamsEdge {
+  "A cursor for use in pagination."
+  cursor: String!
+  "The item at the end of the edge."
+  node: Team!
+}
+
+type UpdateHeroPayload {
+  hero: Hero
+  errors: [UpdateHeroError!]
+}
+
+interface Error {
+  message: String!
+}
+
+union AddHeroToTeamError = InputValidationError | NotFoundError
+
+union CompleteMissionError =
+  | InputValidationError
+  | NotFoundError
+  | ConflictError
+
+union CreateHeroError = InputValidationError
+
+union CreateTeamError = InputValidationError
+
+union ExecuteMissionError = InputValidationError | NotFoundError | ConflictError
+
+union UpdateHeroError = InputValidationError | NotFoundError
+
+input AddHeroToTeamInput {
+  teamId: TeamId!
+  heroId: HeroId!
+}
+
+input CompleteMissionInput {
+  teamId: TeamId!
+}
+
+input CreateHeroInput {
+  name: String!
+  alias: String!
+  powers: [CreateHeroPowerInput!]!
+}
+
+input CreateHeroPowerInput {
+  name: String!
+  powerLevel: Int!
+}
+
+input CreateTeamInput {
+  name: String!
+}
+
+input ExecuteMissionInput {
+  teamId: TeamId!
+  description: String!
+}
+
+input HeroFilterInput {
+  and: [HeroFilterInput!]
+  or: [HeroFilterInput!]
+  name: StringOperationFilterInput
+  alias: StringOperationFilterInput
+  powerLevel: IntOperationFilterInput
+}
+
+input HeroSortInput {
+  name: SortEnumType @cost(weight: "10")
+  alias: SortEnumType @cost(weight: "10")
+  powerLevel: SortEnumType @cost(weight: "10")
+}
+
+input IntOperationFilterInput {
+  eq: Int @cost(weight: "10")
+  neq: Int @cost(weight: "10")
+  in: [Int] @cost(weight: "10")
+  nin: [Int] @cost(weight: "10")
+  gt: Int @cost(weight: "10")
+  ngt: Int @cost(weight: "10")
+  gte: Int @cost(weight: "10")
+  ngte: Int @cost(weight: "10")
+  lt: Int @cost(weight: "10")
+  nlt: Int @cost(weight: "10")
+  lte: Int @cost(weight: "10")
+  nlte: Int @cost(weight: "10")
+}
+
+input StringOperationFilterInput {
+  and: [StringOperationFilterInput!]
+  or: [StringOperationFilterInput!]
+  eq: String @cost(weight: "10")
+  neq: String @cost(weight: "10")
+  contains: String @cost(weight: "20")
+  ncontains: String @cost(weight: "20")
+  in: [String] @cost(weight: "10")
+  nin: [String] @cost(weight: "10")
+  startsWith: String @cost(weight: "20")
+  nstartsWith: String @cost(weight: "20")
+  endsWith: String @cost(weight: "20")
+  nendsWith: String @cost(weight: "20")
+}
+
+input TeamFilterInput {
+  and: [TeamFilterInput!]
+  or: [TeamFilterInput!]
+  name: StringOperationFilterInput
+  totalPowerLevel: IntOperationFilterInput
+  status: TeamStatusOperationFilterInput
+}
+
+input TeamSortInput {
+  name: SortEnumType @cost(weight: "10")
+  totalPowerLevel: SortEnumType @cost(weight: "10")
+}
+
+input TeamStatusOperationFilterInput {
+  eq: TeamStatus @cost(weight: "10")
+  neq: TeamStatus @cost(weight: "10")
+  in: [TeamStatus!] @cost(weight: "10")
+  nin: [TeamStatus!] @cost(weight: "10")
+}
+
+input UpdateHeroInput {
+  heroId: HeroId!
+  name: String!
+  alias: String!
+  powers: [UpdateHeroPowerInput!]!
+}
+
+input UpdateHeroPowerInput {
+  name: String!
+  powerLevel: Int!
+}
+
+enum MissionStatus {
+  IN_PROGRESS
+  COMPLETE
+}
+
+enum SortEnumType {
+  ASC
+  DESC
+}
+
+enum TeamStatus {
+  AVAILABLE
+  ON_MISSION
+}
+
+"The `DateTime` scalar type represents a date and time with time zone offset information."
+scalar DateTime
+  @specifiedBy(url: "https://scalars.graphql.org/chillicream/date-time.html")
+
+scalar HeroId
+
+scalar MissionId
+
+scalar TeamId
+
+"The purpose of the `cost` directive is to define a `weight` for GraphQL types, fields, and arguments. Static analysis can use these weights when calculating the overall cost of a query or response."
+directive @cost(
+  "The `weight` argument defines what value to add to the overall cost for every appearance, or possible appearance, of a type, field, argument, etc."
+  weight: String!
+) on
+  | SCALAR
+  | OBJECT
+  | FIELD_DEFINITION
+  | ARGUMENT_DEFINITION
+  | ENUM
+  | INPUT_FIELD_DEFINITION
+
+"The purpose of the `@listSize` directive is to either inform the static analysis about the size of returned lists (if that information is statically available), or to point the analysis to where to find that information."
+directive @listSize(
+  "The `assumedSize` argument can be used to statically define the maximum length of a list returned by a field."
+  assumedSize: Int
+  "The `slicingArguments` argument can be used to define which of the field's arguments with numeric type are slicing arguments, so that their value determines the size of the list returned by that field. It may specify a list of multiple slicing arguments."
+  slicingArguments: [String!]
+  "The `slicingArgumentDefaultValue` argument can be used to define a default value for a slicing argument, which is used if the argument is not present in a query."
+  slicingArgumentDefaultValue: Int
+  "The `sizedFields` argument can be used to define that the value of the `assumedSize` argument or of a slicing argument does not affect the size of a list returned by a field itself, but that of a list returned by one of its sub-fields."
+  sizedFields: [String!]
+  "The `requireOneSlicingArgument` argument can be used to inform the static analysis that it should expect that exactly one of the defined slicing arguments is present in a query. If that is not the case (i.e., if none or multiple slicing arguments are present), the static analysis may throw an error."
+  requireOneSlicingArgument: Boolean = true
+) on FIELD_DEFINITION

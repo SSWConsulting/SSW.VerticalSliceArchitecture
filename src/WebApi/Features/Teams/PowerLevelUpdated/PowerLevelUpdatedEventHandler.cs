@@ -1,41 +1,41 @@
 using Ardalis.Specification.EntityFrameworkCore;
-using SSW.VerticalSliceArchitecture.Common.Domain.Base.EventualConsistency;
-using SSW.VerticalSliceArchitecture.Common.Domain.Heroes;
-using SSW.VerticalSliceArchitecture.Common.Domain.Teams;
+using SSW.VerticalSliceArchitecture.Common.Events;
+using SSW.VerticalSliceArchitecture.Domain.Base.EventualConsistency;
+using SSW.VerticalSliceArchitecture.Domain.Heroes;
+using SSW.VerticalSliceArchitecture.Domain.Teams;
 
 namespace SSW.VerticalSliceArchitecture.Features.Teams.PowerLevelUpdated;
 
 public class PowerLevelUpdatedEventHandler(
-    IServiceScopeFactory scopeFactory,
+    ApplicationDbContext dbContext,
     ILogger<PowerLevelUpdatedEventHandler> logger)
-    : IEventHandler<PowerLevelUpdatedEvent>
+    : IDomainEventHandler<PowerLevelUpdatedEvent>
 {
-    public async Task HandleAsync(PowerLevelUpdatedEvent eventModel, CancellationToken ct)
+    public async Task HandleAsync(PowerLevelUpdatedEvent domainEvent, CancellationToken cancellationToken)
     {
-        logger.PowerLevelUpdated(eventModel.Hero.Name, eventModel.Hero.PowerLevel);
+        ThrowIfNull(domainEvent);
 
-        using var scope = scopeFactory.CreateScope();
-        var dbContext = scope.Resolve<ApplicationDbContext>();
+        logger.PowerLevelUpdated(domainEvent.Hero.Name, domainEvent.Hero.PowerLevel);
 
-
-        var hero = await dbContext.Heroes.FirstAsync(h => h.Id == eventModel.Hero.Id,
-            cancellationToken: ct);
+        // The dispatcher runs each handler in its own scope, so this is a different DbContext from
+        // the one whose SaveChanges raised the event.
+        var hero = await dbContext.Heroes.FirstAsync(h => h.Id == domainEvent.Hero.Id, cancellationToken);
 
         if (hero.TeamId is null)
         {
-            logger.HeroNotOnTeam(eventModel.Hero.Name);
+            logger.HeroNotOnTeam(domainEvent.Hero.Name);
             return;
         }
 
-        var team = dbContext.Teams
+        var team = await dbContext.Teams
             .WithSpecification(TeamSpec.ById(hero.TeamId.Value))
-            .FirstOrDefault();
+            .FirstOrDefaultAsync(cancellationToken);
 
         if (team is null)
             throw new EventualConsistencyException(PowerLevelUpdatedEvent.TeamNotFound);
 
         team.ReCalculatePowerLevel();
-        await dbContext.SaveChangesAsync(ct);
+        await dbContext.SaveChangesAsync(cancellationToken);
     }
 }
 

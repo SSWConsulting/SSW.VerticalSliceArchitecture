@@ -1,4 +1,4 @@
-﻿using SSW.VerticalSliceArchitecture.Common.Domain.Teams;
+﻿using SSW.VerticalSliceArchitecture.Domain.Teams;
 
 namespace SSW.VerticalSliceArchitecture.IntegrationTests.Common.Factories;
 

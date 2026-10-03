@@ -7,7 +7,7 @@ paths:
 
 A green Debug build is the weakest signal this template gives you. Real
 verification means the code compiles the way CI compiles it, every test project
-passes, the app actually boots under Aspire, and the endpoints you touched
+passes, the app actually boots under Aspire, and the fields you touched
 return what they should. Work through the steps below before you call a change
 done.
 
@@ -15,14 +15,14 @@ done.
 
 Not every edit earns the full gauntlet.
 
-- **Runtime changes** (endpoints, DI registration, EF Core mappings or
-  migrations, middleware, `ServiceDefaults`, the AppHost) — run everything:
-  builds, all tests, the Aspire boot, and REST smoke checks.
+- **Runtime changes** (resolvers, schema configuration, DI registration, EF Core
+  mappings or migrations, middleware, `ServiceDefaults`, the AppHost) — run
+  everything: builds, all tests, the Aspire boot, and GraphQL smoke checks.
 - **Domain, spec, or validator changes** with no wiring change — builds plus the
   unit and integration tests. Skip the Aspire loop only if nothing you changed
   can affect a running request.
 - **Docs, comments, or test-only changes** — build and the relevant tests are
-  enough; the Aspire boot and REST calls prove nothing here.
+  enough; the Aspire boot and GraphQL calls prove nothing here.
 
 When in doubt, run the heavier tier. A skipped step you needed costs far more
 than a minute of build time.
@@ -79,26 +79,31 @@ list resources, and read their health and traces. Confirm every resource
 you trust anything downstream. If the environment itself looks wrong,
 `aspire doctor` is the first diagnostic.
 
-## 4. Smoke-test the REST API
+## 4. Smoke-test the GraphQL API
 
-A healthy resource can still serve a broken endpoint. Once the app is up, call
-the surface you actually changed plus a known-good baseline, and read the
-responses. A 200 with the wrong body still fails verification.
+A healthy resource can still serve a broken field. Once the app is up, run the
+operations your change touched plus a known-good baseline, and read the
+responses. **HTTP 200 is not the signal here** — GraphQL answers a failed query
+with 200 and an `errors` array, so read the body every time.
 
-- Hit the endpoints your change touched, across the status codes that matter
-  (the success path and at least one validation or not-found path).
-- Call a baseline you didn't touch (a Heroes read, `/swagger`, or
-  `/swagger/v1/swagger.json`) to confirm the app is genuinely serving traffic
-  and the failure, if any, is scoped to your change.
-- The Swagger UI at `https://localhost:7255/swagger` is the quickest way to
-  exercise an endpoint by hand; `curl` against the same routes works for a
-  scripted check.
+- Run the operation your change touched, on the success path and on at least one
+  failure path. For a mutation, the failure path means checking the typed member
+  of the payload's error union, not the status code.
+- Run a baseline you did not touch (`query { heroes { totalCount } }`) to confirm
+  the app is genuinely serving traffic, and that any failure is scoped to your
+  change.
+- Nitro, the built-in IDE at `https://localhost:7255/graphql`, is the quickest
+  way to run an operation by hand. For a scripted check, post the document:
 
-One caveat inherited from [dependencies.md](dependencies.md): `/swagger` and
-`swagger.json` come from FastEndpoints (NSwag), a different stack from
-`Microsoft.AspNetCore.OpenApi`. The two don't share a code path, so a 200 from
-Swagger tells you nothing about the OpenAPI side. As shipped the WebApi calls
-`AddOpenApi()` but never `MapOpenApi()`, so its `/openapi/v1.json` document isn't
-mapped and returns 404 until something maps it; don't smoke-test that route
-unless your change is what wired it up. Match the request to the code you
-actually changed.
+```bash
+curl -sk https://localhost:7255/graphql \
+  -H 'content-type: application/json' \
+  -d '{"query":"{ heroes { totalCount nodes { alias } } }"}'
+```
+
+If your change touched the schema, regenerate the snapshot and read the diff —
+it is the clearest statement of what the change did to the public contract:
+
+```bash
+dotnet run --project src/WebApi -- schema export --output src/WebApi/schema.graphql
+```

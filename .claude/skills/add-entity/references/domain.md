@@ -4,20 +4,20 @@ Placeholders: `{Aggregate}` is the folder / aggregate name (`Heroes`), `{Entity}
 
 The namespace root (`SSW.VerticalSliceArchitecture`) is rewritten by `dotnet new` when the template is instantiated, so keep using it verbatim — it will match whatever the generated project is called. If you're unsure of the current root, read `src/WebApi/GlobalUsings.cs`.
 
-Types available without a `using` (from `src/WebApi/GlobalUsings.cs`): `Vogen`, `ErrorOr`, `Ardalis.Specification`, `FluentValidation`, `FastEndpoints`, `Microsoft.EntityFrameworkCore`, and the `ArgumentException` / `ArgumentNullException` / `ArgumentOutOfRangeException` static guard helpers (`ThrowIfNullOrWhiteSpace`, `ThrowIfGreaterThan`, `ThrowIfLessThan`, `ThrowIfNull`).
+Types available without a `using` (from `src/Domain/GlobalUsings.cs`): `Vogen`, `ErrorOr`, `Ardalis.Specification`, and the `ArgumentException` / `ArgumentNullException` / `ArgumentOutOfRangeException` static guard helpers (`ThrowIfNullOrWhiteSpace`, `ThrowIfGreaterThan`, `ThrowIfLessThan`, `ThrowIfNull`). The Domain project has no EF Core, no ASP.NET Core and no HotChocolate, and an architecture test keeps it that way.
 
 ---
 
 ## Aggregate root
 
-`src/WebApi/Common/Domain/{Aggregate}/{Entity}.cs`
+`src/Domain/{Aggregate}/{Entity}.cs`
 
 An aggregate root is the transactional boundary: it's what gets a `DbSet`, what specs load, and the only thing that may raise domain events.
 
 ```csharp
-using SSW.VerticalSliceArchitecture.Common.Domain.Base;
+using SSW.VerticalSliceArchitecture.Domain.Base;
 
-namespace SSW.VerticalSliceArchitecture.Common.Domain.{Aggregate};
+namespace SSW.VerticalSliceArchitecture.Domain.{Aggregate};
 
 // Ensure stongly typed IDs are registered in 'VogenEfCoreConverters'
 // For strongly typed IDs, check out the rule: https://www.ssw.com.au/rules/do-you-use-strongly-typed-ids/
@@ -87,14 +87,14 @@ public ErrorOr<Success> ExecuteMission(string description)
 
 ## Child entity
 
-`src/WebApi/Common/Domain/{Aggregate}/{Child}.cs`
+`src/Domain/{Aggregate}/{Child}.cs`
 
 Same shape, but inherits `Entity<TId>` instead of `AggregateRoot<TId>`, gets no `DbSet`, and is created through its parent. Only the aggregate root raises domain events.
 
 ```csharp
-using SSW.VerticalSliceArchitecture.Common.Domain.Base;
+using SSW.VerticalSliceArchitecture.Domain.Base;
 
-namespace SSW.VerticalSliceArchitecture.Common.Domain.{Aggregate};
+namespace SSW.VerticalSliceArchitecture.Domain.{Aggregate};
 
 [ValueObject<Guid>]
 public readonly partial struct {Child}Id;
@@ -128,14 +128,14 @@ Its ID still needs registering in `VogenEfCoreConverters`.
 
 ## Value object
 
-`src/WebApi/Common/Domain/{Aggregate}/{ValueObject}.cs`
+`src/Domain/{Aggregate}/{ValueObject}.cs`
 
 No ID, no lifecycle, structural equality. Use one when the concept is defined entirely by its values — an amount, a coordinate, a named power. Reference: `Power.cs`.
 
 ```csharp
-using SSW.VerticalSliceArchitecture.Common.Domain.Base.Interfaces;
+using SSW.VerticalSliceArchitecture.Domain.Base.Interfaces;
 
-namespace SSW.VerticalSliceArchitecture.Common.Domain.{Aggregate};
+namespace SSW.VerticalSliceArchitecture.Domain.{Aggregate};
 
 public record {ValueObject} : IValueObject
 {
@@ -166,10 +166,10 @@ public record {ValueObject} : IValueObject
 
 ## Errors
 
-`src/WebApi/Common/Domain/{Aggregate}/{Entity}Errors.cs`
+`src/Domain/{Aggregate}/{Entity}Errors.cs`
 
 ```csharp
-namespace SSW.VerticalSliceArchitecture.Common.Domain.{Aggregate};
+namespace SSW.VerticalSliceArchitecture.Domain.{Aggregate};
 
 public static class {Entity}Errors
 {
@@ -189,15 +189,15 @@ The code string is `{Entity}.{Condition}` — it's what surfaces in the problem-
 
 ## Specification
 
-`src/WebApi/Common/Domain/{Aggregate}/{Entity}Spec.cs`
+`src/Domain/{Aggregate}/{Entity}Spec.cs`
 
 One spec class per aggregate, one static factory method per query. That keeps every query for an aggregate in one discoverable place instead of scattered across slices.
 
 ```csharp
-namespace SSW.VerticalSliceArchitecture.Common.Domain.{Aggregate};
+namespace SSW.VerticalSliceArchitecture.Domain.{Aggregate};
 
 // For more on the Specification Pattern see: https://www.ssw.com.au/rules/use-specification-pattern/
-public sealed class {Entity}Spec : SingleResultSpecification<{Entity}>
+public sealed class {Entity}Spec : Specification<{Entity}>
 {
     public static {Entity}Spec ById({Entity}Id {entity}Id)
     {
@@ -235,14 +235,15 @@ var {entity} = dbContext.{Entities}
 
 ## Domain event
 
-`src/WebApi/Common/Domain/{Aggregate}/{Event}Event.cs`
+`src/Domain/{Aggregate}/{Event}Event.cs`
 
 ```csharp
-using SSW.VerticalSliceArchitecture.Common.Domain.Base.EventualConsistency;
+using SSW.VerticalSliceArchitecture.Domain.Base.EventualConsistency;
+using SSW.VerticalSliceArchitecture.Domain.Base.Interfaces;
 
-namespace SSW.VerticalSliceArchitecture.Common.Domain.{Aggregate};
+namespace SSW.VerticalSliceArchitecture.Domain.{Aggregate};
 
-public record {Event}Event({Entity} {Entity}) : IEvent
+public record {Event}Event({Entity} {Entity}) : IDomainEvent
 {
     public static readonly Error {Dependency}NotFound = EventualConsistencyError.From(
         code: "{Event}.{Dependency}NotFound",
@@ -256,4 +257,8 @@ Raised from inside the aggregate:
 AddDomainEvent(new {Event}Event(this));
 ```
 
-`DispatchDomainEventsInterceptor` dispatches these after `SaveChangesAsync()`, and handlers run inside the same transaction. So a handler that can't complete must throw `EventualConsistencyException` (built from the `EventualConsistencyError` above) rather than swallowing the failure — `EventualConsistencyMiddleware` turns it into the right HTTP response. Handlers live in the consuming slice, not the domain: `src/WebApi/Features/{Feature}/{Event}/{Event}EventHandler.cs`. Reference: `Features/Teams/PowerLevelUpdated/PowerLevelUpdatedEventHandler.cs`.
+`IDomainEvent` is a marker declared in the Domain project, so raising an event costs the domain no dependency.
+
+`DispatchDomainEventsInterceptor` collects these after `SaveChangesAsync()`, and `DomainEventDispatcher` runs every handler, each in its own scope and therefore its own `DbContext`. A handler that can't complete must throw `EventualConsistencyException` (built from the `EventualConsistencyError` above) rather than swallowing the failure.
+
+A handler implements `IDomainEventHandler<TEvent>` and lives in the consuming slice, not the domain: `src/WebApi/Features/{Feature}/{Event}/{Event}EventHandler.cs`. One event may have several handlers — reference: `Features/Teams/PowerLevelUpdated/PowerLevelUpdatedEventHandler.cs` recalculates the team total while `Features/Heroes/PowerLevelUpdated/PowerLevelUpdatedPublisher.cs` pushes a subscription message.

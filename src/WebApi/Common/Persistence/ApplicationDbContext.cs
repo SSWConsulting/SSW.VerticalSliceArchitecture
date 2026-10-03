@@ -1,4 +1,4 @@
-﻿using SSW.VerticalSliceArchitecture.Common.Domain.Base.Interfaces;
+﻿using SSW.VerticalSliceArchitecture.Domain.Base.Interfaces;
 using System.Reflection;
 
 namespace SSW.VerticalSliceArchitecture.Common.Persistence;

@@ -1,12 +1,13 @@
+using System.Reflection;
 using System.Text.RegularExpressions;
-using FastEndpoints;
+using FluentValidation;
+using HotChocolate.Types;
 using Microsoft.EntityFrameworkCore;
 using Mono.Cecil;
 using SSW.VerticalSliceArchitecture.ArchitectureTests.Common;
-using SSW.VerticalSliceArchitecture.Common.Pagination;
 using SSW.VerticalSliceArchitecture.Common.Persistence;
 
-// FastEndpoints ships its own TypeDefinition; this file means Cecil's throughout.
+// Cecil and HotChocolate both ship a TypeDefinition; this file means Cecil's throughout.
 using TypeDefinition = Mono.Cecil.TypeDefinition;
 
 namespace SSW.VerticalSliceArchitecture.ArchitectureTests;
@@ -16,14 +17,18 @@ public class FeatureTests : TestBase
     private static readonly string DbContextFullName = typeof(DbContext).FullName!;
     private static readonly string ApplicationDbContextFullName = typeof(ApplicationDbContext).FullName!;
 
+    private static readonly string[] ResolverSuffixes = ["Query", "Mutation", "Subscription"];
+
+    /// <summary>
+    /// Every class that contributes fields to a root operation type.
+    /// </summary>
     /// <remarks>
-    /// <c>IsAssignableFrom</c> walks the base-type chain, so this catches every FastEndpoints base
-    /// (<c>Endpoint&lt;TRequest, TResponse&gt;</c> and its aliases) without NetArchTest's
-    /// <c>Inherit()</c>, which does not follow open generics reliably.
+    /// Found by attribute rather than by base type: a HotChocolate resolver class is a static
+    /// partial with no base to inherit, so the attribute is the only thing that marks it.
     /// </remarks>
-    private static readonly List<Type> Endpoints = RootAssembly
+    private static readonly List<Type> Resolvers = RootAssembly
         .GetTypes()
-        .Where(t => t is { IsAbstract: false, IsGenericTypeDefinition: false } && typeof(BaseEndpoint).IsAssignableFrom(t))
+        .Where(HasOperationTypeAttribute)
         .ToList();
 
     private static readonly Lazy<ModuleDefinition> LazyRootModule = new(ReadRootModule);
@@ -36,93 +41,79 @@ public class FeatureTests : TestBase
     }
 
     [Fact]
-    public void Endpoints_Should_BeNamedEndpointAndLiveInASliceNamespace()
+    public void Resolvers_Should_BeNamedForTheirOperationAndLiveInASliceNamespace()
     {
         // Arrange
-        Endpoints.Dump(_output);
+        Resolvers.Dump(_output);
 
         // Act
-        var invalidTypes = Endpoints
-            .Where(t => !t.Name.EndsWith("Endpoint", StringComparison.Ordinal) || !IsSliceNamespace(t.Namespace))
+        var invalidTypes = Resolvers
+            .Where(t => !ResolverSuffixes.Any(s => t.Name.EndsWith(s, StringComparison.Ordinal)) ||
+                        !IsSliceNamespace(t.Namespace))
             .ToList();
 
         // Assert
-        Endpoints.Should().NotBeEmpty();
+        Resolvers.Should().NotBeEmpty();
         invalidTypes.Should().BeEmpty(
-            "every endpoint must be named *Endpoint and sit two segments below {0} — one for the feature, one for the use case — but these do not: {1}",
+            "every resolver must be named *Query, *Mutation or *Subscription and sit two segments below {0} — one for the feature, one for the use case — but these do not: {1}",
             FeaturesNamespace,
             Describe(invalidTypes));
     }
 
+    /// <remarks>
+    /// Static partial is not a style preference: the HotChocolate source generator emits the other
+    /// half of the class, and a non-partial or instance class produces no schema field at all —
+    /// silently, because nothing fails to compile.
+    /// </remarks>
     [Fact]
-    public void EndpointsWithARequest_Should_HaveAMatchingValidatorInTheirSlice()
+    public void Resolvers_Should_BeStaticAndPartial()
     {
         // Arrange
-        var requests = Endpoints
-            .Select(t => (Endpoint: t, Request: GetRequestType(t)))
-            .ToList();
-
-        var endpointsWithRequest = requests
-            .Where(x => x.Request is not null && x.Request != typeof(EmptyRequest))
-            .ToList();
-
-        endpointsWithRequest.Select(x => x.Endpoint).Dump(_output);
+        Resolvers.Dump(_output);
 
         // Act
-        var missingValidators = endpointsWithRequest
-            .Where(x => !HasValidatorInSlice(x.Endpoint, x.Request!))
-            .Select(x => x.Endpoint)
+        var invalidTypes = Resolvers
+            .Where(t => !(t.IsAbstract && t.IsSealed))
             .ToList();
 
-        // An endpoint whose request type can't be read isn't exempt, it's unclassified. Letting it fall
-        // in with the request-less endpoints is how a rule quietly stops covering part of its subject.
-        var unclassified = requests.Where(x => x.Request is null).Select(x => x.Endpoint).ToList();
-
         // Assert
-        endpointsWithRequest.Should().NotBeEmpty();
-        unclassified.Should().BeEmpty(
-            "every endpoint must derive from Endpoint<TRequest, TResponse> so its request type is known, but these do not: {0}",
-            Describe(unclassified));
-        missingValidators.Should().BeEmpty(
-            "every endpoint with a request must have a Validator<TRequest> in the same slice, but these do not: {0}",
-            Describe(missingValidators));
+        Resolvers.Should().NotBeEmpty();
+        invalidTypes.Should().BeEmpty(
+            "every resolver must be a static class so the source generator can extend it, but these are not: {0}",
+            Describe(invalidTypes));
     }
 
     /// <summary>
-    /// A paged request must be validated by a <see cref="PagedRequestValidator{TRequest,TEntity}"/>, not
-    /// merely by some <c>Validator&lt;TRequest&gt;</c>.
+    /// A mutation that takes an input record must have a FluentValidation validator beside it.
     /// </summary>
     /// <remarks>
-    /// The allow-list rules live in that base class, and the primitives behind them throw on an unknown
-    /// sort column or direction rather than returning a result. So a slice that inherits
-    /// <see cref="PagedRequest"/> but writes its own bare validator still satisfies
-    /// <see cref="EndpointsWithARequest_Should_HaveAMatchingValidatorInTheirSlice"/> while turning the
-    /// documented 400 into a 500. This is the rule that makes that unreachable.
+    /// GraphQL validates the shape of an input, never its content: it will happily accept an empty
+    /// name or a power level of 500. Nothing else in the pipeline checks, so a missing validator is
+    /// the difference between a typed error in the payload and a faulted resolver.
     /// </remarks>
     [Fact]
-    public void EndpointsWithAPagedRequest_Should_HaveAPagedRequestValidatorInTheirSlice()
+    public void MutationInputs_Should_HaveAValidatorInTheirSlice()
     {
         // Arrange
-        var pagedEndpoints = Endpoints
-            .Select(t => (Endpoint: t, Request: GetRequestType(t)))
-            .Where(x => x.Request is not null && typeof(PagedRequest).IsAssignableFrom(x.Request))
+        var inputs = Resolvers
+            .Where(t => t.GetCustomAttributes().Any(a => a is MutationTypeAttribute))
+            .SelectMany(GetInputTypes)
+            .DistinctBy(x => x.Input)
             .ToList();
 
-        pagedEndpoints.Select(x => x.Endpoint).Dump(_output);
+        inputs.Select(x => x.Input).Dump(_output);
 
         // Act
-        var missingPagedValidators = pagedEndpoints
-            .Where(x => !HasPagedValidatorInSlice(x.Endpoint, x.Request!))
-            .Select(x => x.Endpoint)
+        var missingValidators = inputs
+            .Where(x => !HasValidatorInSlice(x.Resolver, x.Input))
+            .Select(x => x.Input)
             .ToList();
 
         // Assert
-        pagedEndpoints.Should().NotBeEmpty();
-        missingPagedValidators.Should().BeEmpty(
-            "every endpoint whose request derives from {0} must have a {1} in the same slice, but these do not: {2}",
-            nameof(PagedRequest),
-            "PagedRequestValidator<TRequest, TEntity>",
-            Describe(missingPagedValidators));
+        inputs.Should().NotBeEmpty();
+        missingValidators.Should().BeEmpty(
+            "every mutation input must have an AbstractValidator<TInput> in the same slice, but these do not: {0}",
+            Describe(missingValidators));
     }
 
     [Fact]
@@ -178,108 +169,105 @@ public class FeatureTests : TestBase
     }
 
     [Fact]
-    public void Endpoints_Should_OnlyDependOnApplicationDbContext()
+    public void Resolvers_Should_OnlyDependOnApplicationDbContext()
     {
         // Arrange
-        var endpointDefinitions = GetEndpointDefinitions();
+        var resolverDefinitions = GetResolverDefinitions();
 
-        var endpointsUsingADbContext = endpointDefinitions
-            .Select(td => (Endpoint: td, DbContexts: GetDbContextDependencies(td)))
+        var resolversUsingADbContext = resolverDefinitions
+            .Select(td => (Resolver: td, DbContexts: GetDbContextDependencies(td)))
             .Where(x => x.DbContexts.Count > 0)
             .ToList();
 
-        foreach (var (endpoint, dbContexts) in endpointsUsingADbContext)
-            _output.WriteLine($"{endpoint.FullName} -> {string.Join(", ", dbContexts.Select(d => d.FullName))}");
+        foreach (var (resolver, dbContexts) in resolversUsingADbContext)
+            _output.WriteLine($"{resolver.FullName} -> {string.Join(", ", dbContexts.Select(d => d.FullName))}");
 
         // Act
-        var invalidTypes = endpointsUsingADbContext
+        var invalidTypes = resolversUsingADbContext
             .Where(x => x.DbContexts.Any(db => !string.Equals(db.FullName, ApplicationDbContextFullName, StringComparison.Ordinal)))
-            .Select(x => x.Endpoint.FullName)
+            .Select(x => x.Resolver.FullName)
             .ToList();
 
         // Assert
-        endpointDefinitions.Should().HaveCount(Endpoints.Count, "the IL scan must see the same endpoints reflection found");
-        endpointsUsingADbContext.Should().NotBeEmpty();
+        resolverDefinitions.Should().HaveCount(Resolvers.Count, "the IL scan must see the same resolvers reflection found");
+        resolversUsingADbContext.Should().NotBeEmpty();
         invalidTypes.Should().BeEmpty(
-            "endpoints must take {0}, not the DbContext base type or a second DbContext, but these do not: {1}",
+            "resolvers must take {0}, not the DbContext base type or a second DbContext, but these do not: {1}",
             nameof(ApplicationDbContext),
             string.Join(", ", invalidTypes));
     }
 
     /// <summary>
-    /// The request type an endpoint handles, or <c>null</c> when it can't be determined.
+    /// The object types that bind an aggregate to the schema belong to the feature, not to a slice.
     /// </summary>
     /// <remarks>
-    /// The request-less base types are aliases: <c>Endpoint&lt;TRequest&gt;</c> is
-    /// <c>Endpoint&lt;TRequest, object&gt;</c> and <c>EndpointWithoutRequest&lt;TResponse&gt;</c> is
-    /// <c>Endpoint&lt;EmptyRequest, TResponse&gt;</c>. Callers filter out <c>EmptyRequest</c> to exclude the latter.
+    /// One Hero type serves every hero slice — that is what makes it a graph. Declaring it inside a
+    /// slice would make every other slice depend on that slice to return a hero.
     /// </remarks>
-    private static Type? GetRequestType(Type endpoint)
+    [Fact]
+    public void ObjectTypes_Should_LiveAtFeatureLevel()
     {
-        for (var type = endpoint.BaseType; type is not null; type = type.BaseType)
-        {
-            if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Endpoint<,>))
-                return type.GetGenericArguments()[0];
-        }
+        // Arrange
+        var objectTypes = RootAssembly
+            .GetTypes()
+            .Where(t => t.GetCustomAttributes().Any(a => a.GetType().Name.StartsWith("ObjectTypeAttribute", StringComparison.Ordinal)))
+            .ToList();
 
-        return null;
+        objectTypes.Dump(_output);
+
+        // Act
+        var invalidTypes = objectTypes
+            .Where(t => IsSliceNamespace(t.Namespace))
+            .ToList();
+
+        // Assert
+        objectTypes.Should().NotBeEmpty();
+        invalidTypes.Should().BeEmpty(
+            "an [ObjectType<T>] must sit at feature level, not inside a slice, but these do not: {0}",
+            Describe(invalidTypes));
     }
 
+    private static bool HasOperationTypeAttribute(Type type) =>
+        type.GetCustomAttributes().Any(a =>
+            a is QueryTypeAttribute or MutationTypeAttribute or SubscriptionTypeAttribute);
+
+    /// <summary>
+    /// Every parameter of a resolver method that is an input record declared in the same slice.
+    /// </summary>
     /// <remarks>
-    /// Matches on FastEndpoints' <c>Validator&lt;T&gt;</c> rather than FluentValidation's
-    /// <c>IValidator&lt;T&gt;</c> for two reasons. FastEndpoints only binds validators derived from its
-    /// own base, so an <c>AbstractValidator&lt;T&gt;</c> would satisfy the interface while never running
-    /// against a request. And <c>IValidator&lt;in T&gt;</c> is contravariant, so a base request's
-    /// validator would satisfy every request derived from it; class assignability is invariant.
+    /// Identified by namespace rather than by a name suffix: services, DataLoaders and the
+    /// cancellation token all come from elsewhere, and a slice's own types are exactly the ones the
+    /// slice is responsible for validating.
     /// </remarks>
-    private static bool HasValidatorInSlice(Type endpoint, Type requestType)
+    private static IEnumerable<(Type Resolver, Type Input)> GetInputTypes(Type resolver) =>
+        resolver
+            .GetMethods(BindingFlags.Public | BindingFlags.Static | BindingFlags.DeclaredOnly)
+            .SelectMany(m => m.GetParameters())
+            .Select(p => p.ParameterType)
+            .Where(t => string.Equals(t.Namespace, resolver.Namespace, StringComparison.Ordinal))
+            .Select(t => (resolver, t));
+
+    private static bool HasValidatorInSlice(Type resolver, Type inputType)
     {
-        var validatorBase = typeof(Validator<>).MakeGenericType(requestType);
+        var validatorBase = typeof(AbstractValidator<>).MakeGenericType(inputType);
 
         return RootAssembly
             .GetTypes()
             .Any(t => t is { IsAbstract: false } &&
-                      string.Equals(t.Namespace, endpoint.Namespace, StringComparison.Ordinal) &&
+                      string.Equals(t.Namespace, resolver.Namespace, StringComparison.Ordinal) &&
                       validatorBase.IsAssignableFrom(t));
     }
 
-    /// <remarks>
-    /// Walks the base chain looking for the open <c>PagedRequestValidator&lt;,&gt;</c> rather than closing it
-    /// over a known entity type: the entity argument is the slice's own choice, so the rule can't name it.
-    /// </remarks>
-    private static bool HasPagedValidatorInSlice(Type endpoint, Type requestType)
+    private static List<TypeDefinition> GetResolverDefinitions()
     {
-        var validatorBase = typeof(Validator<>).MakeGenericType(requestType);
-
-        return RootAssembly
-            .GetTypes()
-            .Any(t => t is { IsAbstract: false } &&
-                      string.Equals(t.Namespace, endpoint.Namespace, StringComparison.Ordinal) &&
-                      validatorBase.IsAssignableFrom(t) &&
-                      DerivesFromPagedRequestValidator(t));
-    }
-
-    private static bool DerivesFromPagedRequestValidator(Type validator)
-    {
-        for (var type = validator; type is not null; type = type.BaseType)
-        {
-            if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(PagedRequestValidator<,>))
-                return true;
-        }
-
-        return false;
-    }
-
-    private static List<TypeDefinition> GetEndpointDefinitions()
-    {
-        var endpointNames = Endpoints
+        var resolverNames = Resolvers
             .Select(t => t.FullName)
             .OfType<string>()
             .ToHashSet(StringComparer.Ordinal);
 
         return LazyRootModule.Value
             .GetTypes()
-            .Where(td => endpointNames.Contains(td.FullName))
+            .Where(td => resolverNames.Contains(td.FullName))
             .ToList();
     }
 
@@ -296,26 +284,25 @@ public class FeatureTests : TestBase
     }
 
     /// <summary>
-    /// Every <see cref="DbContext"/>-derived type an endpoint reaches for.
+    /// Every <see cref="DbContext"/>-derived type a resolver reaches for.
     /// </summary>
     /// <remarks>
-    /// Reads IL rather than reflecting over members, because a signature is only one of the ways an
-    /// endpoint can get hold of a service. FastEndpoints also supports handler-method injection, and
-    /// <c>Resolve&lt;T&gt;()</c> names its service only in the generic argument of the call site —
-    /// an idiom this codebase already uses.
+    /// Reads IL rather than reflecting over members, because a signature is only one of the ways a
+    /// resolver can get hold of a service — it can also resolve one from the request's service
+    /// provider, which names the service only in the generic argument of the call site.
     /// <para>
     /// Deliberately ignores the declaring type of called methods: <c>SaveChangesAsync</c> is declared on
-    /// <c>DbContext</c>, so counting call targets would flag every correct endpoint.
+    /// <c>DbContext</c>, so counting call targets would flag every correct resolver.
     /// </para>
     /// </remarks>
-    private static List<TypeReference> GetDbContextDependencies(TypeDefinition endpoint)
+    private static List<TypeReference> GetDbContextDependencies(TypeDefinition resolver)
     {
         var references = new List<TypeReference>();
 
-        // Nested types carry the real body of every async method: HandleAsync compiles down to a state
-        // machine in a nested type, and the endpoint's own method body only starts it. Skip them and the
-        // scan sees nothing an endpoint actually does.
-        foreach (var type in WithNestedTypes(endpoint))
+        // Nested types carry the real body of every async method: the resolver compiles down to a
+        // state machine in a nested type, and the method body only starts it. Skip them and the scan
+        // sees nothing a resolver actually does.
+        foreach (var type in WithNestedTypes(resolver))
         {
             references.AddRange(type.Fields.Select(f => f.FieldType));
             references.AddRange(type.Properties.Select(p => p.PropertyType));

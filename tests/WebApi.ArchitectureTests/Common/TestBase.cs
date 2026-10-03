@@ -1,14 +1,19 @@
 using System.Reflection;
+using SSW.VerticalSliceArchitecture.Domain.Base;
 
 namespace SSW.VerticalSliceArchitecture.ArchitectureTests.Common;
 
 public abstract class TestBase
 {
-    protected const string DomainAssemblyName = "Domain";
-
     protected const string FeaturesNamespace = "SSW.VerticalSliceArchitecture.Features";
 
     protected static readonly Assembly RootAssembly = typeof(SSW.VerticalSliceArchitecture.Program).Assembly;
+
+    /// <summary>
+    /// The domain project's assembly, which the rules in <c>DomainTests</c> hold to a stricter
+    /// standard than the rest of the solution.
+    /// </summary>
+    protected static readonly Assembly DomainAssembly = typeof(Entity<>).Assembly;
 
     /// <remarks>
     /// Lazy so that a type-load failure surfaces in the test that actually reflects over the assembly,
@@ -39,8 +44,8 @@ public abstract class TestBase
     /// <see cref="FeaturesNamespace"/>, and nothing deeper.
     /// </summary>
     /// <remarks>
-    /// Excludes feature-level types such as <c>HeroesGroup</c> and <c>HeroesFeature</c>, which sit one
-    /// segment up.
+    /// Excludes feature-level types such as <c>HeroType</c> and <c>HeroesFeature</c>, which sit one
+    /// segment up and are shared by every slice in the feature.
     /// </remarks>
     protected static bool IsSliceNamespace(string? ns) =>
         ns is not null &&

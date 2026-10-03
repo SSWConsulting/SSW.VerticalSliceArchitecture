@@ -12,7 +12,7 @@ Every entity inherits `AuditableConfiguration<T>` rather than implementing `IEnt
 
 ```csharp
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using SSW.VerticalSliceArchitecture.Common.Domain.{Aggregate};
+using SSW.VerticalSliceArchitecture.Domain.{Aggregate};
 
 namespace SSW.VerticalSliceArchitecture.Common.Persistence.{Aggregate};
 
@@ -73,7 +73,7 @@ Pick `ToJson()` when the collection is small, always loaded with its parent, and
 Aggregate roots only. A child entity has no `DbSet` — it's reached through its aggregate, and that's what keeps the transactional boundary meaningful.
 
 ```csharp
-using SSW.VerticalSliceArchitecture.Common.Domain.{Aggregate};
+using SSW.VerticalSliceArchitecture.Domain.{Aggregate};
 
 // Preserve the namespace across partial classes
 // ReSharper disable once CheckNamespace
@@ -98,9 +98,9 @@ The namespace deliberately doesn't match the folder. It has to stay `Common.Pers
 This file already exists — edit it, don't regenerate it. Add one `using` for your aggregate's namespace *only if it isn't already there*, and one attribute per new ID. A duplicate `using` is CS0105, which Release turns into a build error via `TreatWarningsAsErrors`.
 
 ```csharp
-using SSW.VerticalSliceArchitecture.Common.Domain.Heroes;
-using SSW.VerticalSliceArchitecture.Common.Domain.Teams;
-using SSW.VerticalSliceArchitecture.Common.Domain.{Aggregate};   // <-- only if new
+using SSW.VerticalSliceArchitecture.Domain.Heroes;
+using SSW.VerticalSliceArchitecture.Domain.Teams;
+using SSW.VerticalSliceArchitecture.Domain.{Aggregate};   // <-- only if new
 
 namespace SSW.VerticalSliceArchitecture.Common.Persistence;
 
@@ -151,7 +151,7 @@ To undo an unwanted migration, `dotnet ef migrations remove --project src/WebApi
 Integration tests seed through these rather than constructing entities inline, which keeps a change to the entity's factory signature to one place.
 
 ```csharp
-using SSW.VerticalSliceArchitecture.Common.Domain.{Aggregate};
+using SSW.VerticalSliceArchitecture.Domain.{Aggregate};
 
 namespace SSW.VerticalSliceArchitecture.IntegrationTests.Common.Factories;
 

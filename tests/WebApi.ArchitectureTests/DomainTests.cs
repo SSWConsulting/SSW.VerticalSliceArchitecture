@@ -1,8 +1,7 @@
-﻿using FastEndpoints;
 using System.Reflection;
 using SSW.VerticalSliceArchitecture.ArchitectureTests.Common;
-using SSW.VerticalSliceArchitecture.Common.Domain.Base;
-using SSW.VerticalSliceArchitecture.Common.Domain.Base.Interfaces;
+using SSW.VerticalSliceArchitecture.Domain.Base;
+using SSW.VerticalSliceArchitecture.Domain.Base.Interfaces;
 
 namespace SSW.VerticalSliceArchitecture.ArchitectureTests;
 
@@ -10,8 +9,25 @@ public class DomainTests : TestBase
 {
     private static readonly Type AggregateRoot = typeof(AggregateRoot<>);
     private static readonly Type Entity = typeof(Entity<>);
-    private static readonly Type DomainEvent = typeof(IEvent);
+    private static readonly Type DomainEvent = typeof(IDomainEvent);
     private static readonly Type ValueObject = typeof(IValueObject);
+
+    /// <summary>
+    /// The packages the domain project is allowed to reference.
+    /// </summary>
+    /// <remarks>
+    /// The whole reason the domain is its own project. Anything outside this list — EF Core,
+    /// ASP.NET Core, HotChocolate, a messaging library — means the model has started to depend on
+    /// how it is stored or served, which is the coupling the split exists to prevent.
+    /// </remarks>
+    private static readonly string[] AllowedReferences =
+    [
+        "System",
+        "netstandard",
+        "Ardalis.Specification",
+        "ErrorOr",
+        "Vogen.SharedTypes"
+    ];
 
     private readonly ITestOutputHelper _output;
 
@@ -21,13 +37,40 @@ public class DomainTests : TestBase
     }
 
     [Fact]
+    public void Domain_Should_OnlyReferenceAllowedPackages()
+    {
+        // Arrange
+        var references = DomainAssembly.GetReferencedAssemblies()
+            .Select(a => a.Name)
+            .OfType<string>()
+            .Order(StringComparer.Ordinal)
+            .ToList();
+
+        foreach (var reference in references)
+            _output.WriteLine(reference);
+
+        // Act
+        var disallowed = references
+            .Where(name => !AllowedReferences.Any(allowed =>
+                name.Equals(allowed, StringComparison.Ordinal) ||
+                name.StartsWith(allowed + ".", StringComparison.Ordinal)))
+            .ToList();
+
+        // Assert
+        references.Should().NotBeEmpty();
+        disallowed.Should().BeEmpty(
+            "the domain may only reference {0}, but it also references: {1}",
+            string.Join(", ", AllowedReferences),
+            string.Join(", ", disallowed));
+    }
+
+    [Fact]
     public void DomainModel_Should_InheritsBaseClasses()
     {
         // Arrange
-        var domainModels = Types.InAssembly(RootAssembly)
+        var domainModels = Types.InAssembly(DomainAssembly)
             .That()
-            .ResideInNamespaceContaining(DomainAssemblyName)
-            .And().DoNotResideInNamespaceContaining("Base")
+            .DoNotResideInNamespaceContaining("Base")
             .And().DoNotHaveNameMatching(".*Id.*")
             .And().DoNotHaveNameMatching(".*Vogen.*")
             .And().DoNotHaveName("ThrowHelper")
@@ -35,7 +78,7 @@ public class DomainTests : TestBase
             .And().DoNotHaveNameEndingWith("Errors")
             .And().MeetCustomRule(new IsNotEnumRule());
         var types = domainModels.GetTypes().ToList();
-        
+
         types.Dump(_output);
 
         // Act
@@ -57,13 +100,13 @@ public class DomainTests : TestBase
     {
         // Arrange
         var entityTypes = Types
-            .InAssembly(RootAssembly)
+            .InAssembly(DomainAssembly)
             .That()
             .Inherit(Entity)
             .Or()
             .Inherit(AggregateRoot);
         var types = entityTypes.GetTypes().ToList();
-        
+
         types.Dump(_output);
 
         // Act

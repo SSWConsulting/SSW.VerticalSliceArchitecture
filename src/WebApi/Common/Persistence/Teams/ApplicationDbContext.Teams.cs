@@ -1,4 +1,4 @@
-﻿using SSW.VerticalSliceArchitecture.Common.Domain.Teams;
+﻿using SSW.VerticalSliceArchitecture.Domain.Teams;
 
 // Preserve the namespace across partial classes
 // ReSharper disable once CheckNamespace

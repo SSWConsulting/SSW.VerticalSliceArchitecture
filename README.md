@@ -46,19 +46,19 @@ Read more on [SSW Rules to Better Vertical Slice Architecture](https://www.ssw.c
     - Entity
     - ValueObject
     - DomainEvent
-- ⚡ FastEndpoints - developer friendly alternative to Minimal APIs. 
-    - Strongly-typed requests and responses
-    - Automatic validation with FluentValidation
-    - Support for commands and events
-- 📝 OpenAPI/Swagger - easily document your API
-    - as per [ssw.com.au/rules/do-you-document-your-webapi/](https://ssw.com.au/rules/do-you-document-your-webapi/)
+- ⚡ HotChocolate 16 - GraphQL server for .NET
+    - Source-generated resolvers, so a slice joins the schema by existing
+    - Relay connections with filtering and sorting, on per-aggregate allow-lists
+    - Typed errors in every mutation payload, DataLoaders for the N+1 problem, and subscriptions
+- 📝 A schema you can read - `src/WebApi/schema.graphql` is checked in, and a test fails when the server stops matching it
+    - Nitro, the built-in IDE, is served at `/graphql` in development
 - 🔑 Global Exception Handling - it's important to handle exceptions in a consistent way & protect sensitive information
     - Transforms exceptions into a consistent format following the [RFC7231 memo](https://datatracker.ietf.org/doc/html/rfc7231#section-6.1)
 - 🗄️ Entity Framework Core - for data access
     - Comes with Migrations & Data Seeding
     - as per [ssw.com.au/rules/rules-to-better-entity-framework/](https://ssw.com.au/rules/rules-to-better-entity-framework/)
 - 🧩 Specification Pattern - abstract EF Core away from your business logic
-- 🔀 REPR (Request-Endpoint-Response) Pattern - for structured endpoints
+- 🧱 A domain project with no framework dependencies - and an architecture test that keeps it that way
 - 📦 ErrorOr - fluent result pattern (instead of exceptions)
 - 📦 FluentValidation - for validating requests
     - as per [ssw.com.au/rules/use-fluent-validation/](https://ssw.com.au/rules/use-fluent-validation/)
@@ -151,7 +151,7 @@ dotnet new ssw-vsa --name {{SolutionName}}
 > [!NOTE]
 > The first time you run the solution, it may take a while to download the docker images, create the DB, and seed the data.
 
-2. Open https://localhost:7255/swagger in your browser to see it running ️🏃‍♂️
+2. Open https://localhost:7255/graphql in your browser to see it running ️🏃‍♂️
 
 ## Adding Features
 
@@ -159,20 +159,20 @@ dotnet new ssw-vsa --name {{SolutionName}}
 
 A full Vertical Slice is a set of files across the domain, persistence, and feature layers:
 
-- A domain object in `src/WebApi/Common/Domain/*`
+- A domain object in `src/Domain/*`
 - Domain configuration in `src/WebApi/Common/Persistence/*`
-- Command & Query API endpoints in `src/WebApi/Features/*`
+- Query & mutation resolvers in `src/WebApi/Features/*`
 
 The template ships skills that scaffold all of this for you. In Claude Code:
 
 ```
-/add-entity   # domain object, strongly typed ID, spec, EF config, DbSet, Vogen registration, migration
-/add-slice    # one use case — endpoint, request, response, validator, summary — plus tests
+/add-entity   # domain object, strongly typed ID, spec, EF config, DbSet, Vogen + GraphQL registrations, migration
+/add-slice    # one use case — resolver, input, validator — plus tests
 ```
 
 Run `/add-entity` first when the use case needs a domain type that doesn't exist yet, then `/add-slice`. The skills live in `.claude/skills/`, and the conventions they follow are documented in [`CLAUDE.md`](CLAUDE.md) and `.claude/rules/`. Using a different agent? Point it at `.claude/skills/add-slice/SKILL.md` — they're plain markdown.
 
-`/add-slice` adds a *slice* — one use case in its own folder. It creates the Feature and its route Group as well, but only when the slice is the first one in that Feature. [`CONTEXT.md`](CONTEXT.md) defines both terms.
+`/add-slice` adds a *slice* — one use case in its own folder. It creates the Feature's object type and its filter and sort allow-lists as well, but only when the slice is the first one in that Feature. [`CONTEXT.md`](CONTEXT.md) defines both terms.
 
 To do it by hand instead, copy an existing feature such as `Heroes` and rename it. Two steps are easy to miss:
 

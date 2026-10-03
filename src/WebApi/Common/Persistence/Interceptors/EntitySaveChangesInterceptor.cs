@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Diagnostics;
-using SSW.VerticalSliceArchitecture.Common.Domain.Base.Interfaces;
+using SSW.VerticalSliceArchitecture.Domain.Base.Interfaces;
 using SSW.VerticalSliceArchitecture.Common.Interfaces;
 
 namespace SSW.VerticalSliceArchitecture.Common.Persistence.Interceptors;
