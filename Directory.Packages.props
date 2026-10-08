@@ -30,7 +30,7 @@
          in (10.0.12 for Aspire 13.6.0), or restore fails with NU1109. Keep it, the Design
          pin, and the dotnet-ef tool version in lockstep. -->
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Relational" Version="10.0.12" />
-    <PackageVersion Include="Aspire.Microsoft.EntityFrameworkCore.SqlServer" Version="13.6.0" />
+    <PackageVersion Include="Aspire.Microsoft.EntityFrameworkCore.SqlServer" Version="13.6.1" />
     <PackageVersion Include="Scalar.AspNetCore" Version="2.4.7" />
     <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
     <PackageVersion Include="ErrorOr" Version="2.1.1" />
