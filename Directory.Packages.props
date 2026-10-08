@@ -19,14 +19,17 @@
     <!-- Transitive via Microsoft.AspNetCore.OpenApi 10.0.0; pinned above the 2.0.0 it
          resolves to in order to clear NU1903 (GHSA-v5pm-xwqc-g5wc, high severity). -->
     <PackageVersion Include="Microsoft.OpenApi" Version="2.9.0" />
-    <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.11">
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.12">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageVersion>
     <!-- Pinned to satisfy Aspire 13.5.3's transitive >= 10.0.11 requirement, now
-         enforced by transitive pinning. Matches the EF Core 10.0.11 pins. -->
+         enforced by transitive pinning. -->
     <PackageVersion Include="Microsoft.Extensions.Hosting" Version="10.0.11" />
-    <PackageVersion Include="Microsoft.EntityFrameworkCore.Relational" Version="10.0.11" />
+    <!-- Must be >= the EF Core version Aspire.Microsoft.EntityFrameworkCore.SqlServer pulls
+         in (10.0.12 for Aspire 13.6.0), or restore fails with NU1109. Keep it, the Design
+         pin, and the dotnet-ef tool version in lockstep. -->
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Relational" Version="10.0.12" />
     <PackageVersion Include="Aspire.Microsoft.EntityFrameworkCore.SqlServer" Version="13.6.0" />
     <PackageVersion Include="Scalar.AspNetCore" Version="2.4.7" />
     <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
