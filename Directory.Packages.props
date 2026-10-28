@@ -8,9 +8,9 @@
   <ItemGroup>
     <PackageVersion Include="Aspire.Hosting.Azure.ApplicationInsights" Version="13.5.3" />
     <!-- Transitive via Aspire.Hosting 13.5.3 (StreamJsonRpc 2.25.29 requires >= 2.5.302);
-         also clears NU1903 (GHSA-hv8m-jj95-wg3x, high severity) that the 2.5.192 it would
-         otherwise resolve to is subject to. -->
-    <PackageVersion Include="MessagePack" Version="2.5.302" />
+         pinned to 2.5.303 to clear NU1903 (GHSA-hv8m-jj95-wg3x, high severity) and NU1902
+         (GHSA-qhrr-8q5h-9q3h, moderate severity). -->
+    <PackageVersion Include="MessagePack" Version="2.5.303" />
     <PackageVersion Include="Aspire.Hosting.Azure.AppService" Version="13.5.3" />
     <PackageVersion Include="Aspire.Hosting.Azure.Sql" Version="13.5.3" />
     <PackageVersion Include="EntityFrameworkCore.Exceptions.SqlServer" Version="10.0.1" />
@@ -30,6 +30,11 @@
          in (10.0.12 for Aspire 13.6.0), or restore fails with NU1109. Keep it, the Design
          pin, and the dotnet-ef tool version in lockstep. -->
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Relational" Version="10.0.12" />
+    <!-- Transitive via Microsoft.Data.SqlClient 7.0.2 (pulled in by
+         Aspire.Microsoft.EntityFrameworkCore.SqlServer and EntityFrameworkCore.Exceptions.SqlServer);
+         pinned above the 10.0.12 it resolves to in order to clear NU1903 (GHSA-846f-f764-76mx,
+         high severity) and NU1902 (GHSA-2fmv-rv2c-59x7, moderate severity). -->
+    <PackageVersion Include="System.Security.Cryptography.Pkcs" Version="10.0.13" />
     <PackageVersion Include="Aspire.Microsoft.EntityFrameworkCore.SqlServer" Version="13.6.0" />
     <PackageVersion Include="Scalar.AspNetCore" Version="2.4.7" />
     <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
