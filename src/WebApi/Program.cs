@@ -11,7 +11,6 @@ builder.AddServiceDefaults();
 builder.Services.AddCustomProblemDetails();
 
 builder.AddWebApi();
-builder.AddApplication();
 builder.AddInfrastructure();
 
 builder.Services.ConfigureFeatures(builder.Configuration, appAssembly);

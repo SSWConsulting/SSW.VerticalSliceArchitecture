@@ -20,12 +20,4 @@ public static class DependencyInjection
 
         builder.Services.SwaggerDocument();
     }
-    
-    public static void AddApplication(this IHostApplicationBuilder builder)
-    {
-        var applicationAssembly = typeof(DependencyInjection).Assembly;
-        var services = builder.Services;
-        
-        services.AddValidatorsFromAssembly(applicationAssembly, includeInternalTypes: true);
-    }
 }
