@@ -96,7 +96,7 @@ Read more on [SSW Rules to Better Vertical Slice Architecture](https://www.ssw.c
 ### Prerequisites
 
 - [Docker](https://www.docker.com/get-started/) / [Podman](https://podman.io/get-started) / [OrbStack](https://orbstack.dev/)
-- [.NET 10 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/10.0)
+- [.NET 11 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/11.0)
 - [Aspire CLI](https://aspire.dev/get-started/install-cli/)
 - `dotnet-ef`, restored from the solution's tool manifest:
   ```bash
