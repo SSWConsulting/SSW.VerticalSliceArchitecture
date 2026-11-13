@@ -2,11 +2,11 @@
 
 ## Project Overview
 
-A template for **.NET 10 + Vertical Slice Architecture + Aspire**. Each use case is a self-contained vertical slice in its own folder under `src/WebApi/Features/{Feature}/`, shared domain types sit in `src/WebApi/Common/Domain/`, and infrastructure (EF Core, middleware, services) lives in `src/WebApi/Common/`. Terms are defined in `CONTEXT.md`.
+A template for **.NET 11 + Vertical Slice Architecture + Aspire**. Each use case is a self-contained vertical slice in its own folder under `src/WebApi/Features/{Feature}/`, shared domain types sit in `src/WebApi/Common/Domain/`, and infrastructure (EF Core, middleware, services) lives in `src/WebApi/Common/`. Terms are defined in `CONTEXT.md`.
 
 ## Technology Stack
 
-- **.NET 10**, ASP.NET Core, EF Core (SQL Server)
+- **.NET 11**, ASP.NET Core, EF Core (SQL Server)
 - **FastEndpoints** — HTTP endpoints with strongly-typed request/response
 - **Aspire** — local orchestration, observability, service discovery
 - **Vogen** — strongly typed IDs

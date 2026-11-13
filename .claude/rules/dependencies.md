@@ -26,7 +26,7 @@ Central transitive pinning is enabled (`CentralPackageTransitivePinningEnabled`)
 so add a `<PackageVersion>` for the affected transitive package in
 `Directory.Packages.props` at the first patched version (the GHSA lists its
 patched range), with a comment naming the parent package and the GHSA id. The
-`Microsoft.OpenApi` and `MessagePack` entries show the established shape.
+`System.Security.Cryptography.Pkcs` and `SSH.NET` entries show the established shape.
 
 Pin the transitive package rather than bumping its parent or turning off the
 audit.
@@ -60,11 +60,11 @@ FastEndpoints.Swagger, which uses NSwag and never touches `Microsoft.OpenApi`. A
 pin.
 
 As shipped, the WebApi calls `AddOpenApi()` but never `MapOpenApi()`, so the
-`Microsoft.OpenApi` path isn't mapped and can't be exercised at all, so the pin
-here only clears the audit. Once something maps it (`aspire start --isolated`, then
+`Microsoft.OpenApi` path isn't mapped and can't be exercised at all; a pin on it
+would only clear the audit. Once something maps it (`aspire start --isolated`, then
 `GET /openapi/v1.json` expecting a valid document), that's the check to run.
 
-Pins that never reach a request don't need a runtime check. The `MessagePack`
-pin, for instance, backs Aspire tooling. Match the check to whatever surface
+Pins that never reach a request don't need a runtime check. A pin on a package
+that only Aspire tooling loads (such as `MessagePack`) is one example. Match the check to whatever surface
 really loads the assembly, and if nothing does, the pin is just satisfying the
 audit.

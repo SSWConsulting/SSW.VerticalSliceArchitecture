@@ -6,36 +6,34 @@
     <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
   </PropertyGroup>
   <ItemGroup>
-    <PackageVersion Include="Aspire.Hosting.Azure.ApplicationInsights" Version="13.5.3" />
-    <!-- Transitive via Aspire.Hosting 13.5.3 (StreamJsonRpc 2.25.29 requires >= 2.5.302);
-         pinned to 2.5.303 to clear NU1903 (GHSA-hv8m-jj95-wg3x, high severity) and NU1902
-         (GHSA-qhrr-8q5h-9q3h, moderate severity). -->
-    <PackageVersion Include="MessagePack" Version="2.5.303" />
-    <PackageVersion Include="Aspire.Hosting.Azure.AppService" Version="13.5.3" />
-    <PackageVersion Include="Aspire.Hosting.Azure.Sql" Version="13.5.3" />
+    <PackageVersion Include="Aspire.Hosting.Azure.ApplicationInsights" Version="13.6.5" />
+    <PackageVersion Include="Aspire.Hosting.Azure.AppService" Version="13.6.5" />
+    <PackageVersion Include="Aspire.Hosting.Azure.Sql" Version="13.6.5" />
     <PackageVersion Include="EntityFrameworkCore.Exceptions.SqlServer" Version="10.0.1" />
     <PackageVersion Include="FastEndpoints.Swagger" Version="8.3.0" />
-    <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="10.0.10" />
-    <!-- Transitive via Microsoft.AspNetCore.OpenApi 10.0.0; pinned above the 2.0.0 it
-         resolves to in order to clear NU1903 (GHSA-v5pm-xwqc-g5wc, high severity). -->
-    <PackageVersion Include="Microsoft.OpenApi" Version="2.9.0" />
-    <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.12">
+    <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="11.0.0" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="11.0.0">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageVersion>
-    <!-- Pinned to satisfy Aspire 13.5.3's transitive >= 10.0.11 requirement, now
+    <!-- Pinned to satisfy Aspire 13.6.5's transitive EF Core/Hosting requirement, now
          enforced by transitive pinning. -->
-    <PackageVersion Include="Microsoft.Extensions.Hosting" Version="10.0.11" />
+    <PackageVersion Include="Microsoft.Extensions.Hosting" Version="11.0.0" />
     <!-- Must be >= the EF Core version Aspire.Microsoft.EntityFrameworkCore.SqlServer pulls
-         in (10.0.12 for Aspire 13.6.0), or restore fails with NU1109. Keep it, the Design
+         in (10.0.x for Aspire 13.6.5), or restore fails with NU1109. Keep it, the Design
          pin, and the dotnet-ef tool version in lockstep. -->
-    <PackageVersion Include="Microsoft.EntityFrameworkCore.Relational" Version="10.0.12" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Relational" Version="11.0.0" />
+    <!-- Transitive via Aspire.Microsoft.EntityFrameworkCore.SqlServer and
+         EntityFrameworkCore.Exceptions.SqlServer, which still target EF Core 10. Must match the
+         Relational pin: a 10.x provider on 11.x Relational compiles but throws
+         MissingMethodException when the model is built. -->
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.SqlServer" Version="11.0.0" />
     <!-- Transitive via Microsoft.Data.SqlClient 7.0.2 (pulled in by
          Aspire.Microsoft.EntityFrameworkCore.SqlServer and EntityFrameworkCore.Exceptions.SqlServer);
-         pinned above the 10.0.12 it resolves to in order to clear NU1903 (GHSA-846f-f764-76mx,
+         pinned above the vulnerable version it resolves to in order to clear NU1903 (GHSA-846f-f764-76mx,
          high severity) and NU1902 (GHSA-2fmv-rv2c-59x7, moderate severity). -->
-    <PackageVersion Include="System.Security.Cryptography.Pkcs" Version="10.0.13" />
-    <PackageVersion Include="Aspire.Microsoft.EntityFrameworkCore.SqlServer" Version="13.6.0" />
+    <PackageVersion Include="System.Security.Cryptography.Pkcs" Version="11.0.0" />
+    <PackageVersion Include="Aspire.Microsoft.EntityFrameworkCore.SqlServer" Version="13.6.5" />
     <PackageVersion Include="Scalar.AspNetCore" Version="2.4.7" />
     <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
     <PackageVersion Include="ErrorOr" Version="2.1.1" />
@@ -55,10 +53,10 @@
   </ItemGroup>
   <ItemGroup Condition="$(IsAspireHost) == 'true'">
     <!-- Prerelease is the only channel this package has ever shipped on; there is no stable
-         13.x to move to. The build number tracks the stable Aspire.Hosting.* 13.5.3 pins, so
+         13.x to move to. The build number tracks the stable Aspire.Hosting.* pins, so
          bump it in lockstep with them. -->
-    <PackageVersion Include="Aspire.Hosting.EntityFrameworkCore" Version="13.5.3-preview.1.26425.3" />
-    <PackageVersion Include="Aspire.Hosting.SqlServer" Version="13.5.4" />
+    <PackageVersion Include="Aspire.Hosting.EntityFrameworkCore" Version="13.6.5-preview.1.26559.7" />
+    <PackageVersion Include="Aspire.Hosting.SqlServer" Version="13.6.5" />
   </ItemGroup>
   <ItemGroup Condition="$(IsTestProject) == 'true'">
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.8.1" />
@@ -70,7 +68,7 @@
     <PackageVersion Include="NSubstitute" Version="6.0.0" />
     <PackageVersion Include="NetArchTest.Rules" Version="1.3.2" />
     <PackageVersion Include="AwesomeAssertions" Version="9.5.0" />
-    <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="10.0.9" />
+    <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="11.0.0" />
     <PackageVersion Include="Respawn" Version="7.0.0" />
     <PackageVersion Include="Testcontainers.MsSql" Version="4.9.0" />
     <!-- Transitive via Testcontainers (pulled in by Testcontainers.MsSql); pinned above
