@@ -73,7 +73,8 @@ These all compile, and no test catches them.
 
 ```bash
 dotnet build && dotnet build -c Release
-dotnet test tests/WebApi.UnitTests tests/WebApi.ArchitectureTests
+dotnet test tests/WebApi.UnitTests            # one project per call: extra paths go to the test app as arguments
+dotnet test tests/WebApi.ArchitectureTests
 dotnet test tests/WebApi.IntegrationTests    # needs Docker or Podman running
 ```
 

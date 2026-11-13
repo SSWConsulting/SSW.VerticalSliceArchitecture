@@ -39,7 +39,7 @@ jobs:
       run: dotnet build --no-restore --configuration Release
 
     - name: Test
-      run: dotnet test --no-build --no-restore --configuration Release --logger "trx;LogFileName=TestResults.trx"
+      run: dotnet test --no-build --no-restore --configuration Release --report-xunit-trx
 
     - name: Test Report
       uses: dorny/test-reporter@v3
