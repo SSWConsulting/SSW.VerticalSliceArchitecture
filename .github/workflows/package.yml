@@ -25,8 +25,14 @@ jobs:
       - name: Create the package
         run: nuget pack VerticalSliceArchitecture.nuspec -NoDefaultExcludes
         
+      # Reads the SDK version from global.json, which the dotnet CLI needs to run in this repo.
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v6
+
+      # Pushed with the dotnet CLI rather than nuget.exe: under Mono, nuget.exe validates TLS
+      # against Mono's own certificate store, which rejects api.nuget.org on current runners.
       - name: Publish the package
-        run: nuget push *.nupkg -Source 'https://api.nuget.org/v3/index.json' -ApiKey ${{secrets.NUGET_API_KEY}} 
+        run: dotnet nuget push *.nupkg --source 'https://api.nuget.org/v3/index.json' --api-key ${{secrets.NUGET_API_KEY}}
 
       - name: Get version
         id: package_version
