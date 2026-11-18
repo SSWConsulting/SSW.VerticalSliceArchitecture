@@ -55,7 +55,7 @@
          13.x to move to. The build number tracks the stable Aspire.Hosting.* pins, so
          bump it in lockstep with them. -->
     <PackageVersion Include="Aspire.Hosting.EntityFrameworkCore" Version="13.6.5-preview.1.26559.7" />
-    <PackageVersion Include="Aspire.Hosting.SqlServer" Version="13.6.5" />
+    <PackageVersion Include="Aspire.Hosting.SqlServer" Version="17.0.0" />
   </ItemGroup>
   <ItemGroup Condition="$(IsTestProject) == 'true'">
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.12.0" />
