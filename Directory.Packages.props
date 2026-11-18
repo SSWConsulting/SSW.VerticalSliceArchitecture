@@ -6,8 +6,8 @@
     <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
   </PropertyGroup>
   <ItemGroup>
-    <PackageVersion Include="Aspire.Hosting.Azure.ApplicationInsights" Version="13.6.5" />
-    <PackageVersion Include="Aspire.Hosting.Azure.AppService" Version="13.6.5" />
+    <PackageVersion Include="Aspire.Hosting.Azure.ApplicationInsights" Version="17.0.0" />
+    <PackageVersion Include="Aspire.Hosting.Azure.AppService" Version="17.0.0" />
     <PackageVersion Include="Aspire.Hosting.Azure.Sql" Version="13.6.5" />
     <PackageVersion Include="EntityFrameworkCore.Exceptions.SqlServer" Version="10.0.1" />
     <PackageVersion Include="FastEndpoints.Swagger" Version="9.0.0" />
