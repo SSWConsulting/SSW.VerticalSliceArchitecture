@@ -1,7 +1,6 @@
 using AppHost.Commands;
 using Azure.Provisioning;
 using Azure.Provisioning.AppService;
-using Projects;
 
 var builder = DistributedApplication.CreateBuilder(args);
 
@@ -39,8 +38,9 @@ var db = sqlServer
     .AddDatabase("AppDb", "app-db")
     .WithDropDatabaseCommand();
 
+// Paths are relative to this AppHost project's directory.
 var api = builder
-    .AddProject<WebApi>("api")
+    .AddDotnetProject("api", "../../src/WebApi/WebApi.csproj")
     .WithExternalHttpEndpoints()
     .WithReference(db);
 
@@ -58,7 +58,7 @@ if (builder.ExecutionContext.IsRunMode)
 {
     // Seeding is dev-only, and this guard is what enforces it — the resource is never
     // added in publish mode, so Bogus data has no path to a deployed environment.
-    var seeder = builder.AddProject<Seeder>("seeder")
+    var seeder = builder.AddDotnetProject("seeder", "../Seeder/Seeder.csproj")
         .WithReference(db)
         .WaitForCompletion(migrations);
 
