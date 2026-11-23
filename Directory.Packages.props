@@ -6,9 +6,9 @@
     <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
   </PropertyGroup>
   <ItemGroup>
-    <PackageVersion Include="Aspire.Hosting.Azure.ApplicationInsights" Version="13.6.5" />
-    <PackageVersion Include="Aspire.Hosting.Azure.AppService" Version="13.6.5" />
-    <PackageVersion Include="Aspire.Hosting.Azure.Sql" Version="13.6.5" />
+    <PackageVersion Include="Aspire.Hosting.Azure.ApplicationInsights" Version="17.0.0" />
+    <PackageVersion Include="Aspire.Hosting.Azure.AppService" Version="17.0.0" />
+    <PackageVersion Include="Aspire.Hosting.Azure.Sql" Version="17.0.0" />
     <PackageVersion Include="EntityFrameworkCore.Exceptions.SqlServer" Version="10.0.1" />
     <PackageVersion Include="FastEndpoints.Swagger" Version="9.0.0" />
     <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="11.0.0" />
@@ -16,24 +16,10 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageVersion>
-    <!-- Pinned to satisfy Aspire 13.6.5's transitive EF Core/Hosting requirement, now
-         enforced by transitive pinning. -->
-    <PackageVersion Include="Microsoft.Extensions.Hosting" Version="11.0.0" />
-    <!-- Must be >= the EF Core version Aspire.Microsoft.EntityFrameworkCore.SqlServer pulls
-         in (10.0.x for Aspire 13.6.5), or restore fails with NU1109. Keep it, the Design
-         pin, and the dotnet-ef tool version in lockstep. -->
+    <!-- Keep in lockstep with the Design pin and the dotnet-ef version in
+         .config/dotnet-tools.json. -->
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Relational" Version="11.0.0" />
-    <!-- Transitive via Aspire.Microsoft.EntityFrameworkCore.SqlServer and
-         EntityFrameworkCore.Exceptions.SqlServer, which still target EF Core 10. Must match the
-         Relational pin: a 10.x provider on 11.x Relational compiles but throws
-         MissingMethodException when the model is built. -->
-    <PackageVersion Include="Microsoft.EntityFrameworkCore.SqlServer" Version="11.0.0" />
-    <!-- Transitive via Microsoft.Data.SqlClient 7.0.2 (pulled in by
-         Aspire.Microsoft.EntityFrameworkCore.SqlServer and EntityFrameworkCore.Exceptions.SqlServer);
-         pinned above the vulnerable version it resolves to in order to clear NU1903 (GHSA-846f-f764-76mx,
-         high severity) and NU1902 (GHSA-2fmv-rv2c-59x7, moderate severity). -->
-    <PackageVersion Include="System.Security.Cryptography.Pkcs" Version="11.0.0" />
-    <PackageVersion Include="Aspire.Microsoft.EntityFrameworkCore.SqlServer" Version="13.6.5" />
+    <PackageVersion Include="Aspire.Microsoft.EntityFrameworkCore.SqlServer" Version="17.0.0" />
     <PackageVersion Include="Scalar.AspNetCore" Version="2.4.7" />
     <PackageVersion Include="ErrorOr" Version="2.1.1" />
     <PackageVersion Include="Vogen" Version="8.0.7" />
@@ -51,11 +37,15 @@
     <PackageVersion Include="OpenTelemetry.Instrumentation.Runtime" Version="1.21.0" />
   </ItemGroup>
   <ItemGroup Condition="$(IsAspireHost) == 'true'">
+    <!-- Aspire.Hosting.AppHost supplies the AppHost build targets and Aspire.Hosting.Dotnet
+         supplies AddDotnetProject; the AppHost is a plain Microsoft.NET.Sdk project. -->
+    <PackageVersion Include="Aspire.Hosting.AppHost" Version="17.0.0" />
+    <PackageVersion Include="Aspire.Hosting.Dotnet" Version="17.0.0" />
     <!-- Prerelease is the only channel this package has ever shipped on; there is no stable
-         13.x to move to. The build number tracks the stable Aspire.Hosting.* pins, so
+         version to move to. The build number tracks the stable Aspire.Hosting.* pins, so
          bump it in lockstep with them. -->
-    <PackageVersion Include="Aspire.Hosting.EntityFrameworkCore" Version="13.6.5-preview.1.26559.7" />
-    <PackageVersion Include="Aspire.Hosting.SqlServer" Version="13.6.5" />
+    <PackageVersion Include="Aspire.Hosting.EntityFrameworkCore" Version="17.0.0-preview.1.26567.5" />
+    <PackageVersion Include="Aspire.Hosting.SqlServer" Version="17.0.0" />
   </ItemGroup>
   <ItemGroup Condition="$(IsTestProject) == 'true'">
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.12.0" />

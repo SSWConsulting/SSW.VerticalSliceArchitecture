@@ -25,8 +25,14 @@ it.
 Central transitive pinning is enabled (`CentralPackageTransitivePinningEnabled`),
 so add a `<PackageVersion>` for the affected transitive package in
 `Directory.Packages.props` at the first patched version (the GHSA lists its
-patched range), with a comment naming the parent package and the GHSA id. The
-`System.Security.Cryptography.Pkcs` and `SSH.NET` entries show the established shape.
+patched range), with a comment naming the parent package and the GHSA id:
+
+```xml
+<!-- Transitive via Microsoft.Data.SqlClient (pulled in by
+     Aspire.Microsoft.EntityFrameworkCore.SqlServer); pinned above the vulnerable version
+     it resolves to in order to clear NU1903 (GHSA-xxxx-xxxx-xxxx, high severity). -->
+<PackageVersion Include="System.Security.Cryptography.Pkcs" Version="11.0.0" />
+```
 
 Pin the transitive package rather than bumping its parent or turning off the
 audit.

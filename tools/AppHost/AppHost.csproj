@@ -1,16 +1,14 @@
-<Project Sdk="Aspire.AppHost.Sdk/13.6.5">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <IsAspireHost>true</IsAspireHost>
-    <!-- Sources the DCP and Dashboard binaries from the Aspire CLI bundle rather than
-         RID-specific NuGet packages. The bundle is set to become the only supported
-         source, and leaving this unset reports ASPIRE010. -->
-    <AspireUseCliBundle>true</AspireUseCliBundle>
     <UserSecretsId>5df8b960-6ca4-4a63-9039-5445c0911a16</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Aspire.Hosting.AppHost" />
+    <PackageReference Include="Aspire.Hosting.Dotnet" />
     <PackageReference Include="Aspire.Hosting.Azure.ApplicationInsights" />
     <PackageReference Include="Aspire.Hosting.Azure.AppService" />
     <PackageReference Include="Aspire.Hosting.Azure.Sql" />
@@ -19,12 +17,10 @@
     <PackageReference Include="Aspire.Microsoft.EntityFrameworkCore.SqlServer" />
   </ItemGroup>
 
+  <!-- WebApi and Seeder are registered by path with AddDotnetProject, which builds them
+       itself, so the AppHost holds no ProjectReference to either. -->
   <ItemGroup>
-    <ProjectReference Include="..\..\src\ServiceDefaults\ServiceDefaults.csproj">
-      <IsAspireProjectResource>false</IsAspireProjectResource>
-    </ProjectReference>
-    <ProjectReference Include="..\..\src\WebApi\WebApi.csproj" />
-    <ProjectReference Include="..\Seeder\Seeder.csproj" />
+    <ProjectReference Include="..\..\src\ServiceDefaults\ServiceDefaults.csproj" />
   </ItemGroup>
 
 </Project>
