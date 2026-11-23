@@ -12,6 +12,8 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      # Lets the job request a GitHub OIDC token, which NuGet.org exchanges for a publish key.
+      id-token: write
     steps:
       - uses: actions/checkout@v7
 
@@ -29,10 +31,20 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v6
 
+      # Trusted Publishing: NuGet.org checks the OIDC token against the policy registered for this
+      # repository and workflow file, then issues a key that lasts one hour. Keep this step
+      # directly before the push so the key cannot expire first. NUGET_USER is the nuget.org
+      # profile name of the policy's creator, not an email address.
+      - name: NuGet login
+        id: login
+        uses: NuGet/login@v1
+        with:
+          user: ${{ secrets.NUGET_USER }}
+
       # Pushed with the dotnet CLI rather than nuget.exe: under Mono, nuget.exe validates TLS
       # against Mono's own certificate store, which rejects api.nuget.org on current runners.
       - name: Publish the package
-        run: dotnet nuget push *.nupkg --source 'https://api.nuget.org/v3/index.json' --api-key ${{secrets.NUGET_API_KEY}}
+        run: dotnet nuget push *.nupkg --source 'https://api.nuget.org/v3/index.json' --api-key ${{ steps.login.outputs.NUGET_API_KEY }}
 
       - name: Get version
         id: package_version
