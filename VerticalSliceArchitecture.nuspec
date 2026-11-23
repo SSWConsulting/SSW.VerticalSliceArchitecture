@@ -3,7 +3,7 @@
   <metadata>
 
     <id>SSW.VerticalSliceArchitecture.Template</id>
-    <version>2026.11.17</version>
+    <version>2026.11.23</version>
     <title>Vertical Slice Architecture Template</title>
     <authors>SSW Consulting</authors>
     <description>Vertical Slice Architecture template using ASP.NET Core</description>
@@ -12,9 +12,7 @@
       This template is just one way to apply the Vertical Slice Architecture.
     </summary>
     <releaseNotes>
-      Upgraded to .NET 11, FastEndpoints 9, xunit.v3 4, Aspire 13.6 and SQL Server 2025.
-      Added pagination and sorting primitives, moved migrations to Aspire's AddEFMigrations,
-      and shipped the /add-entity and /add-slice scaffolding skills.
+      Upgraded Aspire to 17.0.0 and Testcontainers.MsSql to 4.17.0.
     </releaseNotes>
     <readme>README.md</readme>
 
