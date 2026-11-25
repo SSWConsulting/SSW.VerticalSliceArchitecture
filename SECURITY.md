@@ -4,7 +4,7 @@
 
 Please do not report security vulnerabilities through public GitHub issues.
 
-Instead, send email to [SSWSoftwareArchitectureWhiteRobes@ssw.com.au](mailto:SSWSoftwareArchitectureWhiteRobes@ssw.com.au).
+Instead, send email to [security@ssw.com.au](mailto:security@ssw.com.au).
 
 You should receive a response within 24 hours. If for some reason you do not, please follow up via email to ensure we received your original message.
 
