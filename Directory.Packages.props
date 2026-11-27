@@ -9,7 +9,7 @@
     <PackageVersion Include="Aspire.Hosting.Azure.ApplicationInsights" Version="17.0.0" />
     <PackageVersion Include="Aspire.Hosting.Azure.AppService" Version="17.0.0" />
     <PackageVersion Include="Aspire.Hosting.Azure.Sql" Version="17.0.0" />
-    <PackageVersion Include="EntityFrameworkCore.Exceptions.SqlServer" Version="10.0.1" />
+    <PackageVersion Include="EntityFrameworkCore.Exceptions.SqlServer" Version="11.0.0" />
     <PackageVersion Include="FastEndpoints.Swagger" Version="9.0.0" />
     <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="11.0.0" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="11.0.0">
