@@ -5,7 +5,7 @@ description: Scaffold a slice in this Vertical Slice Architecture template — o
 
 # Add a Slice
 
-A **slice** is one use case, owning everything it needs from HTTP surface to persistence, in its own folder. `CreateHero` is a slice. A **Feature** is the group of slices over the same aggregate, sharing a route prefix — `Heroes` is a Feature, and it is not itself a slice. [`CONTEXT.md`](../../../CONTEXT.md) at the repo root defines both, along with Group, Endpoint, and the rest of the vocabulary. Use those words, and avoid the ones it lists under *Avoid*.
+A **slice** is one use case, owning everything it needs from HTTP surface to persistence, in its own folder. `CreateHero` is a slice. A **Feature** is the group of slices over the same aggregate, sharing a route prefix — `Heroes` is a Feature, and it is not itself a slice. [`GLOSSARY.md`](../../../GLOSSARY.md) at the repo root defines both, along with Group, Endpoint, and the rest of the vocabulary. Use those words, and avoid the ones it lists under *Avoid*.
 
 This skill adds a slice. It creates the Feature and its Group too, but only when the slice is the first one in that Feature.
 

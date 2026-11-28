@@ -95,7 +95,7 @@ something.
 
 - Write for a team member who joins in two years and wasn't in the room.
 - Active voice, concrete nouns, no jargon you haven't defined.
-- Use the vocabulary from [`CONTEXT.md`](../../../CONTEXT.md) and avoid the synonyms
+- Use the vocabulary from [`GLOSSARY.md`](../../../GLOSSARY.md) and avoid the synonyms
   it lists under _Avoid_ — a slice is a slice, not a module or a handler.
 - Link to real code (`src/WebApi/Features/Heroes/CreateHero/`) and to related ADRs by
   relative path. Images go in `docs/adr/l4b-static/` — Log4brains serves that folder
