@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-A template for **.NET 11 + Vertical Slice Architecture + Aspire**. Each use case is a self-contained vertical slice in its own folder under `src/WebApi/Features/{Feature}/`, shared domain types sit in `src/WebApi/Common/Domain/`, and infrastructure (EF Core, middleware, services) lives in `src/WebApi/Common/`. Terms are defined in `CONTEXT.md`.
+A template for **.NET 11 + Vertical Slice Architecture + Aspire**. Each use case is a self-contained vertical slice in its own folder under `src/WebApi/Features/{Feature}/`, shared domain types sit in `src/WebApi/Common/Domain/`, and infrastructure (EF Core, middleware, services) lives in `src/WebApi/Common/`. Terms are defined in `GLOSSARY.md`.
 
 ## Technology Stack
 
@@ -42,7 +42,7 @@ The rules describe the conventions; the skills in `.claude/skills/` run them. In
 
 Run `/add-entity` before `/add-slice` when the use case needs a domain type that doesn't exist yet.
 
-`add-slice` scaffolds a **slice**, not a Feature: a slice is one use case, a Feature is the group of slices over an aggregate. See `CONTEXT.md`.
+`add-slice` scaffolds a **slice**, not a Feature: a slice is one use case, a Feature is the group of slices over an aggregate. See `GLOSSARY.md`.
 
 The templates in `references/` are copies of the shapes in `Features/Heroes/` and `Common/Domain/Heroes/`, so they drift when those change. Fix the template as part of whatever change made it stale.
 
@@ -76,4 +76,4 @@ The five canonical triage labels, unrenamed. See `docs/agents/triage-labels.md`.
 
 ### Domain docs
 
-Single-context — `CONTEXT.md` and `docs/adr/` at the repo root. See `docs/agents/domain.md`.
+Single-context — `GLOSSARY.md` and `docs/adr/` at the repo root. See `docs/agents/domain.md`.
